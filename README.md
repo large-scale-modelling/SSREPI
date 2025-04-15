@@ -14,6 +14,6 @@ Holds everything to do with SSREPI that needs to be public facing
   type        = {Specification},
   address     = {Aberdeen},
   month       = {November},
-  url         = {https://https://github.com/DougSalt/SSREPI/blob/main/SSREPI.html}
+  url         = {https://https://github.com/large-scale-modelliing/SSREPI/blob/main/SSREPI.html}
 }
 ```
