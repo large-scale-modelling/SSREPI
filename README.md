@@ -18,7 +18,7 @@ Suggested citation:
   type        = {Specification},
   address     = {Aberdeen},
   month       = {November},
-  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/SSREPI.html}
+  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/SSREPI.pdf}
 }
 ```
 
