@@ -6,19 +6,20 @@ This is the specification document for the SSREPI metadata. An implentation of t
 
 Suggested citation:
 
-[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification (version 2.0.0), _Technical Report, The James Hutton Institute, Aberdeen, November 2022_. 
+[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification (version 2.0.2), _Technical Report, The James Hutton Institute, Aberdeen, November 2022_. DOI: [10.5281/zenodo.15234673](https://doi.org/10.5281/zenodo.15234673)
 
 ```BibTeX
 @techreport{polhill2022ssrepi,
   author      = {Polhill, Gary and Milazzo, Lorenzo and Parker, Dawn and Jin, Xiongbing and Pritchard, Calvin and Lee, Ju-Sung and Salt, Doug},
-  title       = {MIRACLE simulation outputs metadata specification version 2.0.0},
+  title       = {MIRACLE simulation outputs metadata specification version 2.0.2},
   institution = {The James Hutton Institute},
   year        = {2022},
   number      = {2.0.0},
   type        = {Specification},
   address     = {Aberdeen},
   month       = {November},
-  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/SSREPI.pdf}
+  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/SSREPI.pdf},
+  doi         = {10.5281/zenodo.15234673}
 }
 ```
 
