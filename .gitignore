@@ -39,6 +39,7 @@ tex2pdf.*
 *.toc
 *.snm
 *.vrb
+*.blg
 
 # Bibtex stuff
 
