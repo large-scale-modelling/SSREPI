@@ -1,0 +1,50 @@
+# Mac Stuff
+
+.DS_Store
+
+# R stuffings
+
+.Rproj.user
+.RData
+.Rhistory
+
+# Protégé bollox
+
+catalog-v???.xml
+
+# Open office crap
+.~lock*
+
+# Vim crud
+*~
+*.swp
+*.swo
+
+# Emacs execrement
+
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Latex stuff
+
+tex2pdf.*
+*.log
+*.aux
+*.out
+*.nav
+*.toc
+*.snm
+*.vrb
+
+# Bibtex stuff
+
+*.bib.bak
+
+# Lex and Yacc stuff
+
+*.y~
+*.l~
