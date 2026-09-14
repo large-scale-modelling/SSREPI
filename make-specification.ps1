@@ -9,6 +9,6 @@ if ((Get-Command python -ErrorAction SilentlyContinue) -and (Get-Command record-
 	exit
 }
 Get-Content .\miracle-specification-end.md | Add-Content .\miracle-specification.md
-pandoc miracle-specification.md --toc -o output.pdf --citeproc --bibliography=citations.bib
+pandoc miracle-specification.md --toc -o miracle-specification.pdf --citeproc --bibliography=citations.bib
 
 

@@ -11,7 +11,11 @@ This is the specification document for the SSREPI metadata. An implentation of t
 **R**epresentation of
 **D**ata
 
-provenance recording framework. This is platform agnostic framework for recording the provenance of data generated, particularly by social simulation modelsi, but can used by other modelling frameworks. 
+provenance recording framework. This is platform agnostic framework for recording the provenance of data generated, particularly by social simulation models, but can used by other modelling frameworks. 
+
+The markdown version of the standard is [here](https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification.md}, and the pdf version of the standard is [here](https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification}.
+
+If you want a word version of this specification, then `pandoc` can produce documents compatible with Microsoft Word. Please note we are trying to stay away from effectively proprietary formats.
 
 Suggested citation:
 
@@ -28,9 +32,9 @@ Suggested citation:
   address     = {Aberdeen},
   month       = {September},
   url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification-full.pdf},
-<!--  doi         = {10.5281/zenodo.15234672} -->
 }
 ```
+<!--  doi         = {10.5281/zenodo.15234672} -->
 
 ## Notes.
 
