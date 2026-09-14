@@ -1,0 +1,170 @@
+
+classDiagram
+    direction TB
+
+    class OtherOntologies["Other ontologies"]:::ontology {
+        <<ontology>>
+    }
+
+    namespace PeopleAndOrgs {
+        class Person:::agent {
+            <<Agent>>
+            name
+            email
+        }
+        class Computer:::agent {
+            <<Agent>>
+            name
+            host-id
+            ip-addr
+            mac-addr
+        }
+        class PersonalData:::plain {
+            <<plain>>
+            label
+            value
+        }
+        class Contributor:::reified {
+            <<reified>>
+            contribution
+            alias
+        }
+        class Involvement:::reified {
+            <<reified>>
+            role
+        }
+        class Study:::activity {
+            <<Activity>>
+            label
+            start-time
+            end-time
+        }
+        class Documentation:::entity {
+            <<Entity>>
+            title
+            date
+        }
+    }
+
+    namespace Applications {
+        class Application:::entity {
+            <<Entity>>
+            purpose
+            version
+            licence
+            language
+            envs
+        }
+        class Model:::entity {
+            <<Entity>>
+            id_model
+            comses
+        }
+        class Pipeline:::entity {
+            <<Entity>>
+            name
+        }
+        class Process:::activity {
+            <<Activity>>
+            start-time
+            end-time
+            argv
+            environment
+            working-directory
+        }
+    }
+
+    namespace Boxes {
+        class Box:::entity {
+            <<Entity>>
+            location-type
+            location-value
+            size
+            encoding
+            creation-time
+            modification-time
+            update-time
+            hash
+        }
+    }
+
+    namespace ServiceMatching {
+        class Requirement:::plain {
+            <<plain>>
+        }
+        class Specification:::plain {
+            <<plain>>
+            label
+            value
+        }
+    }
+
+    namespace Misc {
+        class Context:::plain {
+            <<plain>>
+            value
+        }
+        class Variable:::plain {
+            <<plain>>
+            name
+            data-type
+            is-agent
+            is-space
+            is-time
+            is-link
+        }
+    }
+
+
+    Model "1" --> "*" Application : model
+    Box "1" --> "*" Application : location
+    Person "1" --> "*" Contributor : contributor
+    Documentation "1" --> "*" Contributor : documentation
+    Application "1" --> "*" Contributor : application
+    Application "1" --> "*" Documentation : documents
+    Study "1" --> "*" Documentation : describes
+    Person "1" --> "*" Involvement : person
+    Study "1" --> "*" Involvement : study
+    Application "1" --> "*" Model : application
+    Person "1" --> "*" PersonalData : about
+    Application "1" --> "*" Pipeline : calls
+    Pipeline "1" --> "*" Pipeline : previous
+    Application "1" --> "*" Process : executable
+    Computer "1" --> "*" Process : host
+    Process "1" --> "*" Process : parent
+    Application "1" --> "*" Requirement : application
+    Specification "1" --> "*" Requirement : match
+    Specification "1" --> "*" Requirement : minimum
+    Specification "1" --> "*" Requirement : exact
+    Computer "1" --> "*" Specification : specification_of
+    Study "1" --> "*" Box : generated_by
+    Study "1" --> "*" Box : repository_of
+    Person "1" --> "*" Box : held_by
+    Person "1" --> "*" Box : sourced_from
+    Process "1" --> "*" Box : output_of
+    Box "1" --> "*" Box : collection
+    Documentation "1" --> "*" Box : location_documentation
+    Application "1" --> "*" Box : location_application
+    Context "1" --> "*" Context : part
+
+    OtherOntologies ..> Application
+    OtherOntologies ..> Box
+    OtherOntologies ..> Computer
+    OtherOntologies ..> Context
+    OtherOntologies ..> Contributor
+    OtherOntologies ..> Documentation
+    OtherOntologies ..> Involvement
+    OtherOntologies ..> Model
+    OtherOntologies ..> Person
+    OtherOntologies ..> Pipeline
+    OtherOntologies ..> Process
+    OtherOntologies ..> Requirement
+    OtherOntologies ..> Specification
+    OtherOntologies ..> Study
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

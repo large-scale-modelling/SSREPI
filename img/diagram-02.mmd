@@ -1,0 +1,125 @@
+
+classDiagram
+    direction TB
+
+    class Application:::entity {
+        <<Entity>>
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+    class Implements:::reified {
+        <<reified>>
+        function
+        library
+    }
+    class StatisticalMethod:::plain {
+        <<plain>>
+        label
+    }
+    class StatisticalVariable:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class Employs:::reified {
+        <<reified>>
+    }
+    class VisualisationMethod:::plain {
+        <<plain>>
+        label
+    }
+    class Parameter:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class Entailment:::reified {
+        <<reified>>
+    }
+    class Visualisation:::activity {
+        <<Activity>>
+        date
+        query
+    }
+    class Assumption:::plain {
+        <<plain>>
+        short-name
+    }
+    class Person:::agent {
+        <<Agent>>
+        name
+        email
+    }
+    class Statistics:::activity {
+        <<Activity>>
+        date
+        query
+    }
+    class StatisticalInput:::reified {
+        <<reified>>
+    }
+    class Assumes:::reified {
+        <<reified>>
+    }
+    class Context:::plain {
+        <<plain>>
+        value
+    }
+    class Value:::entity {
+        <<Entity>>
+        value
+    }
+    class Variable:::plain {
+        <<plain>>
+        name
+        data-type
+        is-agent
+        is-space
+        is-time
+        is-link
+    }
+
+    StatisticalMethod "1" --> "*" Employs : statistical_method
+    VisualisationMethod "1" --> "*" Employs : visualisation_method
+    StatisticalVariable "1" --> "*" Employs : statistical_variable
+    StatisticalMethod "1" --> "*" Entailment : statistical_method
+    VisualisationMethod "1" --> "*" Entailment : visualisation_method
+    Assumption "1" --> "*" Entailment : assumption
+    StatisticalMethod "1" --> "*" Implements : statistical_method
+    VisualisationMethod "1" --> "*" Implements : visualisation_method
+    Application "1" --> "*" Implements : application
+    StatisticalMethod "1" --> "*" Parameter : statistical_method
+    VisualisationMethod "1" --> "*" Parameter : visualisation_method
+    StatisticalMethod "1" --> "*" StatisticalInput : statistics
+    Visualisation "1" --> "*" StatisticalInput : visualisation
+    Value "1" --> "*" StatisticalInput : value
+    StatisticalMethod "1" --> "*" StatisticalVariable : statistic_generated_by
+    VisualisationMethod "1" --> "*" StatisticalVariable : visualisation_generated_by
+    StatisticalMethod "1" --> "*" Statistics : used
+    Person "1" --> "*" Assumes : person
+    Statistics "1" --> "*" Assumes : statistics
+    Visualisation "1" --> "*" Assumes : visualisation
+    Variable "1" --> "*" Assumes : variable
+    Assumption "1" --> "*" Assumes : assumption
+    Variable "1" --> "*" Value : variable
+    StatisticalVariable "1" --> "*" Value : statistical_variable
+    Parameter "1" --> "*" Value : parameter
+    Statistics "1" --> "*" Value : statistical_parameter
+    Visualisation "1" --> "*" Value : visualisation_parameter
+    Statistics "1" --> "*" Value : result_of
+    Context "1" --> "*" Value : time
+    Context "1" --> "*" Value : space
+    Context "1" --> "*" Value : agent
+    Context "1" --> "*" Value : link
+    Context "1" --> "*" Context : part
+    VisualisationMethod "1" --> "*" Visualisation : visualisation_method
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

@@ -1,0 +1,120 @@
+
+classDiagram
+    direction TB
+
+    class Application:::entity {
+        <<Entity>>
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+    class Pipeline:::entity {
+        <<Entity>>
+        name
+    }
+    class Implements:::reified {
+        <<reified>>
+        function
+        library
+    }
+    class Uses:::reified {
+        <<reified>>
+        optionality
+        locator
+    }
+    class Box:::entity {
+        <<Entity>>
+        location-type
+        location-value
+        size
+        encoding
+        creation-time
+        modification-time
+        update-time
+        hash
+    }
+    class Product:::reified {
+        <<reified>>
+        optionality
+        locator
+    }
+    class BoxType:::plain {
+        <<plain>>
+        format
+        identifier
+    }
+    class Content:::reified {
+        <<reified>>
+        optionality
+        format
+        units
+        locator
+        space-locator
+        time-locator
+        link-locator
+        agent-locator
+    }
+    class StatisticalMethod:::plain {
+        <<plain>>
+        label
+    }
+    class StatisticalVariable:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class Employs:::reified {
+        <<reified>>
+    }
+    class VisualisationMethod:::plain {
+        <<plain>>
+        label
+    }
+    class Parameter:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class Variable:::plain {
+        <<plain>>
+        name
+        data-type
+        is-agent
+        is-space
+        is-time
+        is-link
+    }
+
+    Box "1" --> "*" Application : location
+    Application "1" --> "*" Pipeline : calls
+    Pipeline "1" --> "*" Pipeline : previous
+    Application "1" --> "*" Implements : application
+    StatisticalMethod "1" --> "*" Implements : statistical_method
+    VisualisationMethod "1" --> "*" Implements : visualisation_method
+    Application "1" --> "*" Uses : application
+    BoxType "1" --> "*" Uses : box_type
+    BoxType "1" --> "*" Uses : in_file
+    Application "1" --> "*" Product : application
+    BoxType "1" --> "*" Product : box_type
+    BoxType "1" --> "*" Product : in_file
+    BoxType "1" --> "*" Box : instance
+    BoxType "1" --> "*" Content : box_type
+    StatisticalVariable "1" --> "*" Content : statistical_variable
+    Variable "1" --> "*" Content : variable
+    VisualisationMethod "1" --> "*" Content : visualisation_method
+    StatisticalMethod "1" --> "*" Employs : statistical_method
+    VisualisationMethod "1" --> "*" Employs : visualisation_method
+    StatisticalVariable "1" --> "*" Employs : statistical_variable
+    StatisticalMethod "1" --> "*" StatisticalVariable : statistic_generated_by
+    VisualisationMethod "1" --> "*" StatisticalVariable : visualisation_generated_by
+    StatisticalMethod "1" --> "*" Parameter : statistical_method
+    VisualisationMethod "1" --> "*" Parameter : visualisation_method
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

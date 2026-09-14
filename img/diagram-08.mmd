@@ -1,0 +1,46 @@
+
+classDiagram
+    class Application {
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+
+    class Dependency {
+        optionality
+    }
+
+    class Requirement
+
+    class Computer {
+        name
+        host-id
+        ip-addr
+        mac-addr
+    }
+
+    class Specification {
+        label
+        value
+    }
+
+    class Meets
+
+    Application "1" --> "*" Requirement : application
+    Application "1" --> "*" Dependency : dependant
+    Application "1" --> "*" Dependency : dependency
+    Specification "1" --> "*" Requirement : minimum
+    Specification "1" --> "*" Requirement : exact
+    Specification "1" --> "*" Requirement : match
+    Computer "1" --> "*" Specification : specification_of
+    Specification "1" --> "*" Meets : computer_specification
+    Specification "1" --> "*" Meets : requirement_specification
+
+    style Application fill:#FFA500,stroke:#000000,stroke-width:1px
+    style Dependency fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff
+    style Computer fill:#00CC00,stroke:#000000,stroke-width:1px
+    style Requirement fill:#ffffff,stroke:#000000,stroke-width:1px
+    style Specification fill:#ffffff,stroke:#000000,stroke-width:1px
+    style Meets fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff

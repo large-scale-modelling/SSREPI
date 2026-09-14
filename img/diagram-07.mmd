@@ -1,0 +1,171 @@
+
+classDiagram
+    direction TB
+
+    class Person:::agent {
+        <<Agent>>
+        name
+        email
+    }
+    class Contributor:::reified {
+        <<reified>>
+        contribution
+        alias
+    }
+    class User:::agent {
+        <<Agent>>
+        uid
+        home-directory
+    }
+    class Computer:::agent {
+        <<Agent>>
+        name
+        host-id
+        ip-addr
+        mac-addr
+    }
+    class Application:::entity {
+        <<Entity>>
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+    class Process:::activity {
+        <<Activity>>
+        start-time
+        end-time
+        argv
+        environment
+        working-directory
+    }
+    class Dependency:::reified {
+        <<reified>>
+        optionality
+    }
+    class Argument:::plain {
+        <<plain>>
+        type
+        order
+        identifier
+        name
+        summary
+        separator
+        arity
+        argsep
+        range
+    }
+    class ArgumentValue:::plain {
+        <<plain>>
+        value
+    }
+    class Input:::reified {
+        <<reified>>
+        usage
+    }
+    class Study:::activity {
+        <<Activity>>
+        label
+        start-time
+        end-time
+    }
+    class Implements:::reified {
+        <<reified>>
+        function
+        library
+    }
+    class Box:::entity {
+        <<Entity>>
+        location-type
+        location-value
+        size
+        encoding
+        creation-time
+        modification-time
+        update-time
+        hash
+    }
+    class VisualisationMethod:::plain {
+        <<plain>>
+        label
+    }
+    class StatisticalMethod:::plain {
+        <<plain>>
+        label
+    }
+    class Visualisation:::activity {
+        <<Activity>>
+        date
+        query
+    }
+    class Statistics:::activity {
+        <<Activity>>
+        date
+        query
+    }
+    class Parameter:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class StatisticalInput:::reified {
+        <<reified>>
+    }
+    class StatisticalVariable:::plain {
+        <<plain>>
+        name
+        data-type
+    }
+    class Value:::entity {
+        <<Entity>>
+        value
+    }
+
+    Application "1" --> "*" Application : revision
+    Box "1" --> "*" Application : location
+    Application "1" --> "*" Argument : application
+    Process "1" --> "*" ArgumentValue : for_process
+    Argument "1" --> "*" ArgumentValue : for_argument
+    Box "1" --> "*" ArgumentValue : box
+    Person "1" --> "*" Contributor : contributor
+    Application "1" --> "*" Contributor : application
+    Application "1" --> "*" Dependency : dependant
+    Application "1" --> "*" Dependency : dependency
+    StatisticalMethod "1" --> "*" Implements : statistical_method
+    VisualisationMethod "1" --> "*" Implements : visualisation_method
+    Application "1" --> "*" Implements : application
+    Process "1" --> "*" Input : process
+    Box "1" --> "*" Input : box
+    Application "1" --> "*" Process : executable
+    User "1" --> "*" Process : user
+    Computer "1" --> "*" Process : host
+    Process "1" --> "*" Process : parent
+    StatisticalMethod "1" --> "*" Parameter : statistical_method
+    VisualisationMethod "1" --> "*" Parameter : visualisation_method
+    StatisticalMethod "1" --> "*" StatisticalInput : statistics
+    Visualisation "1" --> "*" StatisticalInput : visualisation
+    Value "1" --> "*" StatisticalInput : value
+    StatisticalMethod "1" --> "*" StatisticalVariable : statistic_generated_by
+    VisualisationMethod "1" --> "*" StatisticalVariable : visualisation_generated_by
+    StatisticalMethod "1" --> "*" Statistics : used
+    Person "1" --> "*" User : account_of
+    StatisticalVariable "1" --> "*" Value : statistical_variable
+    Parameter "1" --> "*" Value : parameter
+    Statistics "1" --> "*" Value : statistical_parameter
+    Visualisation "1" --> "*" Value : visualisation_parameter
+    Statistics "1" --> "*" Value : result_of
+    VisualisationMethod "1" --> "*" Visualisation : visualisation_method
+    Study "1" --> "*" Box : generated_by
+    Study "1" --> "*" Box : repository_of
+    Box "1" --> "*" Box : collection
+    Process "1" --> "*" Box : output_of
+    Box "1" --> "*" Visualisation : contained_in
+    Box "1" --> "*" Value : contained_in
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

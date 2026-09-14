@@ -2,26 +2,76 @@
 
 **S**ocial **S**imulation **REP**ository **I**nterface (SSREPI)
 
-This is the specification document for the SSREPI metadata. An implentation of this specification can be found at [https://github.com/large-scale-modelling/miracle](https://github.com/large-scale-modelling/miracle), once a working version has been released.
+This is the specification document for the SSREPI metadata. An implentation of this specification can be found at [https://github.Acom/large-scale-modelling/miracle](https://github.com/large-scale-modelling/miracle), once a working version has been released. This is the:
+
+**R**eproducible
+**E**xecution
+**C**ollection and
+**O**notological
+**R**epresentation of
+**D**ata
+
+provenance recording framework. This is platform agnostic framework for recording the provenance of data generated, particularly by social simulation modelsi, but can used by other modelling frameworks. 
 
 Suggested citation:
 
-[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, November 2022_ (version 2.0.2). DOI: [10.5281/zenodo.15234673](https://doi.org/10.5281/zenodo.15234672)
+[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). DOI: [10.5281/zenodo.15234673](https://doi.org/10.5281/zenodo.15234672)
 
 ```BibTeX
 @techreport{polhill2022ssrepi,
   author      = {Polhill, Gary and Milazzo, Lorenzo and Parker, Dawn and Jin, Xiongbing and Pritchard, Calvin and Lee, Ju-Sung and Salt, Doug},
-  title       = {MIRACLE simulation outputs metadata specification},
+  title       = {MIRACLE simulation outputs metadata specification (Formerly: Social Simulation Repository Interface (SSREPI))},
   institution = {The James Hutton Institute},
-  year        = {2022},
-  number      = {version 2.0.2},
+  year        = {2026},
+  number      = {version 3.0.0},
   type        = {Specification},
   address     = {Aberdeen},
-  month       = {November},
-  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/SSREPI.pdf},
-  doi         = {10.5281/zenodo.15234672}
+  month       = {September},
+  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification-full.pdf},
+<!--  doi         = {10.5281/zenodo.15234672} -->
 }
 ```
+
+## Notes.
+
+The large part of the documentation is created by the code itself in RECORD. This is done in the following manner
+
+```
+record-documentation.py > miracle-specification-body.md
+```
+
+This, in conjunction with 
+
++ `miracle-specification-start.md` and
++ `miracle-specification-end.md`
+
+can be used to provide 
+
++ miracle-specification-full.md, which is the specification in a single file. This can be converted to a pdf in two ways:
+
+1. make-spedification.(ps1|sh) - which uses pandoc to convert the markdown to pdf, or
+2. make-latex-specification.(ps1|sh) - which produces a tex file for input to `pdflatex`.
+
+The latter is for preparation of a manuscript for submission to arxiv or a journal. The former is for general use.
+
+## Manifest
+
++ `arxiv-version` - The directory containing the version that is being published on Arxiv. This is a copy of the files in the root directory and the `img` directory. This has been flattened to a single directory as per the instructions from Arxiv.
++ `img` - the images in both mermaid and png format used in the specification. The mermaid files are used to generate the png files. The png files are used in the pdf version of the specification. Pandoc can process mermaid files directly, but the pandoc is quite picky about the version of mermaid that it uses, so the png files are used to ensure that the diagrams are rendered correctly.
++ `previous-versions` - older versions of the specification, which are not maintained. These are provided for reference only.
++ `citations.bib` -  a list of citations used in the specification, in bibtex format. This is used to generate the references section of the specification.
++ `LICENSE.md` -  A copy of the GPLv3 license under which this specification is released.
++ `make-latex-specification.ps1` - Makes a full latex version of the specification, which can used by `pdflatex` to produce a pdf version of the specification. This is for submission to journals or arxiv.
++ `make-specification.ps1|sh` - Makes a full pdf version of the specification, which can be used for general use. This uses pandoc to convert the markdown to pdf. 
++ `miracle-specification-body.md` - Start of the specification in markdown format.
++ `miracle-specification-end.md` - End of the specification in mardown format
++ `miracle-specification-full.pdf` - pdflatex version of specification produced by `pdflatex` and `make-latex-specification.(sh|ps1)`. 
++ `miracle-specification-full.tex` - text file produced by `make-latex-specification.(sh|ps1)` for use with `pdflatex` to produce a pdf version of the specification. This is for submission to journals or arxiv.
++ `miracle-specification-start.md` - End of the specification in mardown format
++ `miracle-specification.md` - full markdown version of the standard produced by `make-specification.(sh|ps1)`.
++ `miracle-specification.pdf` - pdflatex version of the specification produced by `make-specification.(sh|ps1)`.
++ `README.md` - 
+
 
 ## Further reading
 

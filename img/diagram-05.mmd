@@ -1,0 +1,79 @@
+
+classDiagram
+    direction TB
+
+    class Application:::entity {
+        <<Entity>>
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+    class Box:::entity {
+        <<Entity>>
+        location-type
+        location-value
+        size
+        encoding
+        creation-time
+        modification-time
+        update-time
+        hash
+    }
+    class BoxType:::plain {
+        <<plain>>
+        format
+        identifier
+    }
+    class Documentation:::entity {
+        <<Entity>>
+        title
+        date
+    }
+    class StatisticalMethod:::plain {
+        <<plain>>
+        label
+    }
+    class Study:::activity {
+        <<Activity>>
+        label
+        start-time
+        end-time
+    }
+    class VisualisationMethod:::plain {
+        <<plain>>
+        label
+    }
+    class Tag:::plain {
+        <<plain>>
+        label
+    }
+    class TagMap:::reified {
+        <<reified>>
+    }
+    class Person:::agent {
+        <<Agent>>
+    }
+    class Assumption:::plain {
+        <<plain>>
+    }
+
+    Tag "1" --> "*" TagMap : tag
+    Tag "1" --> "*" TagMap : other_tag
+    BoxType "1" --> "*" TagMap : box_type
+    Application "1" --> "*" TagMap : application
+    Assumption "1" --> "*" TagMap : assumption
+    Box "1" --> "*" TagMap : box
+    Documentation "1" --> "*" TagMap : documentation
+    Person "1" --> "*" TagMap : person
+    Study "1" --> "*" TagMap : study
+    StatisticalMethod "1" --> "*" TagMap : statistical_method
+    VisualisationMethod "1" --> "*" TagMap : visualisation_method
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

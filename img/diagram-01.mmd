@@ -1,0 +1,359 @@
+
+classDiagram
+    direction TB
+
+    namespace ExternalOntologies {
+        class OtherOntologies["Other ontologies"]:::ontology {
+            <<ontology>>
+        }
+    }
+
+    namespace PeopleAndOrgs {
+        class Person:::agent {
+            <<Agent>>
+            name
+            email
+        }
+        class User:::agent {
+            <<Agent>>
+            uid
+            home-directory
+        }
+        class Computer:::agent {
+            <<Agent>>
+            name
+            host-id
+            ip-addr
+            mac-addr
+        }
+        class PersonalData:::plain {
+            <<plain>>
+            label
+            value
+        }
+        class Contributor:::reified {
+            <<reified>>
+            contribution
+            alias
+        }
+        class Involvement:::reified {
+            <<reified>>
+            role
+        }
+        class Project:::activity {
+            <<Activity>>
+            title
+            funder
+            grant-ID
+        }
+        class Study:::activity {
+            <<Activity>>
+            label
+            start-time
+            end-time
+        }
+        class Documentation:::entity {
+            <<Entity>>
+            title
+            date
+        }
+    }
+
+    namespace Applications {
+        class Application:::entity {
+            <<Entity>>
+            purpose
+            version
+            licence
+            language
+            envs
+        }
+        class Model:::entity {
+            <<Entity>>
+            id_model
+            comses
+        }
+        class Pipeline:::entity {
+            <<Entity>>
+            name
+        }
+        class Argument:::plain {
+            <<plain>>
+            type
+            order
+            identifier
+            name
+            summary
+            separator
+            arity
+            argsep
+            range
+        }
+        class ArgumentValue:::plain {
+            <<plain>>
+            value
+        }
+        class Dependency:::reified {
+            <<reified>>
+            optionality
+        }
+        class Process:::activity {
+            <<Activity>>
+            start-time
+            end-time
+            argv
+            environment
+            working-directory
+        }
+        class Input:::reified {
+            <<reified>>
+            usage
+        }
+        class Implements:::reified {
+            <<reified>>
+            function
+            library
+        }
+    }
+
+    namespace Boxes {
+        class Box:::entity {
+            <<Entity>>
+            location-type
+            location-value
+            size
+            encoding
+            creation-time
+            modification-time
+            update-time
+            hash
+        }
+        class BoxType:::plain {
+            <<plain>>
+            format
+            identifier
+        }
+        class Content:::reified {
+            <<reified>>
+            optionality
+            format
+            units
+            locator
+            space-locator
+            time-locator
+            link-locator
+            agent-locator
+        }
+        class Product:::reified {
+            <<reified>>
+            optionality
+            locator
+        }
+        class Uses:::reified {
+            <<reified>>
+            optionality
+            locator
+        }
+    }
+
+    namespace ServiceMatching {
+        class Requirement:::plain {
+            <<plain>>
+        }
+        class Specification:::plain {
+            <<plain>>
+            label
+            value
+        }
+        class Meets:::reified {
+            <<reified>>
+        }
+    }
+
+    namespace Folksonomy {
+        class Tag:::plain {
+            <<plain>>
+            label
+        }
+        class TagMap:::reified {
+            <<reified>>
+        }
+    }
+
+    namespace FineGrain {
+        class StatisticalMethod:::plain {
+            <<plain>>
+            label
+        }
+        class StatisticalVariable:::plain {
+            <<plain>>
+            name
+            data-type
+        }
+        class VisualisationMethod:::plain {
+            <<plain>>
+            label
+        }
+        class Parameter:::plain {
+            <<plain>>
+            name
+            data-type
+        }
+        class Employs:::reified {
+            <<reified>>
+        }
+        class Entailment:::reified {
+            <<reified>>
+        }
+        class Statistics:::activity {
+            <<Activity>>
+            date
+            query
+        }
+        class Visualisation:::activity {
+            <<Activity>>
+            date
+            query
+        }
+        class Assumption:::plain {
+            <<plain>>
+            short-name
+        }
+        class StatisticalInput:::reified {
+            <<reified>>
+        }
+        class Assumes:::reified {
+            <<reified>>
+        }
+        class Variable:::plain {
+            <<plain>>
+            name
+            data-type
+            is-agent
+            is-space
+            is-time
+            is-link
+        }
+        class Context:::plain {
+            <<plain>>
+            value
+        }
+        class Value:::entity {
+            <<Entity>>
+            value
+        }
+    }
+
+
+    Application "1" --> "*" Application : revision
+    Model "1" --> "*" Application : model
+    Box "1" --> "*" Application : location
+    Application "1" --> "*" Argument : application
+    Variable "1" --> "*" Argument : variable
+    BoxType "1" --> "*" Argument : box_type
+    Process "1" --> "*" ArgumentValue : for_process
+    Argument "1" --> "*" ArgumentValue : for_argument
+    Box "1" --> "*" ArgumentValue : box
+    Person "1" --> "*" Assumes : person
+    Statistics "1" --> "*" Assumes : statistics
+    Visualisation "1" --> "*" Assumes : visualisation
+    Variable "1" --> "*" Assumes : variable
+    Assumption "1" --> "*" Assumes : assumption
+    BoxType "1" --> "*" Box : instance
+    Application "1" --> "*" Box : location_application
+    Documentation "1" --> "*" Box : location_documentation
+    Study "1" --> "*" Box : generated_by
+    Study "1" --> "*" Box : repository_of
+    Person "1" --> "*" Box : held_by
+    Person "1" --> "*" Box : sourced_from
+    Process "1" --> "*" Box : output_of
+    Box "1" --> "*" Box : collection
+    BoxType "1" --> "*" Content : box_type
+    StatisticalVariable "1" --> "*" Content : statistical_variable
+    Variable "1" --> "*" Content : variable
+    VisualisationMethod "1" --> "*" Content : visualisation_method
+    Context "1" --> "*" Context : part
+    Person "1" --> "*" Contributor : contributor
+    Documentation "1" --> "*" Contributor : documentation
+    Application "1" --> "*" Contributor : application
+    Application "1" --> "*" Dependency : dependant
+    Application "1" --> "*" Dependency : dependency
+    Application "1" --> "*" Documentation : documents
+    Study "1" --> "*" Documentation : describes
+    StatisticalMethod "1" --> "*" Employs : statistical_method
+    VisualisationMethod "1" --> "*" Employs : visualisation_method
+    StatisticalVariable "1" --> "*" Employs : statistical_variable
+    StatisticalMethod "1" --> "*" Entailment : statistical_method
+    VisualisationMethod "1" --> "*" Entailment : visualisation_method
+    Assumption "1" --> "*" Entailment : assumption
+    StatisticalMethod "1" --> "*" Implements : statistical_method
+    VisualisationMethod "1" --> "*" Implements : visualisation_method
+    Application "1" --> "*" Implements : application
+    Process "1" --> "*" Input : process
+    Box "1" --> "*" Input : box
+    Person "1" --> "*" Involvement : person
+    Study "1" --> "*" Involvement : study
+    Specification "1" --> "*" Meets : computer_specification
+    Specification "1" --> "*" Meets : requirement_specification
+    Application "1" --> "*" Model : application
+    StatisticalMethod "1" --> "*" Parameter : statistical_method
+    VisualisationMethod "1" --> "*" Parameter : visualisation_method
+    Person "1" --> "*" PersonalData : about
+    Application "1" --> "*" Pipeline : calls
+    Pipeline "1" --> "*" Pipeline : previous
+    Application "1" --> "*" Process : executable
+    User "1" --> "*" Process : some_user
+    Computer "1" --> "*" Process : host
+    Process "1" --> "*" Process : parent
+    Application "1" --> "*" Product : application
+    BoxType "1" --> "*" Product : box_type
+    BoxType "1" --> "*" Product : in_file
+    Application "1" --> "*" Requirement : application
+    Specification "1" --> "*" Requirement : match
+    Specification "1" --> "*" Requirement : minimum
+    Specification "1" --> "*" Requirement : exact
+    Computer "1" --> "*" Specification : specification_of
+    StatisticalMethod "1" --> "*" StatisticalInput : statistics
+    Visualisation "1" --> "*" StatisticalInput : visualisation
+    Value "1" --> "*" StatisticalInput : value
+    StatisticalMethod "1" --> "*" StatisticalVariable : statistic_generated_by
+    VisualisationMethod "1" --> "*" StatisticalVariable : visualisation_generated_by
+    StatisticalMethod "1" --> "*" Statistics : used
+    Project "1" --> "*" Study : project
+    Study "1" --> "*" Study : part
+    Tag "1" --> "*" TagMap : tag
+    Tag "1" --> "*" TagMap : other_tag
+    BoxType "1" --> "*" TagMap : box_type
+    Application "1" --> "*" TagMap : application
+    Assumption "1" --> "*" TagMap : assumption
+    Box "1" --> "*" TagMap : box
+    Documentation "1" --> "*" TagMap : documentation
+    Person "1" --> "*" TagMap : person
+    Study "1" --> "*" TagMap : study
+    StatisticalMethod "1" --> "*" TagMap : statistical_method
+    VisualisationMethod "1" --> "*" TagMap : visualisation_method
+    Person "1" --> "*" User : account_of
+    Application "1" --> "*" Uses : application
+    BoxType "1" --> "*" Uses : box_type
+    BoxType "1" --> "*" Uses : in_file
+    Variable "1" --> "*" Value : variable
+    StatisticalVariable "1" --> "*" Value : statistical_variable
+    Parameter "1" --> "*" Value : parameter
+    Statistics "1" --> "*" Value : statistical_parameter
+    Visualisation "1" --> "*" Value : visualisation_parameter
+    Statistics "1" --> "*" Value : result_of
+    Context "1" --> "*" Value : time
+    Context "1" --> "*" Value : space
+    Context "1" --> "*" Value : agent
+    Context "1" --> "*" Value : link
+    Box "1" --> "*" Value : contained_in
+    VisualisationMethod "1" --> "*" Visualisation : visualisation_method
+    Box "1" --> "*" Visualisation : contained_in
+
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;

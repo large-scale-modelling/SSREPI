@@ -1,0 +1,78 @@
+
+classDiagram
+    direction TB
+
+    class Person:::agent {
+        <<Agent>>
+        name
+        email
+    }
+    class Contributor:::reified {
+        <<reified>>
+        contribution
+        alias
+    }
+    class Involvement:::reified {
+        <<reified>>
+        role
+    }
+    class Project:::activity {
+        <<Activity>>
+        title
+        funder
+        grant-ID
+    }
+    class Application:::entity {
+        <<Entity>>
+        purpose
+        version
+        licence
+        language
+        envs
+    }
+    class Study:::activity {
+        <<Activity>>
+        label
+        start-time
+        end-time
+    }
+    class Documentation:::entity {
+        <<Entity>>
+        title
+        date
+    }
+    class Box:::entity {
+        <<Entity>>
+        location-type
+        location-value
+        size
+        encoding
+        creation-time
+        modification-time
+        update-time
+        hash
+    }
+
+    Person "1" --> "*" Contributor : contributor
+    Documentation "1" --> "*" Contributor : documentation
+    Application "1" --> "*" Contributor : application
+    Person "1" --> "*" Involvement : person
+    Study "1" --> "*" Involvement : study
+    Project "1" --> "*" Study : project
+    Study "1" --> "*" Study : part
+    Application "1" --> "*" Documentation : documents
+    Study "1" --> "*" Documentation : describes
+    Study "1" --> "*" Box: generated_by
+    Study "1" --> "*" Box: repository_of
+    Person "1" --> "*" Box: held_by
+    Person "1" --> "*" Box: sourced_from
+    Documentation "1" --> "*" Box: location_documentation
+    Application "1" --> "*" Box: location_application
+    Box "1" --> "*" Box: collection
+
+    classDef ontology fill:#00FFFF,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef agent fill:#00CC00,stroke:#000000,stroke-width:3px,color:#000000;
+    classDef activity fill:#FFFF00,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef entity fill:#FFA500,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef reified fill:#8B0000,stroke:#000000,stroke-width:3px,color:#ffffff;
+    classDef plain fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
