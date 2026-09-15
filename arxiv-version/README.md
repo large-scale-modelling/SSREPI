@@ -1,6 +1,6 @@
 # PURPOSE
 
-Directory for loading the the standard to Arxiv.
+Directory for loading the standard to Arxiv.
 
 The instructions on how to do this are [here](https://trevorcampbell.me/html/arxiv.html)
 
