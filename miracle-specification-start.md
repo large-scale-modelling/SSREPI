@@ -87,36 +87,33 @@ summarised in Figure 1.
 ![Metadata schema for MIRACLE. Boxes indicate tables, arcs represent relations, with 'forked' arrowheads showing the 'many' part of a many-to-one or many-to-many relationship. Tables are coloured in brown if they are breaking a many-to-many relationship (a reified relationship), with yellow, orange and green being used to denote specialisations from the PROV standard Activity, Entity and Agent classes respectively. Thick borders denote tables that are potentially autopopulated. Other tables are assumed to be entirely populated by users. Blue octagons show external databases/ontologies to which this one could be linked.](img/diagram-01.png)
 
 With the schema now having a large number of tables, it is better to
-consider it in parts. The schema visualisation document is now in a
-format suitable for using C pre-processor commands to pull out various
-subgraphs. The following are available:
+consider it in parts. The following subgraphs of the schema (which
+may partially intersect) cover different topic areas of the whole:
 
--   ALL: Show the entire schema.
-
--   ANALYSIS: Show the part of the fine grain pertaining only to
+  + **Analysis**: Part of the fine grain pertaining only to
     analysis and visualisation.
 
--   EXTERNAL: Show the links to external ontologies.
+  + **External**: Links to external ontologies.
 
--   FINEGRAIN: Show everything relating to fine grain metadata.
+  + **Fine-grain**: All fine-grain metadata.
 
--   FOLKSONOMY: Show the tables that allow tagging.
+  + **Folksonomy**: Tables allowing tagging.
 
--   PROJECT: Show information relating to metadata about projects.
+  + **Project**: Metadata about projects.
 
--   PROV: Show tables capturing provenance metadata.
+  + **Prov**: Tables capturing provenance metadata.
 
--   SERVICES: Show tables pertaining to service-provision and matching
+  + **Services**: Tables pertaining to service-provision and matching
     requirements against specifications.
 
--   WORKFLOW: Show tables relating to workflow.
+  + **Workflow**: Tables relating to workflow.
 
 The overview section now continues with an explanation of each subgraph
 in turn, with consideration given to the degree of user interaction and
-maintenance. The remainder of the document thereafter explains each
+maintenance. The remainder of the document explains each
 table in detail.
 
-# Analysis
+## Analysis
 
 The subgraph for recording metadata about Analysis is shown in Figure 3.
 Variables are metadata about the content of files, and may have several
@@ -172,7 +169,7 @@ statistical tools support logging this information in sufficient detail.
 ## External ontologies
 
 Though not explicitly noted in the tables, with the exception of OpenABM
-(with which this schema has to integrate for the MIRACLE project),
+(with which this schema had to integrate for the MIRACLE project),
 various external ontologies and schemas are relevant, and could be
 linked to if required. There are various ways such links could be
 manifested (relational tables for example, implementing each of the blue
@@ -181,18 +178,18 @@ exhaustive. Neither is it necessarily the case that any specific
 ontology or external schema is proposed or adopted. The following gives
 examples of specific external links:
 
--   Bib -- connection to a bibliographic database (e.g. bibsonomy). Note
+  + Bib -- connection to a bibliographic database (e.g. bibsonomy). Note
     that the Documentation table is intended to be quite generic, and
     include journal and conference articles as well as reports and code
     documentation.
 
--   Geo -- links to ontologies or databases containing geographical or
+  + Geo -- links to ontologies or databases containing geographical or
     spatial concepts, such as GeoSparql and WGS84. The idea here is that
     we may want to link various table entries to external geographical
     databases, for example, to say that a Study pertained to a
     particular region, or that a Box is a GIS file.
 
--   OpenABM -- this is linking back to the CoMSES-Net archive of
+  + OpenABM -- links to the [CoMSES-Net archive](https://www.comses.net/codebases/) of
     agent-based models, and is essential in order to identify which
     model these metadata are describing the output analysis of.
     (Although in principle, the system described could be applied to any
@@ -200,7 +197,7 @@ examples of specific external links:
     the model and analysing the output, the focus of the MIRACLE project
     is specifically on the output analysis.)
 
--   Services -- links to vocabularies describing the requirements of
+  + Services -- links to vocabularies describing the requirements of
     applications and capabilities of service-providers. Where WSDL and OWL-S
     were once the natural reference points here, most service description in
     practice has since moved to REST-style APIs described using OpenAPI
@@ -209,13 +206,13 @@ examples of specific external links:
     its wide tooling support and adoption make it a more practical link for
     automatic discovery of applications and services, including their input and
     output specifications.
-
--   SocialWeb -- we may want to allow people to link to social web tools
+ 
+  + SocialWeb -- we may want to allow people to link to social web tools
     such as ResearchGate, LinkedIn, Facebook and Twitter. The FOAF
     ontology also has attributes that we can draw on, and includes
     vocabulary for modelling social web links.
 
--   Workflow -- workflow-related ontologies. Standards in this space remain
+  + Workflow -- workflow-related ontologies. Standards in this space remain
     relatively immature. The Common Workflow Language (CWL) has emerged as the
     most widely adopted tool-agnostic specification for describing
     computational workflows, and is a natural candidate for linking here. Other
@@ -269,7 +266,9 @@ tags and the concepts they are applied to.
 ![Subgraph capturing metadata about projects](img/diagram-06.png)
 
 Project metadata is largely for users to enter, and previously may have been
-regarded as unduly onerous. With the advent of large language models, much of
+regarded as unduly onerous [@edwards2014lessons]. However, it tells an important
+part of the story of a model from a Type 1 provenance [@pignotti2013bigprov]
+perspective, and with the advent of large language models, much of
 this metadata might be automatically generated. It is provided to facilitate
 users in understanding how simulation output data relates to publications
 (which would appear in the Documentation table), and specific pieces of work
@@ -357,8 +356,8 @@ match. The results are stored in the Meets reified relationship.
 
 A more sophisticated implementation would wrap each Application in a web
 service. This would also be more secure if responsibility for providing
-Applications as web services was in the hands of their developers -- we
-would then not be uploading Applications to our system, but instead
+Applications as web services was in the hands of their developers -- users of the framework
+would then not be uploading Applications to their own system, but instead
 sending data for processing by other servers, and capturing metadata
 about these interactions. The services architecture could then draw much
 more heavily on standard web services ontologies, such as OWL-S and
@@ -393,8 +392,8 @@ have chosen to do it in the past.
 
 All tables have uniquely specified ID fields as primary keys, unless
 they are associative tables. All tables with have a name field. This is
-free form text and not always present. This identifies a relation,
-however this is not guaranteed to be unique or even present. It is there
+free form text and not always present. It identifies a relation,
+however it is not guaranteed to be unique. It is there
 to help primarily in readability when trying to extract information from
 this database and may contain a human readable label for the relation.
 For instance, for the definition of an argument, this would be the
@@ -416,7 +415,7 @@ Metadata Initiative.[^1] The remaining attribute that is always included
 in each relation is the \"about\" column. This we have pinched directly
 from RDF and uniquely identifies a triple in RDF [@hartig2010publishing]. Although
 currently optional, we intend this to uniquely identify the relationship
-within our database. The form of this normally some kind of IRI. This
+within our database. The form of this is normally some kind of IRI. This
 will allow inward referencing of the provenance and metadata resource
 from other standardised resource software that recognizes IRIs.
 
