@@ -7,6 +7,9 @@ author:
   - Xiongbing Jin
   - Calvin Pritchard
   - Ju-Sung Lee
+  - Tatiana Filatova
+  - Alexey Voinov
+  - Terry Dawson
   - Doug Salt
 date: 29 April 2016
 abstract: |
@@ -30,17 +33,38 @@ bibliography: citations.bib
 | 2.0.0 | 8 Nov 2022 | Doug Salt | Tidied up the relations |
 | 3.0.0 | 9 Sep 2026 | Doug Salt | Converted to markdown and updated for RESAS release |
 
-# Introduction and overview
+# Introduction
+
+The replication 'crisis' [@finelli2018replication] in science generally (and
+especially the social sciences [@shrout2018replication]) has
+its correlate in social simulation [@edmonds2003]. In our own work [@polhill2017lessons],
+the complicated computational workflows associated with preparing, running and
+analysing the results of agent-based models have demonstrated the need for
+automated record-keeping.
+
+Earlier work identified the various ways
+in which provenance metadata could be used to help analyse agent-based models
+[@pignotti2013bigprov]. Three types of provenance were identified in that work:
+
+  1. The social processes outlining the history of model development.
+  2. Execution of the model and associated code for analysing its results.
+  3. Detailed state-change metadata per run.
+
+This document provides a framework in which the first two of these types of
+provenance can be recorded.
+
+
+# Overview
 
 This specification builds on earlier work towards metadata standards for
 sharing simulation outputs [@polhill2014towards]. The schema diagram is shown
 in Figure 2. 
 
 Note originally this schema was designed to run on a relational database, but
-in addition has been adapted to also run on graph database as well, due to ease of querying
+later work has adapted it to run on graph database as well, due to ease of querying
 on a graph database [@davoudian2020big]. As such there are many reified relationships in the
 relational description of the database. Please note that in the graph database,
-this have been converted to direct links between entities, the many to many
+the reified relationships have been converted to direct links between entities; the many to many
 relation being more natural in a graph database setting. A note has been made
 when a reified relationship in the relational schema has been replaced with a
 direct link in the graph database.
