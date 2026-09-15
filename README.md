@@ -19,7 +19,7 @@ If you want a word version of this specification, then `pandoc` can produce docu
 
 Suggested citation:
 
-[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). DOI: [10.5281/zenodo.15234673](https://doi.org/10.5281/zenodo.15234672)
+[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). 
 
 ```BibTeX
 @techreport{polhill2022ssrepi,
