@@ -49,3 +49,7 @@ tex2pdf.*
 
 *.y~
 *.l~
+
+# Specific
+
+pandoc-crossref*
