@@ -74,7 +74,6 @@ done by downloading the relevant binary from
 [here](https://github.com/lierdakil/pandoc-crossref/releases), unzipping it and
 placing it in this directory.
 
-```
 ## Manifest
 
 + `arxiv-version` - The directory containing the version that is being published on Arxiv. This is a copy of the files in the root directory and the `img` directory. This has been flattened to a single directory as per the instructions from Arxiv.
