@@ -59,14 +59,12 @@ This, in conjunction with
 + `miracle-specification-start.md` and
 + `miracle-specification-end.md`
 
-can be used to provide 
 
-+ miracle-specification-full.md, which is the specification in a single file. This can be converted to a pdf in two ways:
 
 1. make-specification.(ps1|sh) - which uses pandoc to convert the markdown to pdf, or
 2. make-latex-specification.(ps1|sh) - which produces a tex file for input to `pdflatex`.
 
-The latter is for preparation of a manuscript for submission to arxiv or a journal. The former is for general use.
+The first produces `miracle-specification.md`, which is the specification in a single markdown file and the pdf file `miracle-specification.pdf`. This is for general use. The second produces `miracle-specification-full.tex`, which is for preparing a manuscript for submission to Arxiv or a journal. 
 
 Note to use either of these you need to install the pandoc-crossref filter,
 which is used to generate the references section of the specification. This is
