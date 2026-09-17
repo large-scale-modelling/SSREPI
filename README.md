@@ -29,7 +29,7 @@ Jin, X.,
 [Voinov, A.](https://orcid.org/0009-0000-8002-2813),
 [Dawson T.](https://orcid.org/0000-0002-4314-1378) and
 [Salt, D.](https://orcid.org/0000-0001-5186-9388) 
-(2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). 
+(2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, September 2023_ (version 3.0.0). 
 
 ```BibTeX
 @techreport{polhill2022ssrepi,
