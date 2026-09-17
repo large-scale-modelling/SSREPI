@@ -2,7 +2,7 @@
 
 **S**ocial **S**imulation **REP**ository **I**nterface (SSREPI)
 
-This is the specification document for the SSREPI metadata. An implentation of this specification can be found at [here](https://github.com/large-scale-modelling/RECORD), once a working version has been released. This is the:
+This is the specification document for the SSREPI metadata. An implentation of this specification can be found [here](https://github.com/large-scale-modelling/RECORD), once a working version has been released. This is the:
 
 **R**eproducible
 **E**xecution
