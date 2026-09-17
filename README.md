@@ -88,7 +88,7 @@ placing it in this directory.
 + `miracle-specification-start.md` - End of the specification in mardown format
 + `miracle-specification.md` - full markdown version of the standard produced by `make-specification.(sh|ps1)`.
 + `miracle-specification.pdf` - pdflatex version of the specification produced by `make-specification.(sh|ps1)`.
-+ `README.md` - 
++ `README.md` -  this file.
 
 
 ## Further reading
