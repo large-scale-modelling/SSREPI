@@ -2,11 +2,11 @@
 
 ## Description
 
-An Application is something that can be run by the user to generate or analyse simulation output.
+An `Application` is something that can be run by the user to generate or analyse simulation output.
 
 ## Standards
 
-`PROV:Entity`. Note the potential confusion. An Application is something that has the potential to be an Activity (in the PROV sense) in the form of a Process. However, PROV only deals with the past, not with potential. The Application is a file somewhere, and hence an Entity.
+`PROV:Entity`. Note the potential confusion. An `Application` is something that has the potential to be an activity (in the PROV sense) in the form of a `Process`. However, PROV only deals with the past, not with potential. The `Application` is a file somewhere, and hence an entity.
 
 ## Automation
 
@@ -58,34 +58,34 @@ Most of this table is expected to be populated by the user.
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | REVISION | Type | TEXT|
-|  | Description | ID in Application table of Application this Application is a revision of, if any.|
+|  | Description | ID in `Application` table of `Application` this `Application` is a revision of, if any.|
 |  | Standards | `PROV:wasDerivedFrom`; `dc:isVersionOF`|
-|  | Validation | Must be an ID of an Application|
-|  | Null | If not a revision of anoth Application.|
+|  | Validation | Must be an ID of an `Application`|
+|  | Null | If not a revision of anoth `Application`.|
 |  | Automation | None|
 | MODEL | Type | TEXT|
-|  | Description | ID in Model table of Model this application is, if it is a Model.|
+|  | Description | ID in `Model` table this `Application` is, if it is a `Model`.|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Model.|
-|  | Null | If this Application is not a Model.|
+|  | Validation | Must be an ID in `Model`.|
+|  | Null | If this `Application` is not a model.|
 |  | Automation | None|
 | LOCATION | Type | TEXT|
-|  | Description | ID in the Box table to use to find this application.|
+|  | Description | ID_BOX in the `Box` table to use to find this `Application`.|
 |  | Standards | ?|
-|  | Validation | Must be an ID of a Box.|
-|  | Null | If the search for a Box for this Application has not been done.|
-|  | Automation | This should be populated automatically the first time the Application is requested on a host by finding the most local Box that references it, and storing that here.
+|  | Validation | Must be ID_BOX of a `Box`.|
+|  | Null | If the search for a `Box` for this `Application` has not been done.|
+|  | Automation | This should be populated automatically the first time the `Application` is requested on a host by finding the most local `Box` that references it, and storing that here.
 
-If the most local Box is not on the current host, then the Application should be downloaded to the current host, and a new Box created for the location.
+If the most local `Box` is not on the current host, then the `Application` should be downloaded to the current host, and a new `Box` created for the location.
 
-If the Box ID is no longer present, then the search should be repeated in the Box table.
+If the Box ID is no longer present, then the search should be repeated in the `Box` table.
                   |
 
 # Argument
 
 ## Description
 
-A command-line argument accepted by an Application. Commands vary hugely in how they parse arguments on the command line, and this table needs to make clear how to build a command line that the Application can use. To be clear, a command line is a string of text that is given to a shell (DOS, bash, etc.) to initiate a batch job.
+A command-line argument accepted by an `Application`. Commands vary hugely in how they parse arguments on the command line, and this table needs to make clear how to build a command line that the `Application` can use. To be clear, a command line is a string of text that is given to a shell (DOS, bash, etc.) to initiate a batch job.
 
 ## Standards
 
@@ -93,7 +93,7 @@ POSIX.1-2008 and equivalently IEEE Std 1003.1-2008/Cor 1-2013 are normative for 
 
 ## Automation
 
-When building up a command-line for an Application with arguments during invocation of a Process, the system should do the following:
+When building up a command-line for an `Application` with arguments during invocation of a `Process`, the system should do the following:
 - Let M be a map from integer to list of string.
 - For each flag, check with the user to see whether it should be set or cleared; if set, add the flag name to M, using the order as the key, or -1 if the order is null. Create an entry in ArgumentValue using ‘true’ or ‘false’ as the value according to whether or not the flag is set.
 - For each option, check with the user to see whether it should be used, and if so, provide an appropriate argument or arguments in accordance with the arity. Build a string for the option including its name and arguments, bearing in mind the separator and argsep values. Add the resulting string to M.
@@ -119,7 +119,7 @@ When building up a command-line for an Application with arguments during invocat
 |  | Validation | One of “required”, “option”, or “flag”|
 |  | Automation | None|
 | ORDER_VALUE | Type | INTEGER|
-|  | Description | A number used to indicate any order in which this Argument should appear in relation to other Arguments the Application accepts.|
+|  | Description | A number used to indicate any order in which this `Argument` should appear in relation to other `Argument`s the `Application` accepts.|
 |  | Standards | None|
 |  | Validation | Non-negative integer or null if the order is unimportant.|
 |  | Automation | None|
@@ -178,27 +178,27 @@ When building up a command-line for an Application with arguments during invocat
 | APPLICATION | Type | TEXT|
 |  | Description | The application this argument applies to.|
 |  | Standards | None|
-|  | Validation | ID in the Application table.|
-|  | Null | Null if not an argument for an Application|
+|  | Validation | ID in the `Application` table.|
+|  | Null | Null if not an argument for an `Application`|
 |  | Automation | None|
 | VARIABLE | Type | TEXT|
 |  | Description | The variable this argument relates to.|
 |  | Standards | None|
-|  | Validation | ID in the Variables table.|
+|  | Validation | ID in the `Variable`s table.|
 |  | Null | Null if not about a variable|
 |  | Automation | None|
 | BOX_TYPE | Type | TEXT|
-|  | Description | The BoxType this argument might be, if it is a file or somesuch.|
+|  | Description | The `BoxType` this argument might be, if it is a file or somesuch.|
 |  | Standards | None|
-|  | Validation | ID in the BoxTypes table.|
-|  | Null | Null if this does not have a BoxType associated iwth it.|
+|  | Validation | ID in the `BoxType`s table.|
+|  | Null | Null if this does not have a `BoxType` associated iwth it.|
 |  | Automation | None|
 
 # ArgumentValue
 
 ## Description
 
-A value supplied for a command-line argument in a run of an Application.
+A value supplied for a command-line argument in a run of an `Application`.
 
 ## Standards
 
@@ -206,7 +206,7 @@ None
 
 ## Automation
 
-Populated automatically when a Process is invoked.
+Populated automatically when a `Process` is invoked.
 
 
 ##  Attributes
@@ -217,25 +217,25 @@ Populated automatically when a Process is invoked.
 |  | Description | Value supplied, or true/false for flags|
 |  | Standards | None|
 |  | Validation | None|
-|  | Automation | Populated when the Process is invoked|
+|  | Automation | Populated when the `Process` is invoked|
 | FOR_PROCESS | Type | TEXT|
-|  | Description | ID in Process table of the Process this ArgumentValue applies to|
+|  | Description | ID in `Process` table of the `Process` this `ArgumentValue` applies to|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Process|
+|  | Validation | Must be an ID of a `Process`|
 |  | Null | Not null|
-|  | Automation | Populated automatically when the Process is created|
+|  | Automation | Populated automatically when the `Process` is created|
 | FOR_ARGUMENT | Type | TEXT|
-|  | Description | ID in Argument table of the Argument this value is for|
+|  | Description | ID in `Argument` table of the `Argument` this value is for|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Argument|
+|  | Validation | Must be an ID of an `Argument`|
 |  | Null | Not null|
-|  | Automation | Populated automatically when the Process is created|
+|  | Automation | Populated automatically when the `Process` is created|
 | BOX | Type | TEXT|
-|  | Description | ID in Box table of the box this value can be for|
+|  | Description | ID in `Box` table of the box this value can be for|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Not null|
-|  | Automation | Populated automatically when the Process is created|
+|  | Automation | Populated automatically when the `Process` is created|
 
 # Assumes
 
@@ -247,40 +247,40 @@ None
 
 ## Automation
 
-This relationship may be inferred automatically from the use of StatisticalMethod or VisualisationMethod.
+This relationship may be inferred automatically from the use of `StatisticalMethod` or `VisualisationMethod`.
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | PERSON | Type | TEXT|
-|  | Description | ID in Person table of the Person making the assumption|
+|  | Description | ID in `Person` table of the `Person` making the assumption|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Not null|
 |  | Automation | None|
 | STATISTICS | Type | TEXT|
-|  | Description | ID in Statistics table if assumption applies to a statistical computation|
+|  | Description | ID in `Statistics` table if assumption applies to a statistical computation|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Statistics|
-|  | Null | Null if Visualisation is not null|
+|  | Validation | Must be an ID of a `Statistics`|
+|  | Null | Null if `Visualisation` is not null|
 |  | Automation | None|
 | VISUALISATION | Type | TEXT|
-|  | Description | ID in Visualisation table if assumption applies to a visualisation|
+|  | Description | ID in `Visualisation` table if assumption applies to a `Visualisation`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Visualisation|
-|  | Null | Null if Statistics is not null|
+|  | Validation | Must be an ID of a `Visualisation`|
+|  | Null | Null if `Statistics` is not null|
 |  | Automation | None|
 | VARIABLE | Type | TEXT|
-|  | Description | ID in Variable table of the variable to which the assumption applies|
+|  | Description | ID in `Variable` table of the variable to which the assumption applies|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Variable|
+|  | Validation | Must be an ID of a `Variable`|
 |  | Null | Not null|
 |  | Automation | None|
 | ASSUMPTION | Type | TEXT|
-|  | Description | ID in Assumption table of the Assumption being made|
+|  | Description | ID in `Assumption` table of the `Assumption` being made|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Assumption|
+|  | Validation | Must be an ID of an `Assumption`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -288,7 +288,7 @@ This relationship may be inferred automatically from the use of StatisticalMetho
 
 ## Description
 
-An Assumption is a condition applied to a Variable for its proper application to a Statistic. (That Statistic being realised as an Aggregation of the Variable to which the Assumption applies.) A Person makes an Assumption about a Variable (in the Assumes table), explicitly or implicitly, every time they compute the Statistic on it.
+An `Assumption` is a condition applied to a `Variable` for its proper application to a `Statistic`. (That `Statistic` being realised as an aggregation of the `Variable` to which the `Assumption` applies.) A `Person` makes an `Assumption` about a `Variable` (in the `Assumes` table), explicitly or implicitly, every time they compute the `Statistic` on it.
 
 ## Standards
 
@@ -313,7 +313,7 @@ None
 
 ## Description
 
-A Box is any data container (file, database, URI, etc.) used to store or reference data within the system.
+A `Box` is any data container (file, database, URI, etc.) used to store or reference data within the system.
 
 ## Standards
 
@@ -321,7 +321,7 @@ A Box is any data container (file, database, URI, etc.) used to store or referen
 
 ## Automation
 
-A Box should be created automatically whenever data is accessed or generated by a Process.
+A `Box` should be created automatically whenever data is accessed or generated by a `Process`.
 Metadata such as size, encoding, timestamps, and hash may be populated automatically using system tools (e.g. OS calls, HTTP headers, checksum utilities).
 
 
@@ -330,12 +330,12 @@ Metadata such as size, encoding, timestamps, and hash may be populated automatic
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_BOX | Type | TEXT|
-|  | Description | Unique identifier for the Box|
+|  | Description | Unique identifier for the `Box`|
 |  | Standards | None|
 |  | Validation | Primary key|
 |  | Automation | Generated automatically|
 | LOCATION_TYPE | Type | TEXT|
-|  | Description | Type of resource the Box refers to (e.g. file, URI, database)|
+|  | Description | Type of resource the `Box` refers to (e.g. file, URI, database)|
 |  | Standards | ?|
 |  | Validation | String describing access type|
 |  | Automation | Requires appropriate software depending on type|
@@ -366,7 +366,7 @@ Metadata such as size, encoding, timestamps, and hash may be populated automatic
 |  | Validation | Datetime string|
 |  | Automation | Retrieved via OS stat or HTTP headers|
 | UPDATE_TIME | Type | TEXT|
-|  | Description | Time the metadata for this Box was last updated|
+|  | Description | Time the metadata for this `Box` was last updated|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
 |  | Automation | System maintained|
@@ -376,9 +376,9 @@ Metadata such as size, encoding, timestamps, and hash may be populated automatic
 |  | Validation | Format: algorithm:encoding:value|
 |  | Automation | Generated using hashing tools (e.g. md5sum, sha256sum)|
 | INSTANCE | Type | TEXT|
-|  | Description | ID in BoxType table describing the type of Box|
+|  | Description | ID in `BoxType` table describing the type of `Box`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -388,52 +388,52 @@ Metadata such as size, encoding, timestamps, and hash may be populated automatic
 |----------|--------|-------------------------|
 | LOCATION_APPLICATION |  | |
 |  | Type | TEXT|
-|  | Description | ID in Application table if this Box refers to an Application|
+|  | Description | ID in `Application` table if this `Box` refers to an `Application`|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`.|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | LOCATION_DOCUMENTATION |  | |
 |  | Type | TEXT|
-|  | Description | ID in Documentation table if this Box refers to Documentation|
+|  | Description | ID in `Documentation` table if this `Box` refers to `Documentation`|
 |  | Standards | None|
-|  | Validation | Must be an ID of Documentation|
+|  | Validation | Must be an ID of `Documentation`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | GENERATED_BY | Type | TEXT|
-|  | Description | ID in Study table of the Study that generated this Box|
+|  | Description | ID in `Study` table of the `Study` that generated this `Box`|
 |  | Standards | `PROV:wasGeneratedBy`|
-|  | Validation | Must be an ID of a Study|
-|  | Null | Null if not generated by a Study|
-|  | Automation | Set when Process produces output|
+|  | Validation | Must be an ID of a `Study`|
+|  | Null | Null if not generated by a `Study`|
+|  | Automation | Set when `Process` produces output|
 | REPOSITORY_OF | Type | TEXT|
-|  | Description | ID in Study table of Study this Box is a repository for|
+|  | Description | ID in `Study` table of `Study` this `Box` is a repository for|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Study|
+|  | Validation | Must be an ID of a `Study`|
 |  | Null | Optional|
 |  | Automation | None|
 | HELD_BY | Type | TEXT|
-|  | Description | ID in Person table of person holding the Box|
+|  | Description | ID in `Person` table of person holding the `Box`|
 |  | Standards | `PROV:wasAttributedTo`|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Optional|
 |  | Automation | None|
 | SOURCED_FROM | Type | TEXT|
-|  | Description | ID in Person table of source of the Box|
+|  | Description | ID in `Person` table of source of the `Box`|
 |  | Standards | `PROV:wasAttributedTo`|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Optional|
 |  | Automation | None|
 | OUTPUT_OF | Type | TEXT|
-|  | Description | ID in Process table of the Process that produced this Box|
+|  | Description | ID in `Process` table of the `Process` that produced this `Box`|
 |  | Standards | `PROV:wasGeneratedBy`|
-|  | Validation | Must be an ID of a Process|
-|  | Null | Null if not produced by a Process|
-|  | Automation | Automatically set during Process execution|
+|  | Validation | Must be an ID of a `Process`|
+|  | Null | Null if not produced by a `Process`|
+|  | Automation | Automatically set during `Process` execution|
 | COLLECTION | Type | TEXT|
-|  | Description | ID in Box table if this Box is part of another Box|
+|  | Description | ID in `Box` table if this `Box` is part of another `Box`|
 |  | Standards | PROV:hadMember|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Null if not part of a collection|
 |  | Automation | None|
 
@@ -441,7 +441,7 @@ Metadata such as size, encoding, timestamps, and hash may be populated automatic
 
 ## Description
 
-A BoxType defines the format and identification rules for Boxes, describing how their contents should be interpreted.
+A `BoxType` defines the format and identification rules for Boxes, describing how their contents should be interpreted.
 
 ## Standards
 
@@ -449,7 +449,7 @@ None
 
 ## Automation
 
-BoxTypes are expected to be defined by the user; identification rules may be applied automatically when inspecting Box contents.
+`BoxType`s are expected to be defined by the user; identification rules may be applied automatically when inspecting `Box` contents.
 
 
 ##  Attributes
@@ -457,17 +457,17 @@ BoxTypes are expected to be defined by the user; identification rules may be app
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_BOX_TYPE | Type | TEXT|
-|  | Description | Unique identifier for the BoxType|
+|  | Description | Unique identifier for the `BoxType`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | FORMAT | Type | TEXT|
-|  | Description | Format of the Box contents|
+|  | Description | Format of the `Box` contents|
 |  | Standards | MIME|
 |  | Validation | Valid MIME type|
 |  | Automation | None|
 | IDENTIFIER | Type | TEXT|
-|  | Description | Rule used to identify whether a Box conforms to this BoxType (e.g. magic bytes, filename pattern)|
+|  | Description | Rule used to identify whether a `Box` conforms to this `BoxType` (e.g. magic bytes, filename pattern)|
 |  | Standards | None|
 |  | Validation | Structured rule string|
 |  | Automation | None|
@@ -476,7 +476,7 @@ BoxTypes are expected to be defined by the user; identification rules may be app
 
 ## Description
 
-A Computer represents a machine on which Processes are executed.
+A `Computer` represents a machine on which a `Process` is executed.
 
 ## Standards
 
@@ -518,7 +518,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Content table describes how Variables (or StatisticalVariables) are located within a Box.
+The `Content` table describes how a `Variable` (or `StatisticalVariable`) is located within a `Box`.
 
 ## Standards
 
@@ -534,12 +534,12 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | OPTIONALITY | Type | TEXT|
-|  | Description | Whether the Variable always appears or only appears depending on some condition|
+|  | Description | Whether the `Variable` always appears or only appears depending on some condition|
 |  | Standards | None|
 |  | Validation | One of 'always' or 'depends'|
 |  | Automation | None|
 | LOCATOR | Type | TEXT|
-|  | Description | How to locate the Variable's values within the Box (e.g. row:X, column:Y, field:Z)|
+|  | Description | How to locate the `Variable` value within the `Box` (e.g. row:X, column:Y, field:Z)|
 |  | Validation | Formatted rule string|
 |  | Automation | None|
 | TIME_LOCATOR | Type | TEXT|
@@ -559,9 +559,9 @@ None
 |  | Automation | None|
 | STATISTICAL_VARIABLE |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalVariable table if this Content refers to a StatisticalVariable|
+|  | Description | ID in `StatisticalVariable` table if this `Content` refers to a `StatisticalVariable`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalVariable|
+|  | Validation | Must be an ID of a `StatisticalVariable`|
 |  | Null | Null if VARIABLE is not null|
 |  | Automation | None|
 
@@ -570,22 +570,22 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | BOX_TYPE | Type | TEXT|
-|  | Description | ID in BoxType table of the BoxType this Content applies to|
+|  | Description | ID in `BoxType` table of the `BoxType` this `Content` applies to|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Not null|
 |  | Automation | None|
 | VARIABLE | Type | TEXT|
-|  | Description | ID in Variable table if this Content refers to a Variable|
+|  | Description | ID in `Variable` table if this `Content` refers to a `Variable`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Variable|
+|  | Validation | Must be an ID of a `Variable`|
 |  | Null | Null if STATISTICAL_VARIABLE is not null|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if this Content is used for visualisation|
+|  | Description | ID in `VisualisationMethod` table if this `Content` is used for visualisation|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Optional|
 |  | Automation | None|
 
@@ -593,7 +593,7 @@ None
 
 ## Description
 
-The Context table provides contextual values such as time, space, agent, or link, which can be associated with Values.
+The `Context` table provides contextual values such as time, space, agent, or link, which can be associated with `Values`.
 
 ## Standards
 
@@ -601,7 +601,7 @@ None
 
 ## Automation
 
-Context entries may be created automatically when extracting or interpreting data from Boxes.
+`Context` entries may be created automatically when extracting or interpreting data from `Box`es.
 
 
 ##  Attributes
@@ -609,25 +609,25 @@ Context entries may be created automatically when extracting or interpreting dat
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_CONTEXT | Type | TEXT|
-|  | Description | Unique identifier for the Context|
+|  | Description | Unique identifier for the `Context`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | VALUE | Type | TEXT|
-|  | Description | Value of the context (e.g. time, space, agent, or link identifier)|
+|  | Description | `Value` of the context (e.g. time, space, agent, or link identifier)|
 |  | Standards | None|
 |  | Validation | String|
-|  | Automation | Derived from Content locators or data extraction|
+|  | Automation | Derived from `Content` locators or data extraction|
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | PART | Type | TEXT|
-|  | Description | ID in Context table indicating that this Context is part of another Context|
+|  | Description | ID in `Context` table indicating that this `Context` is part of another `Context`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Context|
-|  | Null | Null if this Context is not part of another|
+|  | Validation | Must be an ID of a `Context`|
+|  | Null | Null if this `Context` is not part of another|
 |  | Automation | None|
 
 # Contributor
@@ -636,7 +636,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Contributor table records people who have contributed to Applications or Documentation, including how they are credited.
+The `Contributor` table records people who have contributed to `Application`s or `Documentation`, including how they are credited.
 
 ## Standards
 
@@ -657,7 +657,7 @@ None
 |  | Validation | String describing contribution type|
 |  | Automation | None|
 | ALIAS | Type | TEXT|
-|  | Description | Name or alias used for the contributor in the context of the Application or Documentation|
+|  | Description | Name or alias used for the contributor in the context of the `Application` or `Documentation`|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -667,21 +667,21 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | CONTRIBUTOR | Type | TEXT|
-|  | Description | ID in Person table of the contributor|
+|  | Description | ID in `Person` table of the contributor|
 |  | Standards | dc:contributor|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Not null|
 |  | Automation | None|
 | DOCUMENTATION | Type | TEXT|
-|  | Description | ID in Documentation table if the contribution relates to Documentation|
+|  | Description | ID in `Documentation` table if the contribution relates to `Documentation`|
 |  | Standards | dc:relation|
-|  | Validation | Must be an ID of Documentation|
+|  | Validation | Must be an ID of `Documentation`|
 |  | Null | Null if APPLICATION is not null|
 |  | Automation | None|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table if the contribution relates to an Application|
+|  | Description | ID in `Application` table if the contribution relates to an `Application`|
 |  | Standards | dc:relation|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Null if DOCUMENTATION is not null|
 |  | Automation | None|
 
@@ -691,7 +691,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Dependency table records that one Application depends on another, optionally under certain conditions.
+The `Dependency` table records that one `Application` depends on another, optionally under certain conditions.
 
 ## Standards
 
@@ -699,7 +699,7 @@ None
 
 ## Automation
 
-Dependencies may be inferred automatically in some cases, but are generally provided by the user.
+A `Dependency` may be inferred automatically in some cases, but are generally provided by the user.
 
 
 ##  Attributes
@@ -717,15 +717,15 @@ Dependencies may be inferred automatically in some cases, but are generally prov
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | DEPENDANT | Type | TEXT|
-|  | Description | ID in Application table of the Application that depends on another|
+|  | Description | ID in `Application` table of the `Application` that depends on another|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 | DEPENDENCY | Type | TEXT|
-|  | Description | ID in Application table of the Application being depended upon|
+|  | Description | ID in `Application` table of the `Application` being depended upon|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -733,7 +733,7 @@ Dependencies may be inferred automatically in some cases, but are generally prov
 
 ## Description
 
-The Documentation table records documents that describe Applications or Studies.
+The `Documentation` table records documents that describe `Application`s or Studies.
 
 ## Standards
 
@@ -750,7 +750,7 @@ None
 |----------|--------|-------------------------|
 | ID_DOCUMENTATION |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the Documentation|
+|  | Description | Unique identifier for the `Documentation`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -770,15 +770,15 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | DOCUMENTS | Type | TEXT|
-|  | Description | ID in Application table of the Application this Documentation describes|
+|  | Description | ID in `Application` table of the `Application` this `Documentation` describes|
 |  | Standards | dc:relation|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Null if REFERENCES is not null|
 |  | Automation | None|
 | DESCRIBES | Type | TEXT|
-|  | Description | ID in Study table of the Study this Documentation references|
+|  | Description | ID in `Study` table of the `Study` this `Documentation` references|
 |  | Standards | dc:relation|
-|  | Validation | Must be an ID of a Study|
+|  | Validation | Must be an ID of a `Study`|
 |  | Null | Null if DOCUMENTS is not null|
 |  | Automation | None|
 
@@ -788,7 +788,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Employs table records that a StatisticalMethod or VisualisationMethod employs a StatisticalVariable.
+The `Employs` table records that a `StatisticalMethod` or `VisualisationMethod` employs a `StatisticalVariable`.
 
 ## Standards
 
@@ -804,23 +804,23 @@ This relationship may be inferred automatically from the definitions of methods 
 |----------|--------|-------------------------|
 | STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table if the relationship involves a statistical method|
+|  | Description | ID in `StatisticalMethod` table if the relationship involves a statistical method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Null if VISUALISATION_METHOD is not null|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if the relationship involves a visualisation method|
+|  | Description | ID in `VisualisationMethod` table if the relationship involves a visualisation method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Null if STATISTICAL_METHOD is not null|
 |  | Automation | None|
 | STATISTICAL_VARIABLE |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalVariable table of the variable being employed|
+|  | Description | ID in `StatisticalVariable` table of the variable being employed|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalVariable|
+|  | Validation | Must be an ID of a `StatisticalVariable`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -830,7 +830,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Entailment table records that a StatisticalMethod or VisualisationMethod entails an Assumption.
+The `Entailment` table records that a `StatisticalMethod` or `VisualisationMethod` entails an `Assumption`.
 
 ## Standards
 
@@ -846,22 +846,22 @@ This relationship may be inferred automatically from the definitions of methods 
 |----------|--------|-------------------------|
 | STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table if the relationship involves a statistical method|
+|  | Description | ID in `StatisticalMethod` table if the relationship involves a statistical method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Null if VISUALISATION_METHOD is not null|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if the relationship involves a visualisation method|
+|  | Description | ID in `VisualisationMethod` table if the relationship involves a visualisation method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Null if STATISTICAL_METHOD is not null|
 |  | Automation | None|
 | ASSUMPTION | Type | TEXT|
-|  | Description | ID in Assumption table of the Assumption that is entailed|
+|  | Description | ID in `Assumption` table of the `Assumption` that is entailed|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Assumption|
+|  | Validation | Must be an ID of an `Assumption`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -871,7 +871,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Implements table records that an Application implements a StatisticalMethod or VisualisationMethod.
+The `Implements` table records that an `Application` implements a `StatisticalMethod` or `VisualisationMethod`.
 
 ## Standards
 
@@ -887,7 +887,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | FUNCTION | Type | TEXT|
-|  | Description | Name of the function within the Application that implements the method|
+|  | Description | Name of the function within the `Application` that implements the method|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -903,22 +903,22 @@ None
 |----------|--------|-------------------------|
 | STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table if the implementation is for a statistical method|
+|  | Description | ID in `StatisticalMethod` table if the implementation is for a statistical method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Null if VISUALISATION_METHOD is not null|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if the implementation is for a visualisation method|
+|  | Description | ID in `VisualisationMethod` table if the implementation is for a visualisation method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Null if STATISTICAL_METHOD is not null|
 |  | Automation | None|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table of the Application implementing the method|
+|  | Description | ID in `Application` table of the `Application` implementing the method|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -928,7 +928,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Input table records the Boxes that are used as input to a Process, including how they are used.
+The `Input` table records the `Box`es that are used as input to a `Process`, including how they are used.
 
 ## Standards
 
@@ -936,7 +936,7 @@ PROV:used
 
 ## Automation
 
-Populated automatically when a Process is invoked and its inputs are identified.
+Populated automatically when a `Process` is invoked and its inputs are identified.
 
 
 ##  Attributes
@@ -944,7 +944,7 @@ Populated automatically when a Process is invoked and its inputs are identified.
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | USAGE | Type | TEXT|
-|  | Description | Indicates how the input is used by the Process|
+|  | Description | Indicates how the input is used by the `Process`|
 |  | Standards | None|
 |  | Validation | One of 'dependency' or 'data'|
 |  | Automation | Set automatically based on the role of the input|
@@ -954,15 +954,15 @@ Populated automatically when a Process is invoked and its inputs are identified.
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | PROCESS | Type | TEXT|
-|  | Description | ID in Process table of the Process using the input|
+|  | Description | ID in `Process` table of the `Process` using the input|
 |  | Standards | PROV:used|
-|  | Validation | Must be an ID of a Process|
+|  | Validation | Must be an ID of a `Process`|
 |  | Null | Not null|
-|  | Automation | Populated automatically when the Process is created|
+|  | Automation | Populated automatically when the `Process` is created|
 | BOX | Type | TEXT|
-|  | Description | ID in Box table of the Box being used as input|
+|  | Description | ID in `Box` table of the `Box` being used as input|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Not null|
 |  | Automation | Populated automatically when inputs are resolved|
 
@@ -972,7 +972,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Involvement table records the involvement of a Person in a Study, including their role.
+The `Involvement` table records the involvement of a `Person` in a `Study`, including their role.
 
 ## Standards
 
@@ -988,7 +988,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ROLE | Type | TEXT|
-|  | Description | Role of the Person in the Study|
+|  | Description | Role of the `Person` in the `Study`|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -998,15 +998,15 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | PERSON | Type | TEXT|
-|  | Description | ID in Person table of the Person involved|
+|  | Description | ID in `Person` table of the `Person` involved|
 |  | Standards | PROV:Agent|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Not null|
 |  | Automation | None|
 | STUDY | Type | TEXT|
-|  | Description | ID in Study table of the Study the Person is involved in|
+|  | Description | ID in `Study` table of the `Study` the `Person` is involved in|
 |  | Standards | PROV:Activity|
-|  | Validation | Must be an ID of a Study|
+|  | Validation | Must be an ID of a `Study`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -1016,7 +1016,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Meets table records that a Computer meets a specified Specification.
+The `Meets` table records that a `Computer` meets a specified `Specification`.
 
 ## Standards
 
@@ -1032,16 +1032,16 @@ None
 |----------|--------|-------------------------|
 | COMPUTER_SPECIFICATION |  | |
 |  | Type | TEXT|
-|  | Description | ID in Specification table describing the specification met by the Computer|
+|  | Description | ID in `Specification` table describing the specification met by the `Computer`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Specification|
+|  | Validation | Must be an ID of a `Specification`|
 |  | Null | Not null|
 |  | Automation | None|
 | REQUIREMENT_SPECIFICATION |  | |
 |  | Type | TEXT|
-|  | Description | ID in Specification table defining the required specification being met|
+|  | Description | ID in `Specification` table defining the required specification being met|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Specification|
+|  | Validation | Must be an ID of a `Specification`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -1049,7 +1049,7 @@ None
 
 ## Description
 
-The Model table identifies Applications that represent models, optionally linking to external model registries.
+The `Model` table identifies `Application`s that represent models, optionally linking to external model registries.
 
 ## Standards
 
@@ -1065,7 +1065,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_MODEL | Type | TEXT|
-|  | Description | Unique identifier for the Model|
+|  | Description | Unique identifier for the `Model`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1081,9 +1081,9 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table of the Application that is a Model|
+|  | Description | ID in `Application` table of the `Application` that is a `Model`|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -1091,7 +1091,7 @@ None
 
 ## Description
 
-The Parameter table records parameters used by StatisticalMethod or VisualisationMethod.
+The `Parameter` table records parameters used by `StatisticalMethod` or `VisualisationMethod`.
 
 ## Standards
 
@@ -1107,7 +1107,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_PARAMETER | Type | TEXT|
-|  | Description | Unique identifier for the Parameter|
+|  | Description | Unique identifier for the `Parameter`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1123,16 +1123,16 @@ None
 |----------|--------|-------------------------|
 | STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table if the parameter applies to a statistical method|
+|  | Description | ID in `StatisticalMethod` table if the parameter applies to a statistical method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Null if VISUALISATION_METHOD is not null|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if the parameter applies to a visualisation method|
+|  | Description | ID in `VisualisationMethod` table if the parameter applies to a visualisation method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Null if STATISTICAL_METHOD is not null|
 |  | Automation | None|
 
@@ -1140,7 +1140,7 @@ None
 
 ## Description
 
-The Person table records individuals associated with the system, such as users, contributors, or data owners.
+The `Person` table records individuals associated with the system, such as users, contributors, or data owners.
 
 ## Standards
 
@@ -1156,12 +1156,12 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_PERSON | Type | TEXT|
-|  | Description | Unique identifier for the Person|
+|  | Description | Unique identifier for the `Person`|
 |  | Standards | FOAF|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | EMAIL | Type | TEXT|
-|  | Description | Email address of the Person|
+|  | Description | Email address of the `Person`|
 |  | Standards | FOAF|
 |  | Validation | Valid email address string|
 |  | Automation | None|
@@ -1170,7 +1170,7 @@ None
 
 ## Description
 
-The PersonalData table records additional pieces of information about a Person as label–value pairs.
+The `PersonalData` table records additional pieces of information about a `Person` as label–value pairs.
 
 ## Standards
 
@@ -1187,7 +1187,7 @@ None
 |----------|--------|-------------------------|
 | ID_PERSONAL_DATA |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the PersonalData entry|
+|  | Description | Unique identifier for the `PersonalData` entry|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1197,7 +1197,7 @@ None
 |  | Validation | String|
 |  | Automation | None|
 | VALUE | Type | TEXT|
-|  | Description | Value of the personal data|
+|  | Description | `Value` of the personal data|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -1207,9 +1207,9 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ABOUT | Type | TEXT|
-|  | Description | ID in Person table of the Person this data is about|
+|  | Description | ID in `Person` table of the `Person` this data is about|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -1217,7 +1217,7 @@ None
 
 ## Description
 
-The Pipeline table records sequences of Applications, allowing workflows to be defined where one Application calls another.
+The `Pipeline` table records sequences of `Application`s, allowing workflows to be defined where one `Application` calls another.
 
 ## Standards
 
@@ -1233,7 +1233,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_PIPELINE | Type | TEXT|
-|  | Description | Unique identifier for the Pipeline|
+|  | Description | Unique identifier for the `Pipeline`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1243,16 +1243,16 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | CALLS | Type | TEXT|
-|  | Description | ID in Application table of the Application called by this Pipeline step|
+|  | Description | ID in `Application` table of the `Application` called by this `Pipeline` step|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 | PREVIOUS | Type | TEXT|
 |  | Nullable | True|
-|  | Description | ID in Pipeline table of the previous Pipeline step|
+|  | Description | ID in `Pipeline` table of the previous `Pipeline` step|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Pipeline|
+|  | Validation | Must be an ID of a `Pipeline`|
 |  | Null | Null if this is the first step|
 |  | Automation | None|
 
@@ -1260,7 +1260,7 @@ None
 
 ## Description
 
-The Process table records an execution of an Application, including when and how it was run.
+The `Process` table records an execution of an `Application`, including when and how it was run.
 
 ## Standards
 
@@ -1268,7 +1268,7 @@ PROV:Activity
 
 ## Automation
 
-Entries are created automatically when an Application is executed, capturing runtime details.
+Entries are created automatically when an `Application` is executed, capturing runtime details.
 
 
 ##  Attributes
@@ -1276,32 +1276,32 @@ Entries are created automatically when an Application is executed, capturing run
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_PROCESS | Type | TEXT|
-|  | Description | Unique identifier for the Process|
+|  | Description | Unique identifier for the `Process`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | START_TIME | Type | TEXT|
-|  | Description | Time at which the Process started|
+|  | Description | Time at which the `Process` started|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
 |  | Automation | Captured automatically at process start|
 | END_TIME | Type | TEXT|
-|  | Description | Time at which the Process ended|
+|  | Description | Time at which the `Process` ended|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
 |  | Automation | Captured automatically at process completion|
 | ARGV | Type | TEXT|
-|  | Description | Command-line string used to invoke the Application|
+|  | Description | Command-line string used to invoke the `Application`|
 |  | Standards | POSIX|
 |  | Validation | String|
-|  | Automation | Constructed automatically from Argument and ArgumentValue|
+|  | Automation | Constructed automatically from `Argument` and `ArgumentValue`|
 | ENVIRONMENT | Type | TEXT|
 |  | Description | Environment variables used during execution|
 |  | Standards | POSIX|
 |  | Validation | List of strings|
 |  | Automation | Captured from runtime environment|
 | WORKING_DIR | Type | TEXT|
-|  | Description | Working directory from which the Process was executed|
+|  | Description | Working directory from which the `Process` was executed|
 |  | Standards | POSIX|
 |  | Validation | Valid file path|
 |  | Automation | Captured automatically from runtime|
@@ -1311,29 +1311,29 @@ Entries are created automatically when an Application is executed, capturing run
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | EXECUTABLE | Type | TEXT|
-|  | Description | ID in Application table of the Application that was executed|
+|  | Description | ID in `Application` table of the `Application` that was executed|
 |  | Standards | PROV:used|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
-|  | Automation | Set when the Process is created|
+|  | Automation | Set when the `Process` is created|
 | SOME_USER | Type | TEXT|
-|  | Description | ID in User table of the user who initiated the Process|
+|  | Description | ID in `User` table of the user who initiated the `Process`|
 |  | Standards | PROV:wasAssociatedWith|
-|  | Validation | Must be an ID of a User|
+|  | Validation | Must be an ID of a `User`|
 |  | Null | Not null|
 |  | Automation | Captured from system user context|
 | HOST | Type | TEXT|
-|  | Description | ID in Computer table of the machine on which the Process ran|
+|  | Description | ID in `Computer` table of the machine on which the `Process` ran|
 |  | Standards | PROV:wasAssociatedWith|
-|  | Validation | Must be an ID of a Computer|
+|  | Validation | Must be an ID of a `Computer`|
 |  | Null | Not null|
 |  | Automation | Captured from system environment|
 | PARENT | Type | TEXT|
-|  | Description | ID in Process table of the parent Process, if any|
+|  | Description | ID in `Process` table of the parent `Process`, if any|
 |  | Standards | PROV:wasInformedBy|
-|  | Validation | Must be an ID of a Process|
+|  | Validation | Must be an ID of a `Process`|
 |  | Null | Null if no parent process|
-|  | Automation | Set if Process is spawned by another|
+|  | Automation | Set if `Process` is spawned by another|
 
 # Product
 
@@ -1341,7 +1341,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Product table describes the types of output that an Application can produce, including how those outputs are located.
+The `Product` table describes the types of output that an `Application` can produce, including how those outputs are located.
 
 ## Standards
 
@@ -1349,7 +1349,7 @@ None
 
 ## Automation
 
-Some Products may be inferred automatically based on Application execution and generated Boxes.
+Some `Product`s may be inferred automatically based on `Application` execution and generated `Box`es.
 
 
 ##  Attributes
@@ -1357,12 +1357,12 @@ Some Products may be inferred automatically based on Application execution and g
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | OPTIONALITY | Type | TEXT|
-|  | Description | Whether the Product is always produced or only under certain conditions|
+|  | Description | Whether the `Product` is always produced or only under certain conditions|
 |  | Standards | None|
 |  | Validation | One of 'always' or 'depends'|
 |  | Automation | None|
 | LOCATOR | Type | TEXT|
-|  | Description | Description of how to locate the Product output|
+|  | Description | Description of how to locate the `Product` output|
 |  | Standards | None|
 |  | Validation | Formatted rule string|
 |  | Automation | None|
@@ -1372,21 +1372,21 @@ Some Products may be inferred automatically based on Application execution and g
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table of the Application producing this Product|
+|  | Description | ID in `Application` table of the `Application` producing this `Product`|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 | BOX_TYPE | Type | TEXT|
-|  | Description | ID in BoxType table describing the type of Box produced|
+|  | Description | ID in `BoxType` table describing the type of `Box` produced|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Not null|
 |  | Automation | None|
 | IN_FILE | Type | TEXT|
-|  | Description | ID in BoxType table if the Product is contained within another file|
+|  | Description | ID in `BoxType` table if the `Product` is contained within another file|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Null if LOCATOR is not 'in-file'|
 |  | Automation | None|
 
@@ -1394,7 +1394,7 @@ Some Products may be inferred automatically based on Application execution and g
 
 ## Description
 
-The Project table records Projects, which are collections of Studies and may include funding and organisational information.
+The `Project` table records `Project`s, which are collections of Studies and may include funding and organisational information.
 
 ## Standards
 
@@ -1410,22 +1410,22 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_PROJECT | Type | TEXT|
-|  | Description | Unique identifier for the Project|
+|  | Description | Unique identifier for the `Project`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | TITLE | Type | TEXT|
-|  | Description | Title of the Project|
+|  | Description | Title of the `Project`|
 |  | Standards | dc:title|
 |  | Validation | String|
 |  | Automation | None|
 | FUNDER | Type | TEXT|
-|  | Description | Organisation or body funding the Project|
+|  | Description | Organisation or body funding the `Project`|
 |  | Standards | dc:publisher|
 |  | Validation | String|
 |  | Automation | None|
 | GRANT_ID | Type | TEXT|
-|  | Description | Identifier of the grant funding the Project|
+|  | Description | Identifier of the grant funding the `Project`|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -1435,9 +1435,9 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | STUDY | Type | TEXT|
-|  | Description | A Study is a piece of work at some level of aggregation.|
+|  | Description | A `Study` is a piece of work at some level of aggregation.|
 |  | Standards | None|
-|  | Validation | An ID in the Study table.|
+|  | Validation | An ID in the `Study` table.|
 |  | Null | Not Null|
 |  | Automation | None|
 
@@ -1447,7 +1447,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The Requirement table records requirements that an Application has with respect to Specifications, including exact, minimum, or matching constraints.
+The `Requirement` table records requirements that an `Application` has with respect to `Specification`s, including exact, minimum, or matching constraints.
 
 ## Standards
 
@@ -1462,27 +1462,27 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table of the Application that has the requirement|
+|  | Description | ID in `Application` table of the `Application` that has the requirement|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 | MATCH | Type | TEXT|
-|  | Description | ID in Specification table specifying values that must match|
+|  | Description | ID in `Specification` table specifying values that must match|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Specification|
+|  | Validation | Must be an ID of a `Specification`|
 |  | Null | Null if EXACT or MINIMUM is used|
 |  | Automation | None|
 | MINIMUM | Type | TEXT|
-|  | Description | ID in Specification table specifying minimum acceptable values|
+|  | Description | ID in `Specification` table specifying minimum acceptable values|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Specification|
+|  | Validation | Must be an ID of a `Specification`|
 |  | Null | Null if EXACT or MATCH is used|
 |  | Automation | None|
 | EXACT | Type | TEXT|
-|  | Description | ID in Specification table specifying exact required values|
+|  | Description | ID in `Specification` table specifying exact required values|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Specification|
+|  | Validation | Must be an ID of a `Specification`|
 |  | Null | Null if MATCH or MINIMUM is used|
 |  | Automation | None|
 
@@ -1490,7 +1490,7 @@ None
 
 ## Description
 
-The Specification table defines labelled specification values, typically used to describe properties of Computers or requirements of Applications.
+The `Specification` table defines labelled specification values, typically used to describe properties of `Computer`s or requirements of `Application`s.
 
 ## Standards
 
@@ -1507,7 +1507,7 @@ None
 |----------|--------|-------------------------|
 | ID_SPECIFICATION |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the Specification|
+|  | Description | Unique identifier for the `Specification`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1517,7 +1517,7 @@ None
 |  | Validation | String|
 |  | Automation | None|
 | VALUE | Type | TEXT|
-|  | Description | Value of the specification|
+|  | Description | `Value` of the specification|
 |  | Standards | None|
 |  | Validation | String|
 |  | Automation | None|
@@ -1528,9 +1528,9 @@ None
 |----------|--------|-------------------------|
 | SPECIFICATION_OF |  | |
 |  | Type | TEXT|
-|  | Description | ID in Computer table of the Computer this Specification describes|
+|  | Description | ID in `Computer` table of the `Computer` this `Specification` describes|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Computer|
+|  | Validation | Must be an ID of a `Computer`|
 |  | Null | Optional|
 |  | Automation | None|
 
@@ -1540,7 +1540,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The StatisticalInput table records the input Variables or Boxes used by a StatisticalMethod when performing a statistical computation.
+The `StatisticalInput` table records the input `Variable`s or `Box`es used by a `StatisticalMethod` when performing a statistical computation.
 
 ## Standards
 
@@ -1548,36 +1548,36 @@ PROV:used
 
 ## Automation
 
-Inputs may be inferred automatically when a Statistics computation is executed.
+`Input`s may be inferred automatically when a `Statistics` computation is executed.
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | STATISTICS | Type | TEXT|
-|  | Description | ID in StatisticalMethod table of the method using the input|
+|  | Description | ID in `StatisticalMethod` table of the method using the input|
 |  | Standards | PROV:used|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Not null|
 |  | Automation | None|
 | VISUALISATION | Type | TEXT|
-|  | Description | ID in Visualisations table of the Visualisation used as input to the method|
+|  | Description | ID in `Visualisation`s table of the `Visualisation` used as input to the method|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a Visualisation|
+|  | Validation | Must be an ID of a `Visualisation`|
 |  | Null | Null if VARIABLE is not null|
 |  | Automation | Resolved automatically where possible|
 | VALUE | Type | TEXT|
-|  | Description | ID in Value table of the Variable used as input to the method|
+|  | Description | ID in `Value` table of the `Variable` used as input to the method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Value|
-|  | Null | Null if Value is not null|
-|  | Automation | Resolved automatically from Content definitions|
+|  | Validation | Must be an ID of a `Value`|
+|  | Null | Null if `Value` is not null|
+|  | Automation | Resolved automatically from `Content` definitions|
 
 # StatisticalMethod
 
 ## Description
 
-The StatisticalMethod table records statistical methods that may be applied to data to generate StatisticalVariables.
+The `StatisticalMethod` table records statistical methods that may be applied to data to generate `StatisticalVariable`s.
 
 ## Standards
 
@@ -1594,7 +1594,7 @@ None
 |----------|--------|-------------------------|
 | ID_STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the StatisticalMethod|
+|  | Description | Unique identifier for the `StatisticalMethod`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1603,7 +1603,7 @@ None
 
 ## Description
 
-The StatisticalVariable table records variables that are generated by applying a StatisticalMethod.
+The `StatisticalVariable` table records variables that are generated by applying a `StatisticalMethod`.
 
 ## Standards
 
@@ -1611,7 +1611,7 @@ None
 
 ## Automation
 
-StatisticalVariables may be created automatically as outputs of statistical computations.
+`StatisticalVariable`s may be created automatically as outputs of statistical computations.
 
 
 ##  Attributes
@@ -1620,12 +1620,12 @@ StatisticalVariables may be created automatically as outputs of statistical comp
 |----------|--------|-------------------------|
 | ID_STATISTICAL_VARIABLE |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the StatisticalVariable|
+|  | Description | Unique identifier for the `StatisticalVariable`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | DATA_TYPE | Type | TEXT|
-|  | Description | Data type of the StatisticalVariable|
+|  | Description | Data type of the `StatisticalVariable`|
 |  | Standards | XSD|
 |  | Validation | Valid XSD data type or URI|
 |  | Automation | None|
@@ -1636,16 +1636,16 @@ StatisticalVariables may be created automatically as outputs of statistical comp
 |----------|--------|-------------------------|
 | STATISTIC_GENERATED_BY |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table of the method that generates this StatisticalVariable|
+|  | Description | ID in `StatisticalMethod` table of the method that generates this `StatisticalVariable`|
 |  | Standards | PROV:wasGeneratedBy|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Not null|
 |  | Automation | None|
 | VISUALISATION_GENERATED_BY |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table of the method that generates this Visualisation|
+|  | Description | ID in `VisualisationMethod` table of the method that generates this `Visualisation`|
 |  | Standards | PROV:wasGeneratedBy|
-|  | Validation | Must be an ID of a VisualisationMethod.|
+|  | Validation | Must be an ID of a `VisualisationMethod`.|
 |  | Null | Not null|
 |  | Automation | None|
 
@@ -1653,7 +1653,7 @@ StatisticalVariables may be created automatically as outputs of statistical comp
 
 ## Description
 
-The Statistics table records statistical computations, including when they were performed and how input data was selected.
+The `Statistics` table records statistical computations, including when they were performed and how input data was selected.
 
 ## Standards
 
@@ -1669,7 +1669,7 @@ Entries may be created automatically when statistical computations are performed
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_STATISTICS | Type | TEXT|
-|  | Description | Unique identifier for the Statistics computation|
+|  | Description | Unique identifier for the `Statistics` computation|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1689,17 +1689,17 @@ Entries may be created automatically when statistical computations are performed
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | USED | Type | TEXT|
-|  | Description | ID in StatisticalMethod table of the method used for the computation|
+|  | Description | ID in `StatisticalMethod` table of the method used for the computation|
 |  | Standards | PROV:used|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Not null|
-|  | Automation | Set when the Statistics entry is created|
+|  | Automation | Set when the `Statistics` entry is created|
 
 # Study
 
 ## Description
 
-The Study table records units of scientific work, representing collections of Processes, data, and outputs.
+The `Study` table records units of scientific work, representing collections of `Process`es, data, and outputs.
 
 ## Standards
 
@@ -1707,7 +1707,7 @@ PROV:Activity
 
 ## Automation
 
-Some fields may be populated automatically when Processes are grouped into Studies.
+Some fields may be populated automatically when `Process`es are grouped into Studies.
 
 
 ##  Attributes
@@ -1715,48 +1715,48 @@ Some fields may be populated automatically when Processes are grouped into Studi
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_STUDY | Type | TEXT|
-|  | Description | Unique identifier for the Study|
+|  | Description | Unique identifier for the `Study`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | TITLE | Type | TEXT|
-|  | Description | Title or name of the Study|
+|  | Description | Title or name of the `Study`|
 |  | Standards | dc:title|
 |  | Validation | String|
 |  | Automation | None|
 | START_TIME | Type | DATE|
-|  | Description | Start time of the Study|
+|  | Description | Start time of the `Study`|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
-|  | Automation | May be inferred from earliest Process|
+|  | Automation | May be inferred from earliest `Process`|
 | END_TIME | Type | DATE|
-|  | Description | End time of the Study|
+|  | Description | End time of the `Study`|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
-|  | Automation | May be inferred from latest Process|
+|  | Automation | May be inferred from latest `Process`|
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | PROJECT | Type | TEXT|
-|  | Description | ID in Project table of the Project this Study belongs to|
+|  | Description | ID in `Project` table of the `Project` this `Study` belongs to|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Project|
+|  | Validation | Must be an ID of a `Project`|
 |  | Null | Optional|
 |  | Automation | None|
 | PART | Type | TEXT|
-|  | Description | ID in Study table if this Study is part of another Study|
+|  | Description | ID in `Study` table if this `Study` is part of another `Study`|
 |  | Standards | PROV:wasPartOf|
-|  | Validation | Must be an ID of a Study|
-|  | Null | Null if not part of another Study|
+|  | Validation | Must be an ID of a `Study`|
+|  | Null | Null if not part of another `Study`|
 |  | Automation | None|
 
 # Tag
 
 ## Description
 
-The Tag table records tags that can be used to classify and annotate other entities in the system.
+The `Tag` table records tags that can be used to classify and annotate other entities in the system.
 
 ## Standards
 
@@ -1772,7 +1772,7 @@ None
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_TAG | Type | TEXT|
-|  | Description | Unique identifier for the Tag|
+|  | Description | Unique identifier for the `Tag`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1783,7 +1783,7 @@ This is reification. In the graph database, this will appear as an edge between 
 
 ## Description
 
-The TagMap table records the association of Tags with other entities such as Applications, Boxes, Documentation, Studies, and Methods.
+The `TagMap` table records the association of `Tag`s with other entities such as `Application`s, `Box`es, `Documentation`, Studies, and Methods.
 
 ## Standards
 
@@ -1791,78 +1791,78 @@ None
 
 ## Automation
 
-Tags may be applied manually by users or inferred automatically based on metadata and usage.
+`Tag`s may be applied manually by users or inferred automatically based on metadata and usage.
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | TAG | Type | TEXT|
-|  | Description | ID in Tag table of the Tag being applied|
+|  | Description | ID in `Tag` table of the `Tag` being applied|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Tag|
+|  | Validation | Must be an ID of a `Tag`|
 |  | Null | Not null|
 |  | Automation | None|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table if the Tag applies to an Application|
+|  | Description | ID in `Application` table if the `Tag` applies to an `Application`|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | ASSUMPTION | Type | TEXT|
-|  | Description | ID in Assumptoin table if the Tag applies to an Assumption.|
+|  | Description | ID in Assumptoin table if the `Tag` applies to an `Assumption`.|
 |  | Standards | None|
-|  | Validation | Must be an ID of an Assumption|
+|  | Validation | Must be an ID of an `Assumption`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | BOX | Type | TEXT|
-|  | Description | ID in Box table if the Tag applies to a Box|
+|  | Description | ID in `Box` table if the `Tag` applies to a `Box`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | BOX_TYPE | Type | TEXT|
-|  | Description | ID in BoxType table if the Tag applies to a BoxType|
+|  | Description | ID in `BoxType` table if the `Tag` applies to a `BoxType`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | DOCUMENTATION | Type | TEXT|
-|  | Description | ID in Documentation table if the Tag applies to Documentation|
+|  | Description | ID in `Documentation` table if the `Tag` applies to `Documentation`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Documentation|
+|  | Validation | Must be an ID of a `Documentation`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | OTHER_TAG | Type | TEXT|
-|  | Description | ID in Tag table if the Tag relates to another Tag|
+|  | Description | ID in `Tag` table if the `Tag` relates to another `Tag`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Tag|
+|  | Validation | Must be an ID of a `Tag`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | PERSON | Type | TEXT|
-|  | Description | ID in Person table is the Person in the Person table.|
+|  | Description | ID in `Person` table is the `Person` in the `Person` table.|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Tag|
+|  | Validation | Must be an ID of a `Tag`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | STATISTICAL_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalMethod table if the Tag applies to a statistical method|
+|  | Description | ID in `StatisticalMethod` table if the `Tag` applies to a statistical method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalMethod|
+|  | Validation | Must be an ID of a `StatisticalMethod`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | STUDY | Type | TEXT|
-|  | Description | ID in Study table if the Tag applies to a Study|
+|  | Description | ID in `Study` table if the `Tag` applies to a `Study`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Study|
+|  | Validation | Must be an ID of a `Study`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table if the Tag applies to a visualisation method|
+|  | Description | ID in `VisualisationMethod` table if the `Tag` applies to a visualisation method|
 |  | Standards | None|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Null if not applicable|
 |  | Automation | None|
 
@@ -1870,7 +1870,7 @@ Tags may be applied manually by users or inferred automatically based on metadat
 
 ## Description
 
-The User table records system user accounts, linking operating system user information to a Person.
+The `User` table records system user accounts, linking operating system user information to a `Person`.
 
 ## Standards
 
@@ -1886,7 +1886,7 @@ Most values are obtained automatically from the operating system.
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ID_USER | Type | TEXT|
-|  | Description | Unique identifier for the User|
+|  | Description | Unique identifier for the `User`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -1901,9 +1901,9 @@ Most values are obtained automatically from the operating system.
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | ACCOUNT_OF | Type | TEXT|
-|  | Description | ID in Person table of the Person this User account belongs to|
+|  | Description | ID in `Person` table of the `Person` this `User` account belongs to|
 |  | Standards | PROV:actedOnBehalfOf|
-|  | Validation | Must be an ID of a Person|
+|  | Validation | Must be an ID of a `Person`|
 |  | Null | Not null|
 |  | Automation | Resolved from system/user configuration|
 
@@ -1911,7 +1911,7 @@ Most values are obtained automatically from the operating system.
 
 ## Description
 
-The Uses table records that an Application uses a BoxType as an input or dependency.
+The `Uses` table records that an `Application` uses a `BoxType` as an input or dependency.
 
 ## Standards
 
@@ -1919,7 +1919,7 @@ PROV:used
 
 ## Automation
 
-May be inferred automatically based on Application execution and detected Inputs.
+May be inferred automatically based on `Application` execution and detected `Input`s.
 
 
 ##  Attributes
@@ -1927,7 +1927,7 @@ May be inferred automatically based on Application execution and detected Inputs
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | LOCATOR | Type | TEXT|
-|  | Description | Description of how to locate the Uses input|
+|  | Description | Description of how to locate the `Uses` input|
 |  | Standards | None|
 |  | Validation | Formatted rule string|
 |  | Automation | None|
@@ -1937,21 +1937,21 @@ May be inferred automatically based on Application execution and detected Inputs
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | APPLICATION | Type | TEXT|
-|  | Description | ID in Application table of the Application that uses the input|
+|  | Description | ID in `Application` table of the `Application` that uses the input|
 |  | Standards | PROV:Activity|
-|  | Validation | Must be an ID of an Application|
+|  | Validation | Must be an ID of an `Application`|
 |  | Null | Not null|
 |  | Automation | None|
 | BOX_TYPE | Type | TEXT|
-|  | Description | ID in BoxType table of the type of Box that is used|
+|  | Description | ID in `BoxType` table of the type of `Box` that is used|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Not null|
 |  | Automation | None|
 | IN_FILE | Type | TEXT|
-|  | Description | ID in BoxType table if the Uses input is contained within another file|
+|  | Description | ID in `BoxType` table if the `Uses` input is contained within another file|
 |  | Standards | None|
-|  | Validation | Must be an ID of a BoxType|
+|  | Validation | Must be an ID of a `BoxType`|
 |  | Null | Null if LOCATOR is not 'in-file'|
 |  | Automation | None|
 
@@ -1959,7 +1959,7 @@ May be inferred automatically based on Application execution and detected Inputs
 
 ## Description
 
-The Value table represents values of Variables or StatisticalVariables. It is a virtual table whose entries are retrieved from Boxes rather than stored directly.
+The `Value` table represents values of Variables or `StatisticalVariable`s. It is a virtual table whose entries are retrieved from `Box`es rather than stored directly.
 
 ## Standards
 
@@ -1967,7 +1967,7 @@ PROV:Entity
 
 ## Automation
 
-Values are not stored explicitly; they are retrieved dynamically from Boxes based on Content specifications.
+`Value`s are not stored explicitly; they are retrieved dynamically from `Box`es based on `Content` specifications.
 
 
 ##  Attributes
@@ -1979,14 +1979,14 @@ Values are not stored explicitly; they are retrieved dynamically from Boxes base
 |  | Description | Identifier or representation of the value|
 |  | Standards | None|
 |  | Validation | This should be a unique string|
-|  | Automation | Retrieved from underlying data in Box|
+|  | Automation | Retrieved from underlying data in `Box`|
 | UNITS | Type | TEXT|
 |  | Description | The units of the value.|
 |  | Standards | None|
 |  | Validation | None|
 |  | Automation | None.|
 | FORMAT | Type | TEXT|
-|  | Description | ID in Variable table of the Variable this Value corresponds to|
+|  | Description | ID in `Variable` table of the `Variable` this `Value` corresponds to|
 |  | Standards | None|
 |  | Validation | Values are not alway numbers.|
 |  | Automation | None.|
@@ -1996,72 +1996,72 @@ Values are not stored explicitly; they are retrieved dynamically from Boxes base
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | VARIABLE | Type | TEXT|
-|  | Description | ID in Variable table of the Variable this Value corresponds to|
+|  | Description | ID in `Variable` table of the `Variable` this `Value` corresponds to|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Variable|
+|  | Validation | Must be an ID of a `Variable`|
 |  | Null | Null if STATISTICAL_VARIABLE is used|
-|  | Automation | Resolved via Content definitions|
+|  | Automation | Resolved via `Content` definitions|
 | STATISTICAL_VARIABLE |  | |
 |  | Type | TEXT|
-|  | Description | ID in StatisticalVariable table if this Value is the result of a statistical computation|
+|  | Description | ID in `StatisticalVariable` table if this `Value` is the result of a statistical computation|
 |  | Standards | None|
-|  | Validation | Must be an ID of a StatisticalVariable|
+|  | Validation | Must be an ID of a `StatisticalVariable`|
 |  | Null | Null if VARIABLE is used|
 |  | Automation | Resolved via statistical processing|
 | PARAMETER | Type | TEXT|
-|  | Description | ID in Parameter table if this Value corresponds to a parameter|
+|  | Description | ID in `Parameter` table if this `Value` corresponds to a parameter|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Parameter|
+|  | Validation | Must be an ID of a `Parameter`|
 |  | Null | Optional|
 |  | Automation | Resolved during method execution|
 | STATISTICAL_PARAMETER |  | |
 |  | Type | TEXT|
-|  | Description | ID in Statistics table if this Value corresponds to a Statistic|
+|  | Description | ID in `Statistics` table if this `Value` corresponds to a Statistic|
 |  | Standards | None|
 |  | Validation | Must be an ID of a Statistic|
 |  | Null | Optional|
 |  | Automation | Resolved during method execution|
 | VISUALISATION_PARAMETER |  | |
 |  | Type | TEXT|
-|  | Description | ID in the Visualisation table if this Value corresponds to a Visualisation|
+|  | Description | ID in the `Visualisation` table if this `Value` corresponds to a `Visualisation`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Visualisation|
+|  | Validation | Must be an ID of a `Visualisation`|
 |  | Null | Optional|
 |  | Automation | Resolved during method execution|
 | RESULT_OF | Type | TEXT|
-|  | Description | ID in Statistics table if this Value is the result of a statistical computation|
+|  | Description | ID in `Statistics` table if this `Value` is the result of a statistical computation|
 |  | Standards | PROV:wasGeneratedBy|
-|  | Validation | Must be an ID of a Statistics|
+|  | Validation | Must be an ID of a `Statistics`|
 |  | Null | Optional|
 |  | Automation | Set when statistical outputs are generated|
 | TIME | Type | TEXT|
-|  | Description | ID in Context table representing the time associated with the Value|
+|  | Description | ID in `Context` table representing the time associated with the `Value`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Context|
+|  | Validation | Must be an ID of a `Context`|
 |  | Null | Optional|
-|  | Automation | Derived from Content locators|
+|  | Automation | Derived from `Content` locators|
 | SPACE | Type | TEXT|
-|  | Description | ID in Context table representing the spatial context of the Value|
+|  | Description | ID in `Context` table representing the spatial context of the `Value`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Context|
+|  | Validation | Must be an ID of a `Context`|
 |  | Null | Optional|
-|  | Automation | Derived from Content locators|
+|  | Automation | Derived from `Content` locators|
 | AGENT | Type | TEXT|
-|  | Description | ID in Context table representing the agent associated with the Value|
+|  | Description | ID in `Context` table representing the agent associated with the `Value`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Context|
+|  | Validation | Must be an ID of a `Context`|
 |  | Null | Optional|
-|  | Automation | Derived from Content locators|
+|  | Automation | Derived from `Content` locators|
 | LINK | Type | TEXT|
-|  | Description | ID in Context table representing link relationships associated with the Value|
+|  | Description | ID in `Context` table representing link relationships associated with the `Value`|
 |  | Standards | None|
-|  | Validation | Must be an ID of a Context|
+|  | Validation | Must be an ID of a `Context`|
 |  | Null | Optional|
-|  | Automation | Derived from Content locators|
+|  | Automation | Derived from `Content` locators|
 | CONTAINED_IN | Type | TEXT|
-|  | Description | ID in Box table from which the Value is retrieved|
+|  | Description | ID in `Box` table from which the `Value` is retrieved|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Not null|
 |  | Automation | Determined from data source|
 
@@ -2069,7 +2069,7 @@ Values are not stored explicitly; they are retrieved dynamically from Boxes base
 
 ## Description
 
-The Variable table records variables that describe data, including their name, type, and roles such as time, space, agent, or link.
+The `Variable` table records variables that describe data, including their name, type, and roles such as time, space, agent, or link.
 
 ## Standards
 
@@ -2077,7 +2077,7 @@ None
 
 ## Automation
 
-Variables are generally defined by the user; some roles may be inferred during data processing.
+`Variable`s are generally defined by the user; some roles may be inferred during data processing.
 
 
 ##  Attributes
@@ -2124,7 +2124,7 @@ Variables are generally defined by the user; some roles may be inferred during d
 
 ## Description
 
-The Visualisation table records visualisations generated from data, including when they were created and how the data was selected.
+The `Visualisation` table records visualisations generated from data, including when they were created and how the data was selected.
 
 ## Standards
 
@@ -2141,17 +2141,17 @@ Entries may be created automatically when a visualisation is generated.
 |----------|--------|-------------------------|
 | ID_VISUALISATION |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the Visualisation|
+|  | Description | Unique identifier for the `Visualisation`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
 | DATE | Type | DATE|
-|  | Description | Date the Visualisation was created|
+|  | Description | Date the `Visualisation` was created|
 |  | Standards | ISO8601|
 |  | Validation | Datetime string|
 |  | Automation | Set automatically at creation time|
 | QUERY | Type | TEXT|
-|  | Description | Query used to select data for the Visualisation|
+|  | Description | Query used to select data for the `Visualisation`|
 |  | Standards | None|
 |  | Validation | Formatted string|
 |  | Automation | None|
@@ -2162,23 +2162,23 @@ Entries may be created automatically when a visualisation is generated.
 |----------|--------|-------------------------|
 | VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | ID in VisualisationMethod table of the method used to generate the Visualisation|
+|  | Description | ID in `VisualisationMethod` table of the method used to generate the Visualisation|
 |  | Standards | PROV:used|
-|  | Validation | Must be an ID of a VisualisationMethod|
+|  | Validation | Must be an ID of a `VisualisationMethod`|
 |  | Null | Not null|
-|  | Automation | Set when the Visualisation is created|
+|  | Automation | Set when the `Visualisation` is created|
 | CONTAINED_IN | Type | TEXT|
-|  | Description | ID in Box table of the Box containing the Visualisation|
+|  | Description | ID in `Box` table of the `Box` containing the `Visualisation`|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a Box|
+|  | Validation | Must be an ID of a `Box`|
 |  | Null | Optional|
-|  | Automation | Set if output is stored in a Box|
+|  | Automation | Set if output is stored in a `Box`|
 
 # VisualisationMethod
 
 ## Description
 
-The VisualisationMethod table records methods used to generate visualisations from data.
+The `VisualisationMethod` table records methods used to generate visualisations from data.
 
 ## Standards
 
@@ -2195,7 +2195,7 @@ None
 |----------|--------|-------------------------|
 | ID_VISUALISATION_METHOD |  | |
 |  | Type | TEXT|
-|  | Description | Unique identifier for the VisualisationMethod|
+|  | Description | Unique identifier for the `VisualisationMethod`|
 |  | Standards | None|
 |  | Validation | Must be unique|
 |  | Automation | Automated by the instantiating framework|
@@ -2204,7 +2204,7 @@ None
 
 ## Description
 
-The VisualisationValue table links Values to Visualisations, indicating which Values are used in a given Visualisation.
+The `VisualisationValue` table links  a `Value` to a `Visualisation`, indicating which `Value`s are used in a given `Visualisation`.
 
 ## Standards
 
@@ -2212,23 +2212,23 @@ PROV:used
 
 ## Automation
 
-Entries are created automatically when a Visualisation is generated.
+Entries are created automatically when a `Visualisation` is generated.
 
 ##  Relationships
 
 | Field    |Property| Value                   |
 |----------|--------|-------------------------|
 | VALUE | Type | TEXT|
-|  | Description | ID in Value table of the Value used in the Visualisation|
+|  | Description | ID in `Value` table of the `Value` used in the `Visualisation`.|
 |  | Standards | PROV:Entity|
-|  | Validation | Must be an ID of a Value|
-|  | Null | Not null|
-|  | Automation | Populated automatically when the Visualisation is created|
+|  | Validation | Must be an ID of a `Value`.|
+|  | Null | Not null.|
+|  | Automation | Populated automatically when the `Visualisation` is created.|
 | VISUALISATION | Type | TEXT|
-|  | Description | ID in Visualisation table of the Visualisation using the Value|
-|  | Standards | PROV:Activity|
-|  | Validation | Must be an ID of a Visualisation|
-|  | Null | Not null|
-|  | Automation | Populated automatically when the Visualisation is created|
+|  | Description | ID in `Visualisation` table of the `Visualisation` using the `Value`.|
+|  | Standards | PROV:Activity.|
+|  | Validation | Must be an ID of a `Visualisation`.|
+|  | Null | Not null.|
+|  | Automation | Populated automatically when the `Visualisation` is created.|
 
 

@@ -35,7 +35,7 @@ bibliography: citations.bib
 
 # Introduction
 
-The replication 'crisis' [@finelli2018replication] in science generally (and
+The replication 'crisis' [@fanelli2018replication] in science generally (and
 especially the social sciences [@shrout2018replication]) has
 its correlate in social simulation [@edmonds2003]. In our own work [@polhill2017lessons],
 the complicated computational workflows associated with preparing, running and
@@ -58,7 +58,7 @@ provenance can be recorded.
 
 This specification builds on earlier work towards metadata standards for
 sharing simulation outputs [@polhill2014towards]. The schema diagram is shown
-in Figure 2. 
+in @{fig:schema}.
 
 Note originally this schema was designed to run on a relational database, but
 later work has adapted it to run on graph database as well, due to ease of querying
@@ -80,11 +80,11 @@ produces the CSV file is coarse-grained. Turning to the other dimension,
 provenance metadata describes what actually happens (run W of simulation X
 produced output file Y), whilst workflow metadata describes what could happen
 (simulation X produces an output file of type Z). The distinctions are
-summarised in Figure 1.
+summarised in @{fig:dimensions}.
 
-![Dimensions of metadata](img/dimensions_of_metadata.png)
+![Dimensions of metadata](img/dimensions_of_metadata.png){#fig:dimensions}
 
-![Metadata schema for MIRACLE. Boxes indicate tables, arcs represent relations, with 'forked' arrowheads showing the 'many' part of a many-to-one or many-to-many relationship. Tables are coloured in brown if they are breaking a many-to-many relationship (a reified relationship), with yellow, orange and green being used to denote specialisations from the PROV standard Activity, Entity and Agent classes respectively. Thick borders denote tables that are potentially autopopulated. Other tables are assumed to be entirely populated by users. Blue octagons show external databases/ontologies to which this one could be linked.](img/diagram-01.png)
+![Metadata schema for MIRACLE. Boxes indicate tables, arcs represent relations, with 1 indicating a singular relations, "*" indicating 'many' part of a many-to-one or many-to-many relationship. Tables are coloured in brown if they are breaking a many-to-many relationship (a reified relationship), with yellow, orange and green being used to denote specialisations from the PROV standard Activity, Entity and Agent classes respectively. Blue boxes show external databases/ontologies to which this one could be linked.](img/diagram-01.png){#fig:schema}
 
 With the schema now having a large number of tables, it is better to
 consider it in parts. The following subgraphs of the schema (which
@@ -113,16 +113,16 @@ in turn, with consideration given to the degree of user interaction and
 maintenance. The remainder of the document explains each
 table in detail.
 
-## Analysis
+## Analysis {#sec:analysis}
 
-The subgraph for recording metadata about Analysis is shown in Figure 3.
-Variables are metadata about the content of files, and may have several
-Values. These Values may be visualised, and Statistics may be computed
-using them. Statistics are computed using `StatisticalMethods`, and
+The subgraph for recording metadata about Analysis is shown in @{fig:diagram-02}. 
+A `Variable` is metadata about the contents of files, and may have more than one 
+`Value`. A `Value` may be visualised, and `Statistics` may be computed
+using them. `Statistics` are computed using `StatisticalMethods`, and
 Visualisations constructed using `VisualisationMethods`.
-`StatisticalMethods` produce StatisticalVariables as outputs, which are
-stored in the Values table as results-of Statistics. Statistics and
-Visualisations are thus conceived as Activities in the PROV vocabulary
+`StatisticalMethods` produce `StatisticalVariables` as outputs, which are
+stored in the `Value`s table as results-of `Statistics`. `Statistics` and
+`Visualisations` are thus conceived as a `PROV::Activity` in the PROV vocabulary
 [@gao2020big].
 
 When a user of the system has identified some statistics or
@@ -130,41 +130,41 @@ visualisations they want to be able to reuse in other studies or record
 provenance about, as part of recording the activity, if the statistics
 are not something already added by another user, they would make an
 entry in the `StatisticalMethods`: or `VisualisationMethods` tables. If
-known, the user would also record any Assumptions Entailed by the
+known, the user would also record any `Assumption`s `Entailment` by the
 methods. This information is not a requirement, as the user may not have
 relevant expertise to assert that a particular computation involves an
-Assumption; however, this information can be added at any time by any
-user. The Employs table can also be filled with data recording when one
-Statistical- or Visualisation-Method uses a StatisticalVariable as
+`Assumption`; however, this information can be added at any time by any
+user. The `Employs` table can also be filled with data recording when one
+`StatisticalMethod` or `VisualisationMethod` uses a `StatisticalVariable` as
 input.
 
-Assumptions could be quite trivial -- in the most simple case, for
-example, that a numeric Variable is assumed to be a cardinal (as opposed
+`Assumption`s could be quite trivial -- in the most simple case, for
+example, that a numeric `Variable` is assumed to be a cardinal (as opposed
 to ordinal or nominal) when computing the mean of its Values. For other
-statistics, Assumptions can record such things as whether the Variable
+statistics, `Assumption`s can record such things as whether the `Variable`
 is normally distributed, or has constant variance.
 
-Once an Assumption has been stated as Entailed by a Statistical- or
-Visualisation-Method, it can be automatically inferred that Persons have
-made Assumptions about Variables, where they have done Statistics or
-Visualisations that use the Methods and Values of those Variables that
+Once an `Assumption` has been stated as `Entailment` by a `StatisticalMethod` or
+`VisualisationMethod`, it can be automatically inferred that `Person`s have
+made `Assumption`s about `Variable`s, where they have done `Statistics` or
+`Visualisation`s that use the Methods and `Values` of those `Variable`s that
 are returned by the queries used to get the raw data on which the
 activities operated. The query is stored, along with the date made, in
 order to avoid populating large relational tables recording the
-Visualisations and Statistics that used Values as input data. Note that
-Values may also be used to store Parameters and StatisticalVariables
-that act to configure Visualisations and Statistics. These are captured
+`Visualisation`s and `Statistics` that used `Value`s as input data. Note that
+`Value`s may also be used to store `Parameter`s and `StatisticalVariable`s
+that act to configure `Visualisation`s and `Statistics`. These are captured
 using the visualisation-parameter and statistical-parameter relations,
-and the StatisticalInput table.
+and the `StatisticalInput` table.
 
-Visualisations are automatically inferred when the `Box` they are
-contained-in has a `BoxType` with a VisualisationMethod in it. The
-Values visualised (recorded in the VisualisationValue table) can be
+`Visualisation`s are automatically inferred when the `Box` they are
+contained-in has a `BoxType` with a `VisualisationMethod` in it. The
+`Value`s visualised (recorded in the `VisualisationValue` table) can be
 (possibly somewhat dubiously) inferred from the Input to the Application
-that ran the Process that created the `Box`, until such time as
+that ran the `Process` that created the `Box`, until such time as
 statistical tools support logging this information in sufficient detail.
 
-![The analysis subgraph of the schema](img/diagram-02.png)
+![The analysis subgraph of the schema](img/diagram-02.png){#fig:diagram-02}
 
 ## External ontologies
 
@@ -173,7 +173,7 @@ Though not explicitly noted in the tables, with the exception of OpenABM
 various external ontologies and schemas are relevant, and could be
 linked to if required. There are various ways such links could be
 manifested (relational tables for example, implementing each of the blue
-dashed lines in Figure 4), and those suggested are by no means
+dashed lines in @{fig:diagram-03}), and those suggested are by no means
 exhaustive. Neither is it necessarily the case that any specific
 ontology or external schema is proposed or adopted. The following gives
 examples of specific external links:
@@ -221,7 +221,18 @@ examples of specific external links:
     may be a more durable choice than domain-specific alternatives for
     capturing workflow provenance in particular [@herschel2017survey].
 
-![Subgraph showing possible tables that external ontologies could link to, and some relationships between them.](img/diagram-03.png)
+  + GitHub/Zenodo -- links to source-code repositories and their citable
+    archived releases. GitHub is the natural place to link an `Application`'s
+    container (in our terminology `Box`) to its version-controlled source code,
+    and to the history of commits that produced it. However, since a GitHub
+    repository is mutable and its URL is not guaranteed to remain stable,
+    Zenodo's GitHub integration -- which mints a DOI for an immutable snapshot
+    of a repository whenever a release is tagged -- provides the more durable,
+    citable record better suited to linking from the Documentation table, and
+    is increasingly the standard route by which research software is formally
+    cited in publications.
+
+![Subgraph showing possible tables that external ontologies could link to, and some relationships between them.](img/diagram-03.png){#fig:diagram-03}
 
 In terms of maintenance, provision for making the links to external
 databases would require users to supply the relevant information, except
@@ -231,41 +242,41 @@ query them for possibly relevant data to link to.
 ## Fine grain
 
 The fine grain metadata is information about the contents of files,
-including visualisations, and values of variables (Figure 5). Much of
-this has been covered already in the Analysis section above, but here we
+including visualisations, and values of variables (@{fig:diagram-04}). Much of
+this has been covered already in the Analysis @{sec:analysis} section above, but here we
 show how Boxes are disaggregated from a provenance perspective
-through saying that Values and Visualisations are contained-in them, and
+through saying that `Value`s and `Visualisation`s are contained-in them, and
 from a workflow perspective through saying that `BoxType`s have
-Variables and `VisualisationMethods` as their content. The provenance side
+`Variable`s and `VisualisationMethods` as their content. The provenance side
 can be populated automatically, but the workflow metadata would need to
-be provided by the user when describing an Application they were making
+be provided by the user when describing an `Application` they were making
 available to the system: specifically, the user will need to describe
 the inputs and outputs of each application, and for each associated
-`BoxType`, provide details of Variables and `VisualisationMethods`
+`BoxType`, provide details of `Variable`s and `VisualisationMethods`
 given as content. For some file formats, autodetection may assist with
-populating the Variable table -- e.g. given an example of a CSV file
+populating the `Variable` table -- e.g. given an example of a CSV file
 used by or generated by an application, a header row could be used to
-suggest names for Variables they supply.
+suggest names for `Variable`s they supply.
 
-![Subgraph showing the fine grain metadata tables](img/diagram-04.png)
+![Subgraph showing the fine grain metadata tables](img/diagram-04.png){#fig:diagram-04}
 
 ## Folksonomy
 
 Folksonomies are informal ontologies developed by a user communities,
 with tagging being a pretty much standard way in which this is achieved.
-It is not proposed to enrich that here. In Figure 6, the tables thought
+It is not proposed to enrich that here. In @{fig:diagram-05}, the tables thought
 most likely to be of interest for users to tag are depicted, though this
 needn't be exhaustive. Each of the arcs from the Tag table would
 need a relational table to break the jmany-many relationship between
 tags and the concepts they are applied to.
 
-![Folksonomy subgraph. Each of the arcs would itself be a reified table showing the application of Tags to tables.](img/diagram-05.png)
+![Folksonomy subgraph. Each of the arcs would itself be a reified table showing the application of Tags to tables.](img/diagram-05.png){#fig:diagram-05}
 
 ## Project
 
-![Subgraph capturing metadata about projects](img/diagram-06.png)
+![Subgraph capturing metadata about projects](img/diagram-06.png){#fig:diagram-06}
 
-Project metadata is largely for users to enter, and previously may have been
+Project metadata (@{fig:diagram-06}) is largely for users to enter, and previously may have been
 regarded as unduly onerous [@edwards2014lessons]. However, it tells an important
 part of the story of a model from a Type 1 provenance [@pignotti2013bigprov]
 perspective, and with the advent of large language models, much of
@@ -278,19 +289,19 @@ simulation outputs in useful groups.
 
 ## Provenance
 
-![Provenance subgraph](img/diagram-07.png)
+![Provenance subgraph](img/diagram-07.png){#fig:diagram-07}
 
-Provenance is very much at the heart of the system, with an important
+Provenance (@{fig:diagram-07}) is very much at the heart of the system, with an important
 role in recording how results from a model presented in journal articles
 are produced [@oliveira2018provenance]. Most of the tables here are autopopulated, as particularly
 for large scale analyses, user entry is an unrealistic goal. The system
 therefore needs to act as a wrapper around the scripts and tools
-(Applications) used to process the raw output from the simulation (which
+(`Application`s) used to process the raw output from the simulation (which
 is the starting point of the MIRACLE project [@jin2017miracle]) into the result used as
 part of an article. At the coarse grain, the central activity is the
-Process, which is a record of all relevant information of a process that
-ran on a Computer. This includes anything needed to replicate that
-Process under the same circumstances: the input files it used,
+`Process`, which is a record of all relevant information of a process that
+ran on a `Computer`. This includes anything needed to replicate that
+`Process` under the same circumstances: the input files it used,
 command-line arguments, environment variables (essentially, anything
 that might affect its behaviour), and the output files it generated, the
 importance of which is illustrated by the challenges encountered when
@@ -303,9 +314,9 @@ commands within the same operating systems, use different conventions
 for processing input on the command line, and input and output
 redirection. The Argument table attempts to record all relevant details
 about command-line arguments, allowing ArgumentValues to be inferred
-from a specific command-line instruction activating a Process. This is
+from a specific command-line instruction activating a `Process`. This is
 important in avoiding the need for users to supply too much information
-each time they run an Application.
+each time they run an `Application`.
 
 Batch-file processing is assumed at the coarse grain; where processes
 involve user interaction that might affect the behaviour, automatic
@@ -314,60 +325,61 @@ might be used during exploratory analysis of simulation output data,
 ultimately for reproducibility of results and keeping records of
 activities done [@pritchard2025formal], these must ultimately be manifested as scripts that can
 be run in batch mode, once a decision is taken that a particular
-analysis step needs to be recorded as an application. Applications that
+analysis step needs to be recorded as an application. `Application`s that
 only support GUI interaction can therefore not be supported (and
 arguably should be derided as virtually useless for any scientific
 endeavour -- assuming repeatability is a desirable attribute of that
 work).
 
-At the fine-grain, Statistics and Visualisations are the central
+At the fine-grain, `Statistics` and `Visualisation`s are the central
 activities. Again, although GUI interaction cannot be supported,
-command-line interaction potentially could. Parameters and
-StatisticalInput would need to be recorded, and the raw data on which
+command-line interaction potentially could. `Parameter`s and
+`StatisticalInput` would need to be recorded, and the raw data on which
 the activities operate captured somehow in a query allowing the same set
 of data to be operated on. Recording the date at which the query was
-made is therefore important, especially if Values of Variables are
+made is therefore important, especially if `Value`s of `Variable`s are
 subsequently populated that might affect the ability of future analyses
-to reuse the same data. A short-cut might be to store the date a Value
-was generated in the Values table, but since this table is expected to
+to reuse the same data. A short-cut might be to store the date a `Value`
+was generated in the `Value`s table, but since this table is expected to
 be 'virtual' (in that a supporting system would gather relevant data
 from the raw data files), the date can be captured from the dates of the
-Processes generating the `Box`es in which the Values appear, or the
-date at which the Statistics were computed if the Value is a
-StatisticalInput.
+`Process`es generating the `Box`es in which the `Value`s appear, or the
+date at which the `Statistics` were computed if the `Value` is a
+`StatisticalInput`.
 
 ## Services
 
-![Services subgraph](img/diagram-08.png)
+![Services subgraph](img/diagram-08.png){#fig:diagram-08}
 
 
-The services part of the graph depicted in Figure 9 provides a simple
-model intended to be used to determine whether an Application can be run
-on a Computer. This involves checking the Requirement Specifications of
-the Application (and recursively of any Dependencies) against the
-Specifications of a Computer. Requirements can be specified in one of
-three ways -- for numeric Requirement Specifications, a 'minimum'
-Requirement must be exceeded by the Specification of the Computer (e.g.
-for RAM). For all types of Requirement Specifications, an 'exact'
-Specification must be equal (an example might be the OS -- if the
-Application has very specific demands), whilst a 'match' Specification
-is a regular expression that the Specification of the Computer must
-match. The results are stored in the Meets reified relationship.
+The services part of the graph depicted in @{fig:diagram-08} provides a simple
+model intended to be used to determine whether an `Application` can be run
+on a `Computer`. This involves checking the `Requirement` `Specification`s of
+the `Application` (and recursively of any Dependencies) against the
+`Specification`s of a `Computer`. `Requirement`s can be specified in one of
+three ways -- for numeric `Requirement` `Specification`s, a 'minimum'
+`Requirement` must be exceeded by the `Specification` of the `Computer` (e.g.
+for RAM). For all types of `Requirement` `Specification`s, an 'exact'
+`Specification` must be equal (an example might be the OS -- if the
+`Application` has very specific demands), whilst a 'match' `Specification` is a
+regular expression that the `Specification` of the `Computer` must match. The
+results are stored in the `Meets` reified relationship (or as a direct link
+between the two if this a graph database).
 
-A more sophisticated implementation would wrap each Application in a web
+A more sophisticated implementation would wrap each `Application` in a web
 service. This would also be more secure if responsibility for providing
-Applications as web services was in the hands of their developers -- users of the framework
-would then not be uploading Applications to their own system, but instead
+`Application`s as web services was in the hands of their developers -- users of the framework
+would then not be uploading `Application`s to their own system, but instead
 sending data for processing by other servers, and capturing metadata
 about these interactions. The services architecture could then draw much
-more heavily on standard web services ontologies, such as OWL-S and
-WSDL.
+more heavily on web services ontologies, for example OWL-S [@martin2007bringing] and
+WSDL [@christensen2001wsdl].
 
 ## Workflow
 
-![Workflow subgraph](img/diagram-09.png)
+![Workflow subgraph](img/diagram-09.png){#fig:diagram-09}
 
-The standard workflow model provides prescriptive 'recipes' for
+The standard workflow model (@{fig:diagram-09}) provides prescriptive 'recipes' for
 undertaking specific procedures [@atkinson2017scientific]. Though we are interested in that here,
 and have provided a rudimentary sequence-based `Pipeline` table to handle
 that, we are also interested in providing support for exploring what
@@ -375,12 +387,12 @@ that, we are also interested in providing support for exploring what
 be done' before running an `Application`. For example, suppose we are
 interested in getting a `Value` for a particular `Variable`. Then we can see
 which `BoxType`s have that `Variable` in their `Content`, and which
-Applications have the `BoxType` as a `Product`. If the `BoxType`s
-those Applications Use have no instances, then we can find Applications
+`Application`s have the `BoxType` as a `Product`. If the `BoxType`s
+those `Application`s Use have no instances, then we can find `Application`s
 that have the Uses `BoxType`s as their `Product`, and so on. We can
 also search for `Pipeline`s that have the required `Product` by exploring
 the `Product`s of the last element of each `Pipeline`'s list-based
-structure, and checking the Uses of the first element.
+structure, and checking the `Uses` of the first element.
 
 This way, it should be possible, given a set of raw simulation outputs,
 to search for sequences of `Application`s to apply that generate a
@@ -462,7 +474,5 @@ should be allowed to stop the possibility of SQL injections.
 ### Relationships
 
 None.
-
-# References
 
 

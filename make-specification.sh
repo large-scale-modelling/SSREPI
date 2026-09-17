@@ -12,6 +12,17 @@ else
 	exit 255
 fi
 cat .\miracle-specification-end.md > .\miracle-specification.md
-pandoc .\miracle-specification.md --toc --citeproc --bibliography=citations.bib -o miracle-specification.pdf
 
+# The order of these parameter is immportant
+
+pandoc miracle-specification.md \
+        --toc \
+	--number-sections \
+        -o miracle-specification.pdf \
+        --filter=.\pandoc-crossref \
+        --citeproc \
+        --pdf-engine=xelatex \
+        -V mainfont="Carlito" \
+        -V geometry:margin=1in \
+        --bibliography=citations.bib
 

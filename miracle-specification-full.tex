@@ -4,6 +4,7 @@
 \documentclass[
 ]{article}
 \usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
@@ -19,6 +20,7 @@
 \usepackage{lmodern}
 \ifPDFTeX\else
   % xetex/luatex font selection
+  \setmainfont[]{Carlito}
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -37,6 +39,9 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{longtable,booktabs,array}
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
+\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -99,19 +104,58 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \usepackage{etoolbox}
 \AtBeginEnvironment{longtable}{\footnotesize}
+\makeatletter
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\captionsetup[subfigure]{margin=0.5em}
+\AtBeginDocument{%
+\renewcommand*\figurename{Figure}
+\renewcommand*\tablename{Table}
+}
+\AtBeginDocument{%
+\renewcommand*\listfigurename{List of Figures}
+\renewcommand*\listtablename{List of Tables}
+}
+\newcounter{pandoccrossref@subfigures@footnote@counter}
+\newenvironment{pandoccrossrefsubfigures}{%
+\setcounter{pandoccrossref@subfigures@footnote@counter}{0}
+\begin{figure}\centering%
+\gdef\global@pandoccrossref@subfigures@footnotes{}%
+\DeclareRobustCommand{\footnote}[1]{\footnotemark%
+\stepcounter{pandoccrossref@subfigures@footnote@counter}%
+\ifx\global@pandoccrossref@subfigures@footnotes\empty%
+\gdef\global@pandoccrossref@subfigures@footnotes{{##1}}%
+\else%
+\g@addto@macro\global@pandoccrossref@subfigures@footnotes{, {##1}}%
+\fi}}%
+{\end{figure}%
+\addtocounter{footnote}{-\value{pandoccrossref@subfigures@footnote@counter}}
+\@for\f:=\global@pandoccrossref@subfigures@footnotes\do{\stepcounter{footnote}\footnotetext{\f}}%
+\gdef\global@pandoccrossref@subfigures@footnotes{}}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
 \hypersetup{
   pdftitle={MIRACLE simulation outputs metadata specification version 3.0},
-  pdfauthor={Gary Polhill; Lorenzo Milazzo; Dawn Parker; Xiongbing Jin; Calvin Pritchard; Ju-Sung Lee; Doug Salt},
+  pdfauthor={Gary Polhill; Lorenzo Milazzo; Dawn Parker; Xiongbing Jin; Calvin Pritchard; Ju-Sung Lee; Tatiana Filatova; Alexey Voinov; Terry Dawson; Doug Salt},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{MIRACLE simulation outputs metadata specification version 3.0}
 \author{Gary Polhill \and Lorenzo Milazzo \and Dawn
 Parker \and Xiongbing Jin \and Calvin Pritchard \and Ju-Sung
-Lee \and Doug Salt}
+Lee \and Tatiana Filatova \and Alexey Voinov \and Terry Dawson \and Doug
+Salt}
 \date{29 April 2016}
 
 \begin{document}
@@ -127,6 +171,7 @@ outputs.
 }
 \section{ChangeLog}\label{changelog}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
@@ -165,22 +210,52 @@ statisticalInput, statisticalVariable and statisticalMethod \\
 3.0.0 & 9 Sep 2026 & Doug Salt & Converted to markdown and updated for
 RESAS release \\
 \end{longtable}
+}
 
-\section{Introduction and overview}\label{introduction-and-overview}
+\section{Introduction}\label{introduction}
+
+The replication `crisis' (Fanelli 2018) in science generally (and
+especially the social sciences (Shrout and Rodgers 2018)) has its
+correlate in social simulation (Edmonds and Hales 2003). In our own work
+(Polhill et al. 2017), the complicated computational workflows
+associated with preparing, running and analysing the results of
+agent-based models have demonstrated the need for automated
+record-keeping.
+
+Earlier work identified the various ways in which provenance metadata
+could be used to help analyse agent-based models (Pignotti et al. 2013).
+Three types of provenance were identified in that work:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The social processes outlining the history of model development.
+\item
+  Execution of the model and associated code for analysing its results.
+\item
+  Detailed state-change metadata per run.
+\end{enumerate}
+
+This document provides a framework in which the first two of these types
+of provenance can be recorded.
+
+\section{Overview}\label{overview}
 
 This specification builds on earlier work towards metadata standards for
 sharing simulation outputs (Polhill et al. 2014). The schema diagram is
-shown in Figure 2.
+shown in fig.~\ref{fig:schema}.
 
 Note originally this schema was designed to run on a relational
-database, but in addition has been adapted to also run on graph database
-as well, due to ease of querying on a graph database (Davoudian and Liu
+database, but later work has adapted it to run on graph database as
+well, due to ease of querying on a graph database (Davoudian and Liu
 2020). As such there are many reified relationships in the relational
-description of the database. Please note that in the graph database,
-this have been converted to direct links between entities, the many to
-many relation being more natural in a graph database setting. A note has
-been made when a reified relationship in the relational schema has been
-replaced with a direct link in the graph database.
+description of the database. Please note that in the graph database, the
+reified relationships have been converted to direct links between
+entities; the many to many relation being more natural in a graph
+database setting. A note has been made when a reified relationship in
+the relational schema has been replaced with a direct link in the graph
+database.
 
 There are two important dimensions of distinction. First is fine- versus
 coarse- grained metadata. Second is provenance versus workflow.
@@ -194,130 +269,135 @@ the CSV file is coarse-grained. Turning to the other dimension,
 provenance metadata describes what actually happens (run W of simulation
 X produced output file Y), whilst workflow metadata describes what could
 happen (simulation X produces an output file of type Z). The
-distinctions are summarised in Figure 1.
+distinctions are summarised in fig.~\ref{fig:dimensions}.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Dimensions of metadata}]{img/dimensions_of_metadata.png}}
-\caption{Dimensions of metadata}
+\caption{Dimensions of metadata}\label{fig:dimensions}
 \end{figure}
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Metadata schema for MIRACLE. Boxes indicate tables, arcs represent relations, with `forked' arrowheads showing the `many' part of a many-to-one or many-to-many relationship. Tables are coloured in brown if they are breaking a many-to-many relationship (a reified relationship), with yellow, orange and green being used to denote specialisations from the PROV standard Activity, Entity and Agent classes respectively. Thick borders denote tables that are potentially autopopulated. Other tables are assumed to be entirely populated by users. Blue octagons show external databases/ontologies to which this one could be linked.}]{img/diagram-01.png}}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Metadata schema for MIRACLE. Boxes indicate tables, arcs represent relations, with 1 indicating a singular relations, ``*'' indicating `many' part of a many-to-one or many-to-many relationship. Tables are coloured in brown if they are breaking a many-to-many relationship (a reified relationship), with yellow, orange and green being used to denote specialisations from the PROV standard Activity, Entity and Agent classes respectively. Blue boxes show external databases/ontologies to which this one could be linked.}]{img/diagram-01.png}}
 \caption{Metadata schema for MIRACLE. Boxes indicate tables, arcs
-represent relations, with `forked' arrowheads showing the `many' part of
-a many-to-one or many-to-many relationship. Tables are coloured in brown
-if they are breaking a many-to-many relationship (a reified
-relationship), with yellow, orange and green being used to denote
-specialisations from the PROV standard Activity, Entity and Agent
-classes respectively. Thick borders denote tables that are potentially
-autopopulated. Other tables are assumed to be entirely populated by
-users. Blue octagons show external databases/ontologies to which this
-one could be linked.}
+represent relations, with 1 indicating a singular relations, ``*''
+indicating `many' part of a many-to-one or many-to-many relationship.
+Tables are coloured in brown if they are breaking a many-to-many
+relationship (a reified relationship), with yellow, orange and green
+being used to denote specialisations from the PROV standard Activity,
+Entity and Agent classes respectively. Blue boxes show external
+databases/ontologies to which this one could be
+linked.}\label{fig:schema}
 \end{figure}
 
 With the schema now having a large number of tables, it is better to
-consider it in parts. The schema visualisation document is now in a
-format suitable for using C pre-processor commands to pull out various
-subgraphs. The following are available:
+consider it in parts. The following subgraphs of the schema (which may
+partially intersect) cover different topic areas of the whole:
 
 \begin{itemize}
 \item
-  ALL: Show the entire schema.
-\item
-  ANALYSIS: Show the part of the fine grain pertaining only to analysis
+  \textbf{Analysis}: Part of the fine grain pertaining only to analysis
   and visualisation.
 \item
-  EXTERNAL: Show the links to external ontologies.
+  \textbf{External}: Links to external ontologies.
 \item
-  FINEGRAIN: Show everything relating to fine grain metadata.
+  \textbf{Fine-grain}: All fine-grain metadata.
 \item
-  FOLKSONOMY: Show the tables that allow tagging.
+  \textbf{Folksonomy}: Tables allowing tagging.
 \item
-  PROJECT: Show information relating to metadata about projects.
+  \textbf{Project}: Metadata about projects.
 \item
-  PROV: Show tables capturing provenance metadata.
+  \textbf{Prov}: Tables capturing provenance metadata.
 \item
-  SERVICES: Show tables pertaining to service-provision and matching
+  \textbf{Services}: Tables pertaining to service-provision and matching
   requirements against specifications.
 \item
-  WORKFLOW: Show tables relating to workflow.
+  \textbf{Workflow}: Tables relating to workflow.
 \end{itemize}
 
 The overview section now continues with an explanation of each subgraph
 in turn, with consideration given to the degree of user interaction and
-maintenance. The remainder of the document thereafter explains each
-table in detail.
+maintenance. The remainder of the document explains each table in
+detail.
 
-\section{Analysis}\label{analysis}
+\subsection{Analysis}\label{sec:analysis}
 
-The subgraph for recording metadata about Analysis is shown in Figure 3.
-Variables are metadata about the content of files, and may have several
-Values. These Values may be visualised, and Statistics may be computed
-using them. Statistics are computed using StatisticalMethods, and
-Visualisations constructed using VisualisationMethods.
-StatisticalMethods produce StatisticalVariables as outputs, which are
-stored in the Values table as results-of Statistics. Statistics and
-Visualisations are thus conceived as Activities in the PROV vocabulary
-(Gao, Chen, and Du 2020).
+The subgraph for recording metadata about Analysis is shown in
+fig.~\ref{fig:diagram-02}. A \texttt{Variable} is metadata about the
+contents of files, and may have more than one \texttt{Value}. A
+\texttt{Value} may be visualised, and \texttt{Statistics} may be
+computed using them. \texttt{Statistics} are computed using
+\texttt{StatisticalMethods}, and Visualisations constructed using
+\texttt{VisualisationMethods}. \texttt{StatisticalMethods} produce
+\texttt{StatisticalVariables} as outputs, which are stored in the
+\texttt{Value}s table as results-of \texttt{Statistics}.
+\texttt{Statistics} and \texttt{Visualisations} are thus conceived as a
+\texttt{PROV::Activity} in the PROV vocabulary (Gao et al. 2020).
 
 When a user of the system has identified some statistics or
 visualisations they want to be able to reuse in other studies or record
 provenance about, as part of recording the activity, if the statistics
 are not something already added by another user, they would make an
-entry in the StatisticalMethods or VisualisationMethods tables. If
-known, the user would also record any Assumptions Entailed by the
-methods. This information is not a requirement, as the user may not have
-relevant expertise to assert that a particular computation involves an
-Assumption; however, this information can be added at any time by any
-user. The Employs table can also be filled with data recording when one
-Statistical- or Visualisation-Method uses a StatisticalVariable as
+entry in the \texttt{StatisticalMethods}: or
+\texttt{VisualisationMethods} tables. If known, the user would also
+record any \texttt{Assumption}s \texttt{Entailment} by the methods. This
+information is not a requirement, as the user may not have relevant
+expertise to assert that a particular computation involves an
+\texttt{Assumption}; however, this information can be added at any time
+by any user. The \texttt{Employs} table can also be filled with data
+recording when one \texttt{StatisticalMethod} or
+\texttt{VisualisationMethod} uses a \texttt{StatisticalVariable} as
 input.
 
-Assumptions could be quite trivial -- in the most simple case, for
-example, that a numeric Variable is assumed to be a cardinal (as opposed
-to ordinal or nominal) when computing the mean of its Values. For other
-statistics, Assumptions can record such things as whether the Variable
-is normally distributed, or has constant variance.
+\texttt{Assumption}s could be quite trivial -- in the most simple case,
+for example, that a numeric \texttt{Variable} is assumed to be a
+cardinal (as opposed to ordinal or nominal) when computing the mean of
+its Values. For other statistics, \texttt{Assumption}s can record such
+things as whether the \texttt{Variable} is normally distributed, or has
+constant variance.
 
-Once an Assumption has been stated as Entailed by a Statistical- or
-Visualisation-Method, it can be automatically inferred that Persons have
-made Assumptions about Variables, where they have done Statistics or
-Visualisations that use the Methods and Values of those Variables that
-are returned by the queries used to get the raw data on which the
-activities operated. The query is stored, along with the date made, in
-order to avoid populating large relational tables recording the
-Visualisations and Statistics that used Values as input data. Note that
-Values may also be used to store Parameters and StatisticalVariables
-that act to configure Visualisations and Statistics. These are captured
+Once an \texttt{Assumption} has been stated as \texttt{Entailment} by a
+\texttt{StatisticalMethod} or \texttt{VisualisationMethod}, it can be
+automatically inferred that \texttt{Person}s have made
+\texttt{Assumption}s about \texttt{Variable}s, where they have done
+\texttt{Statistics} or \texttt{Visualisation}s that use the Methods and
+\texttt{Values} of those \texttt{Variable}s that are returned by the
+queries used to get the raw data on which the activities operated. The
+query is stored, along with the date made, in order to avoid populating
+large relational tables recording the \texttt{Visualisation}s and
+\texttt{Statistics} that used \texttt{Value}s as input data. Note that
+\texttt{Value}s may also be used to store \texttt{Parameter}s and
+\texttt{StatisticalVariable}s that act to configure
+\texttt{Visualisation}s and \texttt{Statistics}. These are captured
 using the visualisation-parameter and statistical-parameter relations,
-and the StatisticalInput table.
+and the \texttt{StatisticalInput} table.
 
-Visualisations are automatically inferred when the Box they are
-contained-in has a BoxType with a VisualisationMethod in it. The Values
-visualised (recorded in the VisualisationValue table) can be (possibly
+\texttt{Visualisation}s are automatically inferred when the \texttt{Box}
+they are contained-in has a \texttt{BoxType} with a
+\texttt{VisualisationMethod} in it. The \texttt{Value}s visualised
+(recorded in the \texttt{VisualisationValue} table) can be (possibly
 somewhat dubiously) inferred from the Input to the Application that ran
-the Process that created the Box, until such time as statistical tools
-support logging this information in sufficient detail.
+the \texttt{Process} that created the \texttt{Box}, until such time as
+statistical tools support logging this information in sufficient detail.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={The analysis subgraph of the schema}]{img/diagram-02.png}}
-\caption{The analysis subgraph of the schema}
+\caption{The analysis subgraph of the schema}\label{fig:diagram-02}
 \end{figure}
 
 \subsection{External ontologies}\label{external-ontologies}
 
 Though not explicitly noted in the tables, with the exception of OpenABM
-(with which this schema has to integrate for the MIRACLE project),
+(with which this schema had to integrate for the MIRACLE project),
 various external ontologies and schemas are relevant, and could be
 linked to if required. There are various ways such links could be
 manifested (relational tables for example, implementing each of the blue
-dashed lines in Figure 4), and those suggested are by no means
-exhaustive. Neither is it necessarily the case that any specific
-ontology or external schema is proposed or adopted. The following gives
-examples of specific external links:
+dashed lines in fig.~\ref{fig:diagram-03}), and those suggested are by
+no means exhaustive. Neither is it necessarily the case that any
+specific ontology or external schema is proposed or adopted. The
+following gives examples of specific external links:
 
 \begin{itemize}
 \item
@@ -330,9 +410,10 @@ examples of specific external links:
   spatial concepts, such as GeoSparql and WGS84. The idea here is that
   we may want to link various table entries to external geographical
   databases, for example, to say that a Study pertained to a particular
-  region, or that a Box is a GIS file.
+  region, or that a \texttt{Box} is a GIS file.
 \item
-  OpenABM -- this is linking back to the CoMSES-Net archive of
+  OpenABM -- links to the
+  \href{https://www.comses.net/codebases/}{CoMSES-Net archive} of
   agent-based models, and is essential in order to identify which model
   these metadata are describing the output analysis of. (Although in
   principle, the system described could be applied to any stage of
@@ -364,14 +445,26 @@ examples of specific external links:
   Petri-Nets and various business process modelling ontologies, remain
   potentially relevant, though PROV-O may be a more durable choice than
   domain-specific alternatives for capturing workflow provenance in
-  particular (Herschel, Diestelkämper, and Ben Lahmar 2017).
+  particular (Herschel et al. 2017).
+\item
+  GitHub/Zenodo -- links to source-code repositories and their citable
+  archived releases. GitHub is the natural place to link an
+  \texttt{Application}'s container (in our terminology \texttt{Box}) to
+  its version-controlled source code, and to the history of commits that
+  produced it. However, since a GitHub repository is mutable and its URL
+  is not guaranteed to remain stable, Zenodo's GitHub integration --
+  which mints a DOI for an immutable snapshot of a repository whenever a
+  release is tagged -- provides the more durable, citable record better
+  suited to linking from the Documentation table, and is increasingly
+  the standard route by which research software is formally cited in
+  publications.
 \end{itemize}
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Subgraph showing possible tables that external ontologies could link to, and some relationships between them.}]{img/diagram-03.png}}
 \caption{Subgraph showing possible tables that external ontologies could
-link to, and some relationships between them.}
+link to, and some relationships between them.}\label{fig:diagram-03}
 \end{figure}
 
 In terms of maintenance, provision for making the links to external
@@ -382,43 +475,46 @@ query them for possibly relevant data to link to.
 \subsection{Fine grain}\label{fine-grain}
 
 The fine grain metadata is information about the contents of files,
-including visualisations, and values of variables (Figure 5). Much of
-this has been covered already in the Analysis section above, but here we
-show how Boxes are disaggregated from a provenance perspective through
-saying that Values and Visualisations are contained-in them, and from a
-workflow perspective through saying that BoxTypes have Variables and
-VisualisationMethods as their content. The provenance side can be
-populated automatically, but the workflow metadata would need to be
-provided by the user when describing an Application they were making
-available to the system: specifically, the user will need to describe
-the inputs and outputs of each application, and for each associated
-BoxType, provide details of Variables and VisualisationMethods given as
+including visualisations, and values of variables
+(fig.~\ref{fig:diagram-04}). Much of this has been covered already in
+the Analysis sec.~\ref{sec:analysis} section above, but here we show how
+Boxes are disaggregated from a provenance perspective through saying
+that \texttt{Value}s and \texttt{Visualisation}s are contained-in them,
+and from a workflow perspective through saying that \texttt{BoxType}s
+have \texttt{Variable}s and \texttt{VisualisationMethods} as their
+content. The provenance side can be populated automatically, but the
+workflow metadata would need to be provided by the user when describing
+an \texttt{Application} they were making available to the system:
+specifically, the user will need to describe the inputs and outputs of
+each application, and for each associated \texttt{BoxType}, provide
+details of \texttt{Variable}s and \texttt{VisualisationMethods} given as
 content. For some file formats, autodetection may assist with populating
-the Variable table -- e.g.~given an example of a CSV file used by or
-generated by an application, a header row could be used to suggest names
-for Variables they supply.
+the \texttt{Variable} table -- e.g.~given an example of a CSV file used
+by or generated by an application, a header row could be used to suggest
+names for \texttt{Variable}s they supply.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Subgraph showing the fine grain metadata tables}]{img/diagram-04.png}}
-\caption{Subgraph showing the fine grain metadata tables}
+\caption{Subgraph showing the fine grain metadata
+tables}\label{fig:diagram-04}
 \end{figure}
 
 \subsection{Folksonomy}\label{folksonomy}
 
 Folksonomies are informal ontologies developed by a user communities,
 with tagging being a pretty much standard way in which this is achieved.
-It is not proposed to enrich that here. In Figure 6, the tables thought
-most likely to be of interest for users to tag are depicted, though this
-needn't be exhaustive. Each of the arcs from the Tag table would need a
-relational table to break the jmany-many relationship between tags and
-the concepts they are applied to.
+It is not proposed to enrich that here. In fig.~\ref{fig:diagram-05},
+the tables thought most likely to be of interest for users to tag are
+depicted, though this needn't be exhaustive. Each of the arcs from the
+Tag table would need a relational table to break the jmany-many
+relationship between tags and the concepts they are applied to.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Folksonomy subgraph. Each of the arcs would itself be a reified table showing the application of Tags to tables.}]{img/diagram-05.png}}
 \caption{Folksonomy subgraph. Each of the arcs would itself be a reified
-table showing the application of Tags to tables.}
+table showing the application of Tags to tables.}\label{fig:diagram-05}
 \end{figure}
 
 \subsection{Project}\label{project}
@@ -426,43 +522,47 @@ table showing the application of Tags to tables.}
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Subgraph capturing metadata about projects}]{img/diagram-06.png}}
-\caption{Subgraph capturing metadata about projects}
+\caption{Subgraph capturing metadata about
+projects}\label{fig:diagram-06}
 \end{figure}
 
-Project metadata is largely for users to enter, and previously may have
-been regarded as unduly onerous. With the advent of large language
-models, much of this metadata might be automatically generated. It is
-provided to facilitate users in understanding how simulation output data
-relates to publications (which would appear in the Documentation table),
-and specific pieces of work (Study table). The Study might be the most
-important table for users to complete, as this, by its association with
-Boxes allows collection of simulation outputs in useful groups.
+Project metadata (fig.~\ref{fig:diagram-06}) is largely for users to
+enter, and previously may have been regarded as unduly onerous (Edwards
+et al. 2014). However, it tells an important part of the story of a
+model from a Type 1 provenance (Pignotti et al. 2013) perspective, and
+with the advent of large language models, much of this metadata might be
+automatically generated. It is provided to facilitate users in
+understanding how simulation output data relates to publications (which
+would appear in the Documentation table), and specific pieces of work
+(Study table). The Study might be the most important table for users to
+complete, as this, by its association with \texttt{Box}es allows
+collection of simulation outputs in useful groups.
 
 \subsection{Provenance}\label{provenance}
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Provenance subgraph}]{img/diagram-07.png}}
-\caption{Provenance subgraph}
+\caption{Provenance subgraph}\label{fig:diagram-07}
 \end{figure}
 
-Provenance is very much at the heart of the system, with an important
-role in recording how results from a model presented in journal articles
-are produced (Oliveira, Oliveira, and Braganholo 2018). Most of the
-tables here are autopopulated, as particularly for large scale analyses,
-user entry is an unrealistic goal. The system therefore needs to act as
-a wrapper around the scripts and tools (Applications) used to process
-the raw output from the simulation (which is the starting point of the
-MIRACLE project (Jin et al. 2017)) into the result used as part of an
-article. At the coarse grain, the central activity is the Process, which
-is a record of all relevant information of a process that ran on a
-Computer. This includes anything needed to replicate that Process under
-the same circumstances: the input files it used, command-line arguments,
-environment variables (essentially, anything that might affect its
-behaviour), and the output files it generated, the importance of which
-is illustrated by the challenges encountered when replicating the
-analysis of outputs from a social simulation of biodiversity
-incentivisation (Polhill et al. 2017).
+Provenance (fig.~\ref{fig:diagram-07}) is very much at the heart of the
+system, with an important role in recording how results from a model
+presented in journal articles are produced (Oliveira et al. 2018). Most
+of the tables here are autopopulated, as particularly for large scale
+analyses, user entry is an unrealistic goal. The system therefore needs
+to act as a wrapper around the scripts and tools (\texttt{Application}s)
+used to process the raw output from the simulation (which is the
+starting point of the MIRACLE project (Jin et al. 2017)) into the result
+used as part of an article. At the coarse grain, the central activity is
+the \texttt{Process}, which is a record of all relevant information of a
+process that ran on a \texttt{Computer}. This includes anything needed
+to replicate that \texttt{Process} under the same circumstances: the
+input files it used, command-line arguments, environment variables
+(essentially, anything that might affect its behaviour), and the output
+files it generated, the importance of which is illustrated by the
+challenges encountered when replicating the analysis of outputs from a
+social simulation of biodiversity incentivisation (Polhill et al. 2017).
 
 The need for cross-platform support means that it is difficult to draw
 on standards for these. Different operating systems, and even different
@@ -470,9 +570,9 @@ commands within the same operating systems, use different conventions
 for processing input on the command line, and input and output
 redirection. The Argument table attempts to record all relevant details
 about command-line arguments, allowing ArgumentValues to be inferred
-from a specific command-line instruction activating a Process. This is
-important in avoiding the need for users to supply too much information
-each time they run an Application.
+from a specific command-line instruction activating a \texttt{Process}.
+This is important in avoiding the need for users to supply too much
+information each time they run an \texttt{Application}.
 
 Batch-file processing is assumed at the coarse grain; where processes
 involve user interaction that might affect the behaviour, automatic
@@ -482,119 +582,132 @@ ultimately for reproducibility of results and keeping records of
 activities done (Pritchard and Wicenec 2025), these must ultimately be
 manifested as scripts that can be run in batch mode, once a decision is
 taken that a particular analysis step needs to be recorded as an
-application. Applications that only support GUI interaction can
+application. \texttt{Application}s that only support GUI interaction can
 therefore not be supported (and arguably should be derided as virtually
 useless for any scientific endeavour -- assuming repeatability is a
 desirable attribute of that work).
 
-At the fine-grain, Statistics and Visualisations are the central
-activities. Again, although GUI interaction cannot be supported,
-command-line interaction potentially could. Parameters and
-StatisticalInput would need to be recorded, and the raw data on which
-the activities operate captured somehow in a query allowing the same set
-of data to be operated on. Recording the date at which the query was
-made is therefore important, especially if Values of Variables are
-subsequently populated that might affect the ability of future analyses
-to reuse the same data. A short-cut might be to store the date a Value
-was generated in the Values table, but since this table is expected to
-be `virtual' (in that a supporting system would gather relevant data
+At the fine-grain, \texttt{Statistics} and \texttt{Visualisation}s are
+the central activities. Again, although GUI interaction cannot be
+supported, command-line interaction potentially could.
+\texttt{Parameter}s and \texttt{StatisticalInput} would need to be
+recorded, and the raw data on which the activities operate captured
+somehow in a query allowing the same set of data to be operated on.
+Recording the date at which the query was made is therefore important,
+especially if \texttt{Value}s of \texttt{Variable}s are subsequently
+populated that might affect the ability of future analyses to reuse the
+same data. A short-cut might be to store the date a \texttt{Value} was
+generated in the \texttt{Value}s table, but since this table is expected
+to be `virtual' (in that a supporting system would gather relevant data
 from the raw data files), the date can be captured from the dates of the
-Processes generating the Boxes in which the Values appear, or the date
-at which the Statistics were computed if the Value is a
-StatisticalInput.
+\texttt{Process}es generating the \texttt{Box}es in which the
+\texttt{Value}s appear, or the date at which the \texttt{Statistics}
+were computed if the \texttt{Value} is a \texttt{StatisticalInput}.
 
 \subsection{Services}\label{services}
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Services subgraph}]{img/diagram-08.png}}
-\caption{Services subgraph}
+\caption{Services subgraph}\label{fig:diagram-08}
 \end{figure}
 
-The services part of the graph depicted in Figure 9 provides a simple
-model intended to be used to determine whether an Application can be run
-on a Computer. This involves checking the Requirement Specifications of
-the Application (and recursively of any Dependencies) against the
-Specifications of a Computer. Requirements can be specified in one of
-three ways -- for numeric Requirement Specifications, a `minimum'
-Requirement must be exceeded by the Specification of the Computer (e.g.
-for RAM). For all types of Requirement Specifications, an `exact'
-Specification must be equal (an example might be the OS -- if the
-Application has very specific demands), whilst a `match' Specification
-is a regular expression that the Specification of the Computer must
-match. The results are stored in the Meets reified relationship.
+The services part of the graph depicted in fig.~\ref{fig:diagram-08}
+provides a simple model intended to be used to determine whether an
+\texttt{Application} can be run on a \texttt{Computer}. This involves
+checking the \texttt{Requirement} \texttt{Specification}s of the
+\texttt{Application} (and recursively of any Dependencies) against the
+\texttt{Specification}s of a \texttt{Computer}. \texttt{Requirement}s
+can be specified in one of three ways -- for numeric
+\texttt{Requirement} \texttt{Specification}s, a `minimum'
+\texttt{Requirement} must be exceeded by the \texttt{Specification} of
+the \texttt{Computer} (e.g. for RAM). For all types of
+\texttt{Requirement} \texttt{Specification}s, an `exact'
+\texttt{Specification} must be equal (an example might be the OS -- if
+the \texttt{Application} has very specific demands), whilst a `match'
+\texttt{Specification} is a regular expression that the
+\texttt{Specification} of the \texttt{Computer} must match. The results
+are stored in the \texttt{Meets} reified relationship (or as a direct
+link between the two if this a graph database).
 
-A more sophisticated implementation would wrap each Application in a web
-service. This would also be more secure if responsibility for providing
-Applications as web services was in the hands of their developers -- we
-would then not be uploading Applications to our system, but instead
-sending data for processing by other servers, and capturing metadata
-about these interactions. The services architecture could then draw much
-more heavily on standard web services ontologies, such as OWL-S and
-WSDL.
+A more sophisticated implementation would wrap each \texttt{Application}
+in a web service. This would also be more secure if responsibility for
+providing \texttt{Application}s as web services was in the hands of
+their developers -- users of the framework would then not be uploading
+\texttt{Application}s to their own system, but instead sending data for
+processing by other servers, and capturing metadata about these
+interactions. The services architecture could then draw much more
+heavily on web services ontologies, for example OWL-S (Martin et al.
+2007) and WSDL (Christensen et al. 2001).
 
 \subsection{Workflow}\label{workflow}
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Workflow subgraph}]{img/diagram-09.png}}
-\caption{Workflow subgraph}
+\caption{Workflow subgraph}\label{fig:diagram-09}
 \end{figure}
 
-The standard workflow model provides prescriptive `recipes' for
-undertaking specific procedures (Atkinson et al. 2017). Though we are
-interested in that here, and have provided a rudimentary sequence-based
-Pipeline table to handle that, we are also interested in providing
-support for exploring what `could be done' given a current set of
-circumstances, and `what needs to be done' before running an
-Application. For example, suppose we are interested in getting a Value
-for a particular Variable. Then we can see which BoxTypes have that
-Variable in their Content, and which Applications have the BoxType as a
-Product. If the BoxTypes those Applications Use have no instances, then
-we can find Applications that have the Uses BoxTypes as their Product,
-and so on. We can also search for Pipelines that have the required
-Product by exploring the Products of the last element of each Pipeline's
-list-based structure, and checking the Uses of the first element.
+The standard workflow model (fig.~\ref{fig:diagram-09}) provides
+prescriptive `recipes' for undertaking specific procedures (Atkinson et
+al. 2017). Though we are interested in that here, and have provided a
+rudimentary sequence-based \texttt{Pipeline} table to handle that, we
+are also interested in providing support for exploring what `could be
+done' given a current set of circumstances, and `what needs to be done'
+before running an \texttt{Application}. For example, suppose we are
+interested in getting a \texttt{Value} for a particular
+\texttt{Variable}. Then we can see which \texttt{BoxType}s have that
+\texttt{Variable} in their \texttt{Content}, and which
+\texttt{Application}s have the \texttt{BoxType} as a \texttt{Product}.
+If the \texttt{BoxType}s those \texttt{Application}s Use have no
+instances, then we can find \texttt{Application}s that have the Uses
+\texttt{BoxType}s as their \texttt{Product}, and so on. We can also
+search for \texttt{Pipeline}s that have the required \texttt{Product} by
+exploring the \texttt{Product}s of the last element of each
+\texttt{Pipeline}'s list-based structure, and checking the \texttt{Uses}
+of the first element.
 
 This way, it should be possible, given a set of raw simulation outputs,
-to search for sequences of Applications to apply that generate a
-particular desired Visualisation(Method). Using the Provenance
-infrastructure, it would also be possible to explore how other users
-have chosen to do it in the past.
+to search for sequences of \texttt{Application}s to apply that generate
+a particular desired \texttt{Visualisation}(\texttt{Method}). Using the
+provenance infrastructure, it would also be possible to explore how
+other users have chosen to do it in the past.
 
 \section{Detailed specifications}\label{detailed-specifications}
 
 All tables have uniquely specified ID fields as primary keys, unless
-they are associative tables. All tables with have a name field. This is
-free form text and not always present. This identifies a relation,
-however this is not guaranteed to be unique or even present. It is there
-to help primarily in readability when trying to extract information from
-this database and may contain a human readable label for the relation.
-For instance, for the definition of an argument, this would be the
-argument name. All tables will have a description field
-(dc:description). This field has been included to allow the introduction
-of free form documentary text. It is strongly advised that should the
-opportunity arise, then such text is supplied. The authors recommend
-this practice as it forms a useful means of documenting job control code
-in its own right, used to run these large scale models. Each table also
-has a creator/modifier field, and a corresponding created and modified
-date time field. Although most databases record this kind of metadata,
-we have made it explicit and expect these fields to be populated
-automatically. This a deliberate attempt to make this interface database
-software agnostic. Note that date fields should be stored as strings
-conforming to the ISO 8601 date format, not in the native format of the
-database. This is recommended best practice according to the Dublin Core
-Metadata Initiative.{[}\^{}1{]} The remaining attribute that is always
-included in each relation is the "about" column. This we have pinched
-directly from RDF and uniquely identifies a triple in RDF (Hartig and
-Zhao 2010). Although currently optional, we intend this to uniquely
-identify the relationship within our database. The form of this normally
-some kind of IRI. This will allow inward referencing of the provenance
-and metadata resource from other standardised resource software that
+they are associative tables (or direct links in the case of a graph
+database). All tables with have a name field. This is free form text and
+not always present. It identifies a relation, however it is not
+guaranteed to be unique. It is there to help primarily in readability
+when trying to extract information from this database and may contain a
+human readable label for the relation. For instance, for the definition
+of an argument, this would be the argument name. All tables will have a
+description field (dc:description). This field has been included to
+allow the introduction of free form documentary text. It is strongly
+advised that should the opportunity arise, then such text is supplied.
+The authors recommend this practice as it forms a useful means of
+documenting job control code in its own right, used to run these large
+scale models. Each table also has a creator/modifier field, and a
+corresponding created and modified date time field. Although most
+databases record this kind of metadata, we have made it explicit and
+expect these fields to be populated automatically. This a deliberate
+attempt to make this interface database software agnostic. Note that
+date fields should be stored as strings conforming to the ISO 8601 date
+format, not in the native format of the database. This is recommended
+best practice according to the Dublin Core Metadata
+Initiative.{[}\^{}1{]} The remaining attribute that is always included
+in each relation is the "about" column. This we have pinched directly
+from RDF and uniquely identifies a triple in RDF (Hartig and Zhao 2010).
+Although currently optional, we intend this to uniquely identify the
+relationship within our database. The form of this is normally some kind
+of IRI. This will allow inward referencing of the provenance and
+metadata resource from other standardised resource software that
 recognizes IRIs.
 
 \subsubsection{Attributes}\label{attributes}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
@@ -638,6 +751,7 @@ Logical date and time validation. Must come after the date of creation.
 & Should be done by the agency that has implemented the SSREPI
 interface. This will be the computer user \\
 \end{longtable}
+}
 
 \subsection{Annotation}\label{annotation}
 
@@ -656,11 +770,12 @@ JSON for the annotation values. SQL for row restriction.
 There is an entry which documents a database query (if suitable) that
 will document the rows affected. It is up to the standard implementor
 whether such queries will be allowed to be performed automatically. We
-are recommending only statements that refer to the Box table should be
-allowed to stop the possibility of SQL injections.
+are recommending only statements that refer to the \texttt{Box} table
+should be allowed to stop the possibility of SQL injections.
 
 \subsubsection{Attributes}\label{attributes-1}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
@@ -692,27 +807,26 @@ single rows from single or multiple tables. BEWARE OF SQL CODE INJECTION
 when considering using this field & None & Must be unique & Automated by
 the instantiating framework \\
 \end{longtable}
+}
 
 \subsubsection{Relationships}\label{relationships}
 
 None.
 
-\section{References}\label{references}
-
 \section{Application}\label{application}
 
 \subsection{Description}\label{description}
 
-An Application is something that can be run by the user to generate or
-analyse simulation output.
+An \texttt{Application} is something that can be run by the user to
+generate or analyse simulation output.
 
 \subsection{Standards}\label{standards-1}
 
-\texttt{PROV:Entity}. Note the potential confusion. An Application is
-something that has the potential to be an Activity (in the PROV sense)
-in the form of a Process. However, PROV only deals with the past, not
-with potential. The Application is a file somewhere, and hence an
-Entity.
+\texttt{PROV:Entity}. Note the potential confusion. An
+\texttt{Application} is something that has the potential to be an
+activity (in the PROV sense) in the form of a \texttt{Process}. However,
+PROV only deals with the past, not with potential. The
+\texttt{Application} is a file somewhere, and hence an entity.
 
 \subsection{Automation}\label{automation-1}
 
@@ -720,6 +834,7 @@ Most of this table is expected to be populated by the user.
 
 \subsection{Attributes}\label{attributes-2}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -774,9 +889,11 @@ application \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-1}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -794,46 +911,48 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 REVISION & Type & TEXT \\
-& Description & ID in Application table of Application this Application
-is a revision of, if any. \\
+& Description & ID in \texttt{Application} table of \texttt{Application}
+this \texttt{Application} is a revision of, if any. \\
 & Standards & \texttt{PROV:wasDerivedFrom}; \texttt{dc:isVersionOF} \\
-& Validation & Must be an ID of an Application \\
-& Null & If not a revision of anoth Application. \\
+& Validation & Must be an ID of an \texttt{Application} \\
+& Null & If not a revision of anoth \texttt{Application}. \\
 & Automation & None \\
 MODEL & Type & TEXT \\
-& Description & ID in Model table of Model this application is, if it is
-a Model. \\
+& Description & ID in \texttt{Model} table this \texttt{Application} is,
+if it is a \texttt{Model}. \\
 & Standards & None \\
-& Validation & Must be an ID of a Model. \\
-& Null & If this Application is not a Model. \\
+& Validation & Must be an ID in \texttt{Model}. \\
+& Null & If this \texttt{Application} is not a model. \\
 & Automation & None \\
 LOCATION & Type & TEXT \\
-& Description & ID in the Box table to use to find this application. \\
+& Description & ID\_BOX in the \texttt{Box} table to use to find this
+\texttt{Application}. \\
 & Standards & ? \\
-& Validation & Must be an ID of a Box. \\
-& Null & If the search for a Box for this Application has not been
-done. \\
+& Validation & Must be ID\_BOX of a \texttt{Box}. \\
+& Null & If the search for a \texttt{Box} for this \texttt{Application}
+has not been done. \\
 & Automation & This should be populated automatically the first time the
-Application is requested on a host by finding the most local Box that
-references it, and storing that here. \\
+\texttt{Application} is requested on a host by finding the most local
+\texttt{Box} that references it, and storing that here. \\
 \end{longtable}
+}
 
-If the most local Box is not on the current host, then the Application
-should be downloaded to the current host, and a new Box created for the
-location.
+If the most local \texttt{Box} is not on the current host, then the
+\texttt{Application} should be downloaded to the current host, and a new
+\texttt{Box} created for the location.
 
 If the Box ID is no longer present, then the search should be repeated
-in the Box table. \textbar{}
+in the \texttt{Box} table. \textbar{}
 
 \section{Argument}\label{argument}
 
 \subsection{Description}\label{description-1}
 
-A command-line argument accepted by an Application. Commands vary hugely
-in how they parse arguments on the command line, and this table needs to
-make clear how to build a command line that the Application can use. To
-be clear, a command line is a string of text that is given to a shell
-(DOS, bash, etc.) to initiate a batch job.
+A command-line argument accepted by an \texttt{Application}. Commands
+vary hugely in how they parse arguments on the command line, and this
+table needs to make clear how to build a command line that the
+\texttt{Application} can use. To be clear, a command line is a string of
+text that is given to a shell (DOS, bash, etc.) to initiate a batch job.
 
 \subsection{Standards}\label{standards-2}
 
@@ -843,25 +962,26 @@ environments. Cross-platform support is in any case needed.
 
 \subsection{Automation}\label{automation-2}
 
-When building up a command-line for an Application with arguments during
-invocation of a Process, the system should do the following: - Let M be
-a map from integer to list of string. - For each flag, check with the
-user to see whether it should be set or cleared; if set, add the flag
-name to M, using the order as the key, or -1 if the order is null.
-Create an entry in ArgumentValue using `true' or `false' as the value
-according to whether or not the flag is set. - For each option, check
-with the user to see whether it should be used, and if so, provide an
-appropriate argument or arguments in accordance with the arity. Build a
-string for the option including its name and arguments, bearing in mind
-the separator and argsep values. Add the resulting string to M. - For
-each required argument, request a value or values from the user in
-accordance with the arity. Build a string accordingly and add to M. -
-Let K be a sorted list of keys of M. - Let C be a string. - For each
-key, join its list of strings with space and concatenate to C. - C
-contains the command-line argument string.
+When building up a command-line for an \texttt{Application} with
+arguments during invocation of a \texttt{Process}, the system should do
+the following: - Let M be a map from integer to list of string. - For
+each flag, check with the user to see whether it should be set or
+cleared; if set, add the flag name to M, using the order as the key, or
+-1 if the order is null. Create an entry in ArgumentValue using `true'
+or `false' as the value according to whether or not the flag is set. -
+For each option, check with the user to see whether it should be used,
+and if so, provide an appropriate argument or arguments in accordance
+with the arity. Build a string for the option including its name and
+arguments, bearing in mind the separator and argsep values. Add the
+resulting string to M. - For each required argument, request a value or
+values from the user in accordance with the arity. Build a string
+accordingly and add to M. - Let K be a sorted list of keys of M. - Let C
+be a string. - For each key, join its list of strings with space and
+concatenate to C. - C contains the command-line argument string.
 
 \subsection{Attributes}\label{attributes-3}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -894,8 +1014,8 @@ with arity 0. \\
 & Automation & None \\
 ORDER\_VALUE & Type & INTEGER \\
 & Description & A number used to indicate any order in which this
-Argument should appear in relation to other Arguments the Application
-accepts. \\
+\texttt{Argument} should appear in relation to other \texttt{Argument}s
+the \texttt{Application} accepts. \\
 & Standards & None \\
 & Validation & Non-negative integer or null if the order is
 unimportant. \\
@@ -959,9 +1079,11 @@ the user \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-2}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -981,29 +1103,32 @@ Value
 APPLICATION & Type & TEXT \\
 & Description & The application this argument applies to. \\
 & Standards & None \\
-& Validation & ID in the Application table. \\
-& Null & Null if not an argument for an Application \\
+& Validation & ID in the \texttt{Application} table. \\
+& Null & Null if not an argument for an \texttt{Application} \\
 & Automation & None \\
 VARIABLE & Type & TEXT \\
 & Description & The variable this argument relates to. \\
 & Standards & None \\
-& Validation & ID in the Variables table. \\
+& Validation & ID in the \texttt{Variable}s table. \\
 & Null & Null if not about a variable \\
 & Automation & None \\
 BOX\_TYPE & Type & TEXT \\
-& Description & The BoxType this argument might be, if it is a file or
-somesuch. \\
+& Description & The \texttt{BoxType} this argument might be, if it is a
+file or somesuch. \\
 & Standards & None \\
-& Validation & ID in the BoxTypes table. \\
-& Null & Null if this does not have a BoxType associated iwth it. \\
+& Validation & ID in the \texttt{BoxType}s table. \\
+& Null & Null if this does not have a \texttt{BoxType} associated iwth
+it. \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{ArgumentValue}\label{argumentvalue}
 
 \subsection{Description}\label{description-2}
 
-A value supplied for a command-line argument in a run of an Application.
+A value supplied for a command-line argument in a run of an
+\texttt{Application}.
 
 \subsection{Standards}\label{standards-3}
 
@@ -1011,10 +1136,11 @@ None
 
 \subsection{Automation}\label{automation-3}
 
-Populated automatically when a Process is invoked.
+Populated automatically when a \texttt{Process} is invoked.
 
 \subsection{Attributes}\label{attributes-4}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1035,28 +1161,33 @@ HAS\_VALUE & Type & TEXT \\
 & Description & Value supplied, or true/false for flags \\
 & Standards & None \\
 & Validation & None \\
-& Automation & Populated when the Process is invoked \\
+& Automation & Populated when the \texttt{Process} is invoked \\
 FOR\_PROCESS & Type & TEXT \\
-& Description & ID in Process table of the Process this ArgumentValue
-applies to \\
+& Description & ID in \texttt{Process} table of the \texttt{Process}
+this \texttt{ArgumentValue} applies to \\
 & Standards & None \\
-& Validation & Must be an ID of a Process \\
+& Validation & Must be an ID of a \texttt{Process} \\
 & Null & Not null \\
-& Automation & Populated automatically when the Process is created \\
+& Automation & Populated automatically when the \texttt{Process} is
+created \\
 FOR\_ARGUMENT & Type & TEXT \\
-& Description & ID in Argument table of the Argument this value is
+& Description & ID in \texttt{Argument} table of the \texttt{Argument}
+this value is for \\
+& Standards & None \\
+& Validation & Must be an ID of an \texttt{Argument} \\
+& Null & Not null \\
+& Automation & Populated automatically when the \texttt{Process} is
+created \\
+BOX & Type & TEXT \\
+& Description & ID in \texttt{Box} table of the box this value can be
 for \\
 & Standards & None \\
-& Validation & Must be an ID of an Argument \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Not null \\
-& Automation & Populated automatically when the Process is created \\
-BOX & Type & TEXT \\
-& Description & ID in Box table of the box this value can be for \\
-& Standards & None \\
-& Validation & Must be an ID of a Box \\
-& Null & Not null \\
-& Automation & Populated automatically when the Process is created \\
+& Automation & Populated automatically when the \texttt{Process} is
+created \\
 \end{longtable}
+}
 
 \section{Assumes}\label{assumes}
 
@@ -1071,10 +1202,11 @@ None
 \subsection{Automation}\label{automation-4}
 
 This relationship may be inferred automatically from the use of
-StatisticalMethod or VisualisationMethod.
+\texttt{StatisticalMethod} or \texttt{VisualisationMethod}.
 
 \subsection{Relationships}\label{relationships-3}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1092,50 +1224,54 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 PERSON & Type & TEXT \\
-& Description & ID in Person table of the Person making the
-assumption \\
+& Description & ID in \texttt{Person} table of the \texttt{Person}
+making the assumption \\
 & Standards & None \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Not null \\
 & Automation & None \\
 STATISTICS & Type & TEXT \\
-& Description & ID in Statistics table if assumption applies to a
-statistical computation \\
+& Description & ID in \texttt{Statistics} table if assumption applies to
+a statistical computation \\
 & Standards & None \\
-& Validation & Must be an ID of a Statistics \\
-& Null & Null if Visualisation is not null \\
+& Validation & Must be an ID of a \texttt{Statistics} \\
+& Null & Null if \texttt{Visualisation} is not null \\
 & Automation & None \\
 VISUALISATION & Type & TEXT \\
-& Description & ID in Visualisation table if assumption applies to a
-visualisation \\
+& Description & ID in \texttt{Visualisation} table if assumption applies
+to a \texttt{Visualisation} \\
 & Standards & None \\
-& Validation & Must be an ID of a Visualisation \\
-& Null & Null if Statistics is not null \\
+& Validation & Must be an ID of a \texttt{Visualisation} \\
+& Null & Null if \texttt{Statistics} is not null \\
 & Automation & None \\
 VARIABLE & Type & TEXT \\
-& Description & ID in Variable table of the variable to which the
-assumption applies \\
+& Description & ID in \texttt{Variable} table of the variable to which
+the assumption applies \\
 & Standards & None \\
-& Validation & Must be an ID of a Variable \\
+& Validation & Must be an ID of a \texttt{Variable} \\
 & Null & Not null \\
 & Automation & None \\
 ASSUMPTION & Type & TEXT \\
-& Description & ID in Assumption table of the Assumption being made \\
+& Description & ID in \texttt{Assumption} table of the
+\texttt{Assumption} being made \\
 & Standards & None \\
-& Validation & Must be an ID of an Assumption \\
+& Validation & Must be an ID of an \texttt{Assumption} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Assumption}\label{assumption}
 
 \subsection{Description}\label{description-3}
 
-An Assumption is a condition applied to a Variable for its proper
-application to a Statistic. (That Statistic being realised as an
-Aggregation of the Variable to which the Assumption applies.) A Person
-makes an Assumption about a Variable (in the Assumes table), explicitly
-or implicitly, every time they compute the Statistic on it.
+An \texttt{Assumption} is a condition applied to a \texttt{Variable} for
+its proper application to a \texttt{Statistic}. (That \texttt{Statistic}
+being realised as an aggregation of the \texttt{Variable} to which the
+\texttt{Assumption} applies.) A \texttt{Person} makes an
+\texttt{Assumption} about a \texttt{Variable} (in the \texttt{Assumes}
+table), explicitly or implicitly, every time they compute the
+\texttt{Statistic} on it.
 
 \subsection{Standards}\label{standards-5}
 
@@ -1147,6 +1283,7 @@ None
 
 \subsection{Attributes}\label{attributes-5}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -1160,13 +1297,14 @@ ID\_ASSUMPTION & Type & TEXT \\
 & Validation & Must be unique \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Box}\label{box}
 
 \subsection{Description}\label{description-4}
 
-A Box is any data container (file, database, URI, etc.) used to store or
-reference data within the system.
+A \texttt{Box} is any data container (file, database, URI, etc.) used to
+store or reference data within the system.
 
 \subsection{Standards}\label{standards-6}
 
@@ -1174,13 +1312,14 @@ reference data within the system.
 
 \subsection{Automation}\label{automation-6}
 
-A Box should be created automatically whenever data is accessed or
-generated by a Process. Metadata such as size, encoding, timestamps, and
-hash may be populated automatically using system tools (e.g.~OS calls,
-HTTP headers, checksum utilities).
+A \texttt{Box} should be created automatically whenever data is accessed
+or generated by a \texttt{Process}. Metadata such as size, encoding,
+timestamps, and hash may be populated automatically using system tools
+(e.g.~OS calls, HTTP headers, checksum utilities).
 
 \subsection{Attributes}\label{attributes-6}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1198,13 +1337,13 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_BOX & Type & TEXT \\
-& Description & Unique identifier for the Box \\
+& Description & Unique identifier for the \texttt{Box} \\
 & Standards & None \\
 & Validation & Primary key \\
 & Automation & Generated automatically \\
 LOCATION\_TYPE & Type & TEXT \\
-& Description & Type of resource the Box refers to (e.g.~file, URI,
-database) \\
+& Description & Type of resource the \texttt{Box} refers to (e.g.~file,
+URI, database) \\
 & Standards & ? \\
 & Validation & String describing access type \\
 & Automation & Requires appropriate software depending on type \\
@@ -1237,7 +1376,8 @@ MODIFICATION\_TIME & & \\
 & Validation & Datetime string \\
 & Automation & Retrieved via OS stat or HTTP headers \\
 UPDATE\_TIME & Type & TEXT \\
-& Description & Time the metadata for this Box was last updated \\
+& Description & Time the metadata for this \texttt{Box} was last
+updated \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
 & Automation & System maintained \\
@@ -1247,15 +1387,18 @@ HASH & Type & TEXT \\
 & Validation & Format: algorithm:encoding:value \\
 & Automation & Generated using hashing tools (e.g.~md5sum, sha256sum) \\
 INSTANCE & Type & TEXT \\
-& Description & ID in BoxType table describing the type of Box \\
+& Description & ID in \texttt{BoxType} table describing the type of
+\texttt{Box} \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-4}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1274,67 +1417,71 @@ Value
 \endlastfoot
 LOCATION\_APPLICATION & & \\
 & Type & TEXT \\
-& Description & ID in Application table if this Box refers to an
-Application \\
+& Description & ID in \texttt{Application} table if this \texttt{Box}
+refers to an \texttt{Application} \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application}. \\
 & Null & Null if not applicable \\
 & Automation & None \\
 LOCATION\_DOCUMENTATION & & \\
 & Type & TEXT \\
-& Description & ID in Documentation table if this Box refers to
-Documentation \\
+& Description & ID in \texttt{Documentation} table if this \texttt{Box}
+refers to \texttt{Documentation} \\
 & Standards & None \\
-& Validation & Must be an ID of Documentation \\
+& Validation & Must be an ID of \texttt{Documentation} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 GENERATED\_BY & Type & TEXT \\
-& Description & ID in Study table of the Study that generated this
-Box \\
+& Description & ID in \texttt{Study} table of the \texttt{Study} that
+generated this \texttt{Box} \\
 & Standards & \texttt{PROV:wasGeneratedBy} \\
-& Validation & Must be an ID of a Study \\
-& Null & Null if not generated by a Study \\
-& Automation & Set when Process produces output \\
+& Validation & Must be an ID of a \texttt{Study} \\
+& Null & Null if not generated by a \texttt{Study} \\
+& Automation & Set when \texttt{Process} produces output \\
 REPOSITORY\_OF & Type & TEXT \\
-& Description & ID in Study table of Study this Box is a repository
-for \\
+& Description & ID in \texttt{Study} table of \texttt{Study} this
+\texttt{Box} is a repository for \\
 & Standards & None \\
-& Validation & Must be an ID of a Study \\
+& Validation & Must be an ID of a \texttt{Study} \\
 & Null & Optional \\
 & Automation & None \\
 HELD\_BY & Type & TEXT \\
-& Description & ID in Person table of person holding the Box \\
+& Description & ID in \texttt{Person} table of person holding the
+\texttt{Box} \\
 & Standards & \texttt{PROV:wasAttributedTo} \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Optional \\
 & Automation & None \\
 SOURCED\_FROM & Type & TEXT \\
-& Description & ID in Person table of source of the Box \\
+& Description & ID in \texttt{Person} table of source of the
+\texttt{Box} \\
 & Standards & \texttt{PROV:wasAttributedTo} \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Optional \\
 & Automation & None \\
 OUTPUT\_OF & Type & TEXT \\
-& Description & ID in Process table of the Process that produced this
-Box \\
+& Description & ID in \texttt{Process} table of the \texttt{Process}
+that produced this \texttt{Box} \\
 & Standards & \texttt{PROV:wasGeneratedBy} \\
-& Validation & Must be an ID of a Process \\
-& Null & Null if not produced by a Process \\
-& Automation & Automatically set during Process execution \\
+& Validation & Must be an ID of a \texttt{Process} \\
+& Null & Null if not produced by a \texttt{Process} \\
+& Automation & Automatically set during \texttt{Process} execution \\
 COLLECTION & Type & TEXT \\
-& Description & ID in Box table if this Box is part of another Box \\
+& Description & ID in \texttt{Box} table if this \texttt{Box} is part of
+another \texttt{Box} \\
 & Standards & PROV:hadMember \\
-& Validation & Must be an ID of a Box \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Null if not part of a collection \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{BoxType}\label{boxtype}
 
 \subsection{Description}\label{description-5}
 
-A BoxType defines the format and identification rules for Boxes,
-describing how their contents should be interpreted.
+A \texttt{BoxType} defines the format and identification rules for
+Boxes, describing how their contents should be interpreted.
 
 \subsection{Standards}\label{standards-7}
 
@@ -1342,11 +1489,13 @@ None
 
 \subsection{Automation}\label{automation-7}
 
-BoxTypes are expected to be defined by the user; identification rules
-may be applied automatically when inspecting Box contents.
+\texttt{BoxType}s are expected to be defined by the user; identification
+rules may be applied automatically when inspecting \texttt{Box}
+contents.
 
 \subsection{Attributes}\label{attributes-7}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1364,28 +1513,30 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_BOX\_TYPE & Type & TEXT \\
-& Description & Unique identifier for the BoxType \\
+& Description & Unique identifier for the \texttt{BoxType} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 FORMAT & Type & TEXT \\
-& Description & Format of the Box contents \\
+& Description & Format of the \texttt{Box} contents \\
 & Standards & MIME \\
 & Validation & Valid MIME type \\
 & Automation & None \\
 IDENTIFIER & Type & TEXT \\
-& Description & Rule used to identify whether a Box conforms to this
-BoxType (e.g.~magic bytes, filename pattern) \\
+& Description & Rule used to identify whether a \texttt{Box} conforms to
+this \texttt{BoxType} (e.g.~magic bytes, filename pattern) \\
 & Standards & None \\
 & Validation & Structured rule string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Computer}\label{computer}
 
 \subsection{Description}\label{description-6}
 
-A Computer represents a machine on which Processes are executed.
+A \texttt{Computer} represents a machine on which a \texttt{Process} is
+executed.
 
 \subsection{Standards}\label{standards-8}
 
@@ -1398,6 +1549,7 @@ system and network interfaces.
 
 \subsection{Attributes}\label{attributes-8}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -1426,6 +1578,7 @@ MAC\_ADDRESS & Type & TEXT \\
 & Validation & Valid MAC address string \\
 & Automation & Retrieved from the network interface \\
 \end{longtable}
+}
 
 \section{Content}\label{content}
 
@@ -1435,8 +1588,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-7}
 
-The Content table describes how Variables (or StatisticalVariables) are
-located within a Box.
+The \texttt{Content} table describes how a \texttt{Variable} (or
+\texttt{StatisticalVariable}) is located within a \texttt{Box}.
 
 \subsection{Standards}\label{standards-9}
 
@@ -1448,6 +1601,7 @@ None
 
 \subsection{Attributes}\label{attributes-9}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1465,14 +1619,14 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 OPTIONALITY & Type & TEXT \\
-& Description & Whether the Variable always appears or only appears
-depending on some condition \\
+& Description & Whether the \texttt{Variable} always appears or only
+appears depending on some condition \\
 & Standards & None \\
 & Validation & One of `always' or `depends' \\
 & Automation & None \\
 LOCATOR & Type & TEXT \\
-& Description & How to locate the Variable's values within the Box
-(e.g.~row:X, column:Y, field:Z) \\
+& Description & How to locate the \texttt{Variable} value within the
+\texttt{Box} (e.g.~row:X, column:Y, field:Z) \\
 & Validation & Formatted rule string \\
 & Automation & None \\
 TIME\_LOCATOR & Type & TEXT \\
@@ -1492,16 +1646,18 @@ AGENT\_LOCATOR & Type & TEXT \\
 & Automation & None \\
 STATISTICAL\_VARIABLE & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalVariable table if this Content refers
-to a StatisticalVariable \\
+& Description & ID in \texttt{StatisticalVariable} table if this
+\texttt{Content} refers to a \texttt{StatisticalVariable} \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalVariable \\
+& Validation & Must be an ID of a \texttt{StatisticalVariable} \\
 & Null & Null if VARIABLE is not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-5}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1519,35 +1675,36 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 BOX\_TYPE & Type & TEXT \\
-& Description & ID in BoxType table of the BoxType this Content applies
-to \\
+& Description & ID in \texttt{BoxType} table of the \texttt{BoxType}
+this \texttt{Content} applies to \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Not null \\
 & Automation & None \\
 VARIABLE & Type & TEXT \\
-& Description & ID in Variable table if this Content refers to a
-Variable \\
+& Description & ID in \texttt{Variable} table if this \texttt{Content}
+refers to a \texttt{Variable} \\
 & Standards & None \\
-& Validation & Must be an ID of a Variable \\
+& Validation & Must be an ID of a \texttt{Variable} \\
 & Null & Null if STATISTICAL\_VARIABLE is not null \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if this Content is used
-for visualisation \\
+& Description & ID in \texttt{VisualisationMethod} table if this
+\texttt{Content} is used for visualisation \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Optional \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Context}\label{context}
 
 \subsection{Description}\label{description-8}
 
-The Context table provides contextual values such as time, space, agent,
-or link, which can be associated with Values.
+The \texttt{Context} table provides contextual values such as time,
+space, agent, or link, which can be associated with \texttt{Values}.
 
 \subsection{Standards}\label{standards-10}
 
@@ -1555,11 +1712,12 @@ None
 
 \subsection{Automation}\label{automation-10}
 
-Context entries may be created automatically when extracting or
-interpreting data from Boxes.
+\texttt{Context} entries may be created automatically when extracting or
+interpreting data from \texttt{Box}es.
 
 \subsection{Attributes}\label{attributes-10}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1577,20 +1735,23 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_CONTEXT & Type & TEXT \\
-& Description & Unique identifier for the Context \\
+& Description & Unique identifier for the \texttt{Context} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 VALUE & Type & TEXT \\
-& Description & Value of the context (e.g.~time, space, agent, or link
-identifier) \\
+& Description & \texttt{Value} of the context (e.g.~time, space, agent,
+or link identifier) \\
 & Standards & None \\
 & Validation & String \\
-& Automation & Derived from Content locators or data extraction \\
+& Automation & Derived from \texttt{Content} locators or data
+extraction \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-6}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1608,13 +1769,14 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 PART & Type & TEXT \\
-& Description & ID in Context table indicating that this Context is part
-of another Context \\
+& Description & ID in \texttt{Context} table indicating that this
+\texttt{Context} is part of another \texttt{Context} \\
 & Standards & None \\
-& Validation & Must be an ID of a Context \\
-& Null & Null if this Context is not part of another \\
+& Validation & Must be an ID of a \texttt{Context} \\
+& Null & Null if this \texttt{Context} is not part of another \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Contributor}\label{contributor}
 
@@ -1624,8 +1786,9 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-9}
 
-The Contributor table records people who have contributed to
-Applications or Documentation, including how they are credited.
+The \texttt{Contributor} table records people who have contributed to
+\texttt{Application}s or \texttt{Documentation}, including how they are
+credited.
 
 \subsection{Standards}\label{standards-11}
 
@@ -1637,6 +1800,7 @@ None
 
 \subsection{Attributes}\label{attributes-11}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1660,14 +1824,16 @@ CONTRIBUTION & Type & TEXT \\
 & Automation & None \\
 ALIAS & Type & TEXT \\
 & Description & Name or alias used for the contributor in the context of
-the Application or Documentation \\
+the \texttt{Application} or \texttt{Documentation} \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-7}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1685,26 +1851,27 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 CONTRIBUTOR & Type & TEXT \\
-& Description & ID in Person table of the contributor \\
+& Description & ID in \texttt{Person} table of the contributor \\
 & Standards & dc:contributor \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Not null \\
 & Automation & None \\
 DOCUMENTATION & Type & TEXT \\
-& Description & ID in Documentation table if the contribution relates to
-Documentation \\
+& Description & ID in \texttt{Documentation} table if the contribution
+relates to \texttt{Documentation} \\
 & Standards & dc:relation \\
-& Validation & Must be an ID of Documentation \\
+& Validation & Must be an ID of \texttt{Documentation} \\
 & Null & Null if APPLICATION is not null \\
 & Automation & None \\
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table if the contribution relates to
-an Application \\
+& Description & ID in \texttt{Application} table if the contribution
+relates to an \texttt{Application} \\
 & Standards & dc:relation \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Null if DOCUMENTATION is not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Dependency}\label{dependency}
 
@@ -1714,8 +1881,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-10}
 
-The Dependency table records that one Application depends on another,
-optionally under certain conditions.
+The \texttt{Dependency} table records that one \texttt{Application}
+depends on another, optionally under certain conditions.
 
 \subsection{Standards}\label{standards-12}
 
@@ -1723,11 +1890,12 @@ None
 
 \subsection{Automation}\label{automation-12}
 
-Dependencies may be inferred automatically in some cases, but are
-generally provided by the user.
+A \texttt{Dependency} may be inferred automatically in some cases, but
+are generally provided by the user.
 
 \subsection{Attributes}\label{attributes-12}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1751,9 +1919,11 @@ conditional \\
 & Validation & One of `required', `optional', or a condition string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-8}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1771,27 +1941,28 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 DEPENDANT & Type & TEXT \\
-& Description & ID in Application table of the Application that depends
-on another \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} that depends on another \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 DEPENDENCY & Type & TEXT \\
-& Description & ID in Application table of the Application being
-depended upon \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} being depended upon \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Documentation}\label{documentation}
 
 \subsection{Description}\label{description-11}
 
-The Documentation table records documents that describe Applications or
-Studies.
+The \texttt{Documentation} table records documents that describe
+\texttt{Application}s or Studies.
 
 \subsection{Standards}\label{standards-13}
 
@@ -1803,6 +1974,7 @@ None
 
 \subsection{Attributes}\label{attributes-13}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -1812,7 +1984,7 @@ Field & Property & Value \\
 \endlastfoot
 ID\_DOCUMENTATION & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the Documentation \\
+& Description & Unique identifier for the \texttt{Documentation} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -1827,9 +1999,11 @@ DATE & Type & TEXT \\
 & Validation & Datetime string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-9}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1847,20 +2021,21 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 DOCUMENTS & Type & TEXT \\
-& Description & ID in Application table of the Application this
-Documentation describes \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} this \texttt{Documentation} describes \\
 & Standards & dc:relation \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Null if REFERENCES is not null \\
 & Automation & None \\
 DESCRIBES & Type & TEXT \\
-& Description & ID in Study table of the Study this Documentation
-references \\
+& Description & ID in \texttt{Study} table of the \texttt{Study} this
+\texttt{Documentation} references \\
 & Standards & dc:relation \\
-& Validation & Must be an ID of a Study \\
+& Validation & Must be an ID of a \texttt{Study} \\
 & Null & Null if DOCUMENTS is not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Employs}\label{employs}
 
@@ -1870,8 +2045,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-12}
 
-The Employs table records that a StatisticalMethod or
-VisualisationMethod employs a StatisticalVariable.
+The \texttt{Employs} table records that a \texttt{StatisticalMethod} or
+\texttt{VisualisationMethod} employs a \texttt{StatisticalVariable}.
 
 \subsection{Standards}\label{standards-14}
 
@@ -1884,6 +2059,7 @@ methods and variables.
 
 \subsection{Relationships}\label{relationships-10}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1902,29 +2078,30 @@ Value
 \endlastfoot
 STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table if the relationship
-involves a statistical method \\
+& Description & ID in \texttt{StatisticalMethod} table if the
+relationship involves a statistical method \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Null if VISUALISATION\_METHOD is not null \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if the relationship
-involves a visualisation method \\
+& Description & ID in \texttt{VisualisationMethod} table if the
+relationship involves a visualisation method \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Null if STATISTICAL\_METHOD is not null \\
 & Automation & None \\
 STATISTICAL\_VARIABLE & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalVariable table of the variable being
-employed \\
+& Description & ID in \texttt{StatisticalVariable} table of the variable
+being employed \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalVariable \\
+& Validation & Must be an ID of a \texttt{StatisticalVariable} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Entailment}\label{entailment}
 
@@ -1934,8 +2111,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-13}
 
-The Entailment table records that a StatisticalMethod or
-VisualisationMethod entails an Assumption.
+The \texttt{Entailment} table records that a \texttt{StatisticalMethod}
+or \texttt{VisualisationMethod} entails an \texttt{Assumption}.
 
 \subsection{Standards}\label{standards-15}
 
@@ -1948,6 +2125,7 @@ methods and assumptions.
 
 \subsection{Relationships}\label{relationships-11}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1966,28 +2144,29 @@ Value
 \endlastfoot
 STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table if the relationship
-involves a statistical method \\
+& Description & ID in \texttt{StatisticalMethod} table if the
+relationship involves a statistical method \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Null if VISUALISATION\_METHOD is not null \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if the relationship
-involves a visualisation method \\
+& Description & ID in \texttt{VisualisationMethod} table if the
+relationship involves a visualisation method \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Null if STATISTICAL\_METHOD is not null \\
 & Automation & None \\
 ASSUMPTION & Type & TEXT \\
-& Description & ID in Assumption table of the Assumption that is
-entailed \\
+& Description & ID in \texttt{Assumption} table of the
+\texttt{Assumption} that is entailed \\
 & Standards & None \\
-& Validation & Must be an ID of an Assumption \\
+& Validation & Must be an ID of an \texttt{Assumption} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Implements}\label{implements}
 
@@ -1997,8 +2176,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-14}
 
-The Implements table records that an Application implements a
-StatisticalMethod or VisualisationMethod.
+The \texttt{Implements} table records that an \texttt{Application}
+implements a \texttt{StatisticalMethod} or \texttt{VisualisationMethod}.
 
 \subsection{Standards}\label{standards-16}
 
@@ -2010,6 +2189,7 @@ None
 
 \subsection{Attributes}\label{attributes-14}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2027,8 +2207,8 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 FUNCTION & Type & TEXT \\
-& Description & Name of the function within the Application that
-implements the method \\
+& Description & Name of the function within the \texttt{Application}
+that implements the method \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
@@ -2039,9 +2219,11 @@ found \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-12}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2060,28 +2242,29 @@ Value
 \endlastfoot
 STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table if the implementation is
-for a statistical method \\
+& Description & ID in \texttt{StatisticalMethod} table if the
+implementation is for a statistical method \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Null if VISUALISATION\_METHOD is not null \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if the implementation is
-for a visualisation method \\
+& Description & ID in \texttt{VisualisationMethod} table if the
+implementation is for a visualisation method \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Null if STATISTICAL\_METHOD is not null \\
 & Automation & None \\
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table of the Application implementing
-the method \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} implementing the method \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Input}\label{input}
 
@@ -2091,8 +2274,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-15}
 
-The Input table records the Boxes that are used as input to a Process,
-including how they are used.
+The \texttt{Input} table records the \texttt{Box}es that are used as
+input to a \texttt{Process}, including how they are used.
 
 \subsection{Standards}\label{standards-17}
 
@@ -2100,11 +2283,12 @@ PROV:used
 
 \subsection{Automation}\label{automation-17}
 
-Populated automatically when a Process is invoked and its inputs are
-identified.
+Populated automatically when a \texttt{Process} is invoked and its
+inputs are identified.
 
 \subsection{Attributes}\label{attributes-15}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2113,34 +2297,50 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 USAGE & Type & TEXT \\
-& Description & Indicates how the input is used by the Process \\
+& Description & Indicates how the input is used by the
+\texttt{Process} \\
 & Standards & None \\
 & Validation & One of `dependency' or `data' \\
 & Automation & Set automatically based on the role of the input \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-13}
 
-\begin{longtable}[]{@{}lll@{}}
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.5814}}@{}}
 \toprule\noalign{}
-Field & Property & Value \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Property
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 PROCESS & Type & TEXT \\
-& Description & ID in Process table of the Process using the input \\
+& Description & ID in \texttt{Process} table of the \texttt{Process}
+using the input \\
 & Standards & PROV:used \\
-& Validation & Must be an ID of a Process \\
+& Validation & Must be an ID of a \texttt{Process} \\
 & Null & Not null \\
-& Automation & Populated automatically when the Process is created \\
+& Automation & Populated automatically when the \texttt{Process} is
+created \\
 BOX & Type & TEXT \\
-& Description & ID in Box table of the Box being used as input \\
+& Description & ID in \texttt{Box} table of the \texttt{Box} being used
+as input \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a Box \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Not null \\
 & Automation & Populated automatically when inputs are resolved \\
 \end{longtable}
+}
 
 \section{Involvement}\label{involvement}
 
@@ -2150,8 +2350,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-16}
 
-The Involvement table records the involvement of a Person in a Study,
-including their role.
+The \texttt{Involvement} table records the involvement of a
+\texttt{Person} in a \texttt{Study}, including their role.
 
 \subsection{Standards}\label{standards-18}
 
@@ -2163,6 +2363,7 @@ None
 
 \subsection{Attributes}\label{attributes-16}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2171,14 +2372,16 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ROLE & Type & TEXT \\
-& Description & Role of the Person in the Study \\
+& Description & Role of the \texttt{Person} in the \texttt{Study} \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-14}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2196,19 +2399,21 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 PERSON & Type & TEXT \\
-& Description & ID in Person table of the Person involved \\
+& Description & ID in \texttt{Person} table of the \texttt{Person}
+involved \\
 & Standards & PROV:Agent \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Not null \\
 & Automation & None \\
 STUDY & Type & TEXT \\
-& Description & ID in Study table of the Study the Person is involved
-in \\
+& Description & ID in \texttt{Study} table of the \texttt{Study} the
+\texttt{Person} is involved in \\
 & Standards & PROV:Activity \\
-& Validation & Must be an ID of a Study \\
+& Validation & Must be an ID of a \texttt{Study} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Meets}\label{meets}
 
@@ -2218,7 +2423,8 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-17}
 
-The Meets table records that a Computer meets a specified Specification.
+The \texttt{Meets} table records that a \texttt{Computer} meets a
+specified \texttt{Specification}.
 
 \subsection{Standards}\label{standards-19}
 
@@ -2230,6 +2436,7 @@ None
 
 \subsection{Relationships}\label{relationships-15}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2248,28 +2455,29 @@ Value
 \endlastfoot
 COMPUTER\_SPECIFICATION & & \\
 & Type & TEXT \\
-& Description & ID in Specification table describing the specification
-met by the Computer \\
+& Description & ID in \texttt{Specification} table describing the
+specification met by the \texttt{Computer} \\
 & Standards & None \\
-& Validation & Must be an ID of a Specification \\
+& Validation & Must be an ID of a \texttt{Specification} \\
 & Null & Not null \\
 & Automation & None \\
 REQUIREMENT\_SPECIFICATION & & \\
 & Type & TEXT \\
-& Description & ID in Specification table defining the required
+& Description & ID in \texttt{Specification} table defining the required
 specification being met \\
 & Standards & None \\
-& Validation & Must be an ID of a Specification \\
+& Validation & Must be an ID of a \texttt{Specification} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Model}\label{model}
 
 \subsection{Description}\label{description-18}
 
-The Model table identifies Applications that represent models,
-optionally linking to external model registries.
+The \texttt{Model} table identifies \texttt{Application}s that represent
+models, optionally linking to external model registries.
 
 \subsection{Standards}\label{standards-20}
 
@@ -2281,6 +2489,7 @@ None
 
 \subsection{Attributes}\label{attributes-17}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2298,7 +2507,7 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_MODEL & Type & TEXT \\
-& Description & Unique identifier for the Model \\
+& Description & Unique identifier for the \texttt{Model} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -2310,9 +2519,11 @@ repository \\
 & Null & Optional \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-16}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2330,20 +2541,21 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table of the Application that is a
-Model \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} that is a \texttt{Model} \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Parameter}\label{parameter}
 
 \subsection{Description}\label{description-19}
 
-The Parameter table records parameters used by StatisticalMethod or
-VisualisationMethod.
+The \texttt{Parameter} table records parameters used by
+\texttt{StatisticalMethod} or \texttt{VisualisationMethod}.
 
 \subsection{Standards}\label{standards-21}
 
@@ -2355,6 +2567,7 @@ None
 
 \subsection{Attributes}\label{attributes-18}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2363,7 +2576,7 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_PARAMETER & Type & TEXT \\
-& Description & Unique identifier for the Parameter \\
+& Description & Unique identifier for the \texttt{Parameter} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -2373,9 +2586,11 @@ DATA\_TYPE & Type & TEXT \\
 & Validation & Valid XSD data type or URI \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-17}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2394,28 +2609,29 @@ Value
 \endlastfoot
 STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table if the parameter applies
-to a statistical method \\
+& Description & ID in \texttt{StatisticalMethod} table if the parameter
+applies to a statistical method \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Null if VISUALISATION\_METHOD is not null \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if the parameter applies
-to a visualisation method \\
+& Description & ID in \texttt{VisualisationMethod} table if the
+parameter applies to a visualisation method \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Null if STATISTICAL\_METHOD is not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Person}\label{person}
 
 \subsection{Description}\label{description-20}
 
-The Person table records individuals associated with the system, such as
-users, contributors, or data owners.
+The \texttt{Person} table records individuals associated with the
+system, such as users, contributors, or data owners.
 
 \subsection{Standards}\label{standards-22}
 
@@ -2427,6 +2643,7 @@ None
 
 \subsection{Attributes}\label{attributes-19}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2435,23 +2652,24 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_PERSON & Type & TEXT \\
-& Description & Unique identifier for the Person \\
+& Description & Unique identifier for the \texttt{Person} \\
 & Standards & FOAF \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 EMAIL & Type & TEXT \\
-& Description & Email address of the Person \\
+& Description & Email address of the \texttt{Person} \\
 & Standards & FOAF \\
 & Validation & Valid email address string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{PersonalData}\label{personaldata}
 
 \subsection{Description}\label{description-21}
 
-The PersonalData table records additional pieces of information about a
-Person as label--value pairs.
+The \texttt{PersonalData} table records additional pieces of information
+about a \texttt{Person} as label--value pairs.
 
 \subsection{Standards}\label{standards-23}
 
@@ -2463,6 +2681,7 @@ None
 
 \subsection{Attributes}\label{attributes-20}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2472,7 +2691,7 @@ Field & Property & Value \\
 \endlastfoot
 ID\_PERSONAL\_DATA & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the PersonalData entry \\
+& Description & Unique identifier for the \texttt{PersonalData} entry \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -2482,35 +2701,49 @@ CATEGORY & Type & TEXT \\
 & Validation & String \\
 & Automation & None \\
 VALUE & Type & TEXT \\
-& Description & Value of the personal data \\
+& Description & \texttt{Value} of the personal data \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-18}
 
-\begin{longtable}[]{@{}lll@{}}
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.5814}}@{}}
 \toprule\noalign{}
-Field & Property & Value \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Property
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
 ABOUT & Type & TEXT \\
-& Description & ID in Person table of the Person this data is about \\
+& Description & ID in \texttt{Person} table of the \texttt{Person} this
+data is about \\
 & Standards & None \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Pipeline}\label{pipeline}
 
 \subsection{Description}\label{description-22}
 
-The Pipeline table records sequences of Applications, allowing workflows
-to be defined where one Application calls another.
+The \texttt{Pipeline} table records sequences of \texttt{Application}s,
+allowing workflows to be defined where one \texttt{Application} calls
+another.
 
 \subsection{Standards}\label{standards-24}
 
@@ -2522,6 +2755,7 @@ None
 
 \subsection{Attributes}\label{attributes-21}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2530,14 +2764,16 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_PIPELINE & Type & TEXT \\
-& Description & Unique identifier for the Pipeline \\
+& Description & Unique identifier for the \texttt{Pipeline} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-19}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2555,27 +2791,29 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 CALLS & Type & TEXT \\
-& Description & ID in Application table of the Application called by
-this Pipeline step \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} called by this \texttt{Pipeline} step \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 PREVIOUS & Type & TEXT \\
 & Nullable & True \\
-& Description & ID in Pipeline table of the previous Pipeline step \\
+& Description & ID in \texttt{Pipeline} table of the previous
+\texttt{Pipeline} step \\
 & Standards & None \\
-& Validation & Must be an ID of a Pipeline \\
+& Validation & Must be an ID of a \texttt{Pipeline} \\
 & Null & Null if this is the first step \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Process}\label{process}
 
 \subsection{Description}\label{description-23}
 
-The Process table records an execution of an Application, including when
-and how it was run.
+The \texttt{Process} table records an execution of an
+\texttt{Application}, including when and how it was run.
 
 \subsection{Standards}\label{standards-25}
 
@@ -2583,11 +2821,12 @@ PROV:Activity
 
 \subsection{Automation}\label{automation-25}
 
-Entries are created automatically when an Application is executed,
-capturing runtime details.
+Entries are created automatically when an \texttt{Application} is
+executed, capturing runtime details.
 
 \subsection{Attributes}\label{attributes-22}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2605,40 +2844,44 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_PROCESS & Type & TEXT \\
-& Description & Unique identifier for the Process \\
+& Description & Unique identifier for the \texttt{Process} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 START\_TIME & Type & TEXT \\
-& Description & Time at which the Process started \\
+& Description & Time at which the \texttt{Process} started \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
 & Automation & Captured automatically at process start \\
 END\_TIME & Type & TEXT \\
-& Description & Time at which the Process ended \\
+& Description & Time at which the \texttt{Process} ended \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
 & Automation & Captured automatically at process completion \\
 ARGV & Type & TEXT \\
-& Description & Command-line string used to invoke the Application \\
+& Description & Command-line string used to invoke the
+\texttt{Application} \\
 & Standards & POSIX \\
 & Validation & String \\
-& Automation & Constructed automatically from Argument and
-ArgumentValue \\
+& Automation & Constructed automatically from \texttt{Argument} and
+\texttt{ArgumentValue} \\
 ENVIRONMENT & Type & TEXT \\
 & Description & Environment variables used during execution \\
 & Standards & POSIX \\
 & Validation & List of strings \\
 & Automation & Captured from runtime environment \\
 WORKING\_DIR & Type & TEXT \\
-& Description & Working directory from which the Process was executed \\
+& Description & Working directory from which the \texttt{Process} was
+executed \\
 & Standards & POSIX \\
 & Validation & Valid file path \\
 & Automation & Captured automatically from runtime \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-20}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2656,33 +2899,35 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 EXECUTABLE & Type & TEXT \\
-& Description & ID in Application table of the Application that was
-executed \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} that was executed \\
 & Standards & PROV:used \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
-& Automation & Set when the Process is created \\
+& Automation & Set when the \texttt{Process} is created \\
 SOME\_USER & Type & TEXT \\
-& Description & ID in User table of the user who initiated the
-Process \\
+& Description & ID in \texttt{User} table of the user who initiated the
+\texttt{Process} \\
 & Standards & PROV:wasAssociatedWith \\
-& Validation & Must be an ID of a User \\
+& Validation & Must be an ID of a \texttt{User} \\
 & Null & Not null \\
 & Automation & Captured from system user context \\
 HOST & Type & TEXT \\
-& Description & ID in Computer table of the machine on which the Process
-ran \\
+& Description & ID in \texttt{Computer} table of the machine on which
+the \texttt{Process} ran \\
 & Standards & PROV:wasAssociatedWith \\
-& Validation & Must be an ID of a Computer \\
+& Validation & Must be an ID of a \texttt{Computer} \\
 & Null & Not null \\
 & Automation & Captured from system environment \\
 PARENT & Type & TEXT \\
-& Description & ID in Process table of the parent Process, if any \\
+& Description & ID in \texttt{Process} table of the parent
+\texttt{Process}, if any \\
 & Standards & PROV:wasInformedBy \\
-& Validation & Must be an ID of a Process \\
+& Validation & Must be an ID of a \texttt{Process} \\
 & Null & Null if no parent process \\
-& Automation & Set if Process is spawned by another \\
+& Automation & Set if \texttt{Process} is spawned by another \\
 \end{longtable}
+}
 
 \section{Product}\label{product}
 
@@ -2692,8 +2937,9 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-24}
 
-The Product table describes the types of output that an Application can
-produce, including how those outputs are located.
+The \texttt{Product} table describes the types of output that an
+\texttt{Application} can produce, including how those outputs are
+located.
 
 \subsection{Standards}\label{standards-26}
 
@@ -2701,11 +2947,12 @@ None
 
 \subsection{Automation}\label{automation-26}
 
-Some Products may be inferred automatically based on Application
-execution and generated Boxes.
+Some \texttt{Product}s may be inferred automatically based on
+\texttt{Application} execution and generated \texttt{Box}es.
 
 \subsection{Attributes}\label{attributes-23}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2723,20 +2970,23 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 OPTIONALITY & Type & TEXT \\
-& Description & Whether the Product is always produced or only under
-certain conditions \\
+& Description & Whether the \texttt{Product} is always produced or only
+under certain conditions \\
 & Standards & None \\
 & Validation & One of `always' or `depends' \\
 & Automation & None \\
 LOCATOR & Type & TEXT \\
-& Description & Description of how to locate the Product output \\
+& Description & Description of how to locate the \texttt{Product}
+output \\
 & Standards & None \\
 & Validation & Formatted rule string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-21}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2754,34 +3004,36 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table of the Application producing
-this Product \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} producing this \texttt{Product} \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 BOX\_TYPE & Type & TEXT \\
-& Description & ID in BoxType table describing the type of Box
-produced \\
+& Description & ID in \texttt{BoxType} table describing the type of
+\texttt{Box} produced \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Not null \\
 & Automation & None \\
 IN\_FILE & Type & TEXT \\
-& Description & ID in BoxType table if the Product is contained within
-another file \\
+& Description & ID in \texttt{BoxType} table if the \texttt{Product} is
+contained within another file \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Null if LOCATOR is not `in-file' \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Project}\label{project-1}
 
 \subsection{Description}\label{description-25}
 
-The Project table records Projects, which are collections of Studies and
-may include funding and organisational information.
+The \texttt{Project} table records \texttt{Project}s, which are
+collections of Studies and may include funding and organisational
+information.
 
 \subsection{Standards}\label{standards-27}
 
@@ -2793,6 +3045,7 @@ None
 
 \subsection{Attributes}\label{attributes-24}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2801,29 +3054,31 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_PROJECT & Type & TEXT \\
-& Description & Unique identifier for the Project \\
+& Description & Unique identifier for the \texttt{Project} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 TITLE & Type & TEXT \\
-& Description & Title of the Project \\
+& Description & Title of the \texttt{Project} \\
 & Standards & dc:title \\
 & Validation & String \\
 & Automation & None \\
 FUNDER & Type & TEXT \\
-& Description & Organisation or body funding the Project \\
+& Description & Organisation or body funding the \texttt{Project} \\
 & Standards & dc:publisher \\
 & Validation & String \\
 & Automation & None \\
 GRANT\_ID & Type & TEXT \\
-& Description & Identifier of the grant funding the Project \\
+& Description & Identifier of the grant funding the \texttt{Project} \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-22}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2841,13 +3096,14 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 STUDY & Type & TEXT \\
-& Description & A Study is a piece of work at some level of
+& Description & A \texttt{Study} is a piece of work at some level of
 aggregation. \\
 & Standards & None \\
-& Validation & An ID in the Study table. \\
+& Validation & An ID in the \texttt{Study} table. \\
 & Null & Not Null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Requirement}\label{requirement}
 
@@ -2857,9 +3113,9 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-26}
 
-The Requirement table records requirements that an Application has with
-respect to Specifications, including exact, minimum, or matching
-constraints.
+The \texttt{Requirement} table records requirements that an
+\texttt{Application} has with respect to \texttt{Specification}s,
+including exact, minimum, or matching constraints.
 
 \subsection{Standards}\label{standards-28}
 
@@ -2871,6 +3127,7 @@ None
 
 \subsection{Relationships}\label{relationships-23}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2888,42 +3145,43 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table of the Application that has the
-requirement \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} that has the requirement \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 MATCH & Type & TEXT \\
-& Description & ID in Specification table specifying values that must
-match \\
+& Description & ID in \texttt{Specification} table specifying values
+that must match \\
 & Standards & None \\
-& Validation & Must be an ID of a Specification \\
+& Validation & Must be an ID of a \texttt{Specification} \\
 & Null & Null if EXACT or MINIMUM is used \\
 & Automation & None \\
 MINIMUM & Type & TEXT \\
-& Description & ID in Specification table specifying minimum acceptable
-values \\
+& Description & ID in \texttt{Specification} table specifying minimum
+acceptable values \\
 & Standards & None \\
-& Validation & Must be an ID of a Specification \\
+& Validation & Must be an ID of a \texttt{Specification} \\
 & Null & Null if EXACT or MATCH is used \\
 & Automation & None \\
 EXACT & Type & TEXT \\
-& Description & ID in Specification table specifying exact required
-values \\
+& Description & ID in \texttt{Specification} table specifying exact
+required values \\
 & Standards & None \\
-& Validation & Must be an ID of a Specification \\
+& Validation & Must be an ID of a \texttt{Specification} \\
 & Null & Null if MATCH or MINIMUM is used \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Specification}\label{specification}
 
 \subsection{Description}\label{description-27}
 
-The Specification table defines labelled specification values, typically
-used to describe properties of Computers or requirements of
-Applications.
+The \texttt{Specification} table defines labelled specification values,
+typically used to describe properties of \texttt{Computer}s or
+requirements of \texttt{Application}s.
 
 \subsection{Standards}\label{standards-29}
 
@@ -2935,6 +3193,7 @@ None
 
 \subsection{Attributes}\label{attributes-25}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2944,7 +3203,7 @@ Field & Property & Value \\
 \endlastfoot
 ID\_SPECIFICATION & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the Specification \\
+& Description & Unique identifier for the \texttt{Specification} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -2954,14 +3213,16 @@ CATEGORY & Type & TEXT \\
 & Validation & String \\
 & Automation & None \\
 VALUE & Type & TEXT \\
-& Description & Value of the specification \\
+& Description & \texttt{Value} of the specification \\
 & Standards & None \\
 & Validation & String \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-24}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2980,13 +3241,14 @@ Value
 \endlastfoot
 SPECIFICATION\_OF & & \\
 & Type & TEXT \\
-& Description & ID in Computer table of the Computer this Specification
-describes \\
+& Description & ID in \texttt{Computer} table of the \texttt{Computer}
+this \texttt{Specification} describes \\
 & Standards & None \\
-& Validation & Must be an ID of a Computer \\
+& Validation & Must be an ID of a \texttt{Computer} \\
 & Null & Optional \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{StatisticalInput}\label{statisticalinput}
 
@@ -2996,8 +3258,9 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-28}
 
-The StatisticalInput table records the input Variables or Boxes used by
-a StatisticalMethod when performing a statistical computation.
+The \texttt{StatisticalInput} table records the input \texttt{Variable}s
+or \texttt{Box}es used by a \texttt{StatisticalMethod} when performing a
+statistical computation.
 
 \subsection{Standards}\label{standards-30}
 
@@ -3005,11 +3268,12 @@ PROV:used
 
 \subsection{Automation}\label{automation-30}
 
-Inputs may be inferred automatically when a Statistics computation is
-executed.
+\texttt{Input}s may be inferred automatically when a \texttt{Statistics}
+computation is executed.
 
 \subsection{Relationships}\label{relationships-25}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3027,34 +3291,36 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 STATISTICS & Type & TEXT \\
-& Description & ID in StatisticalMethod table of the method using the
-input \\
+& Description & ID in \texttt{StatisticalMethod} table of the method
+using the input \\
 & Standards & PROV:used \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Not null \\
 & Automation & None \\
 VISUALISATION & Type & TEXT \\
-& Description & ID in Visualisations table of the Visualisation used as
-input to the method \\
+& Description & ID in \texttt{Visualisation}s table of the
+\texttt{Visualisation} used as input to the method \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a Visualisation \\
+& Validation & Must be an ID of a \texttt{Visualisation} \\
 & Null & Null if VARIABLE is not null \\
 & Automation & Resolved automatically where possible \\
 VALUE & Type & TEXT \\
-& Description & ID in Value table of the Variable used as input to the
-method \\
+& Description & ID in \texttt{Value} table of the \texttt{Variable} used
+as input to the method \\
 & Standards & None \\
-& Validation & Must be an ID of a Value \\
-& Null & Null if Value is not null \\
-& Automation & Resolved automatically from Content definitions \\
+& Validation & Must be an ID of a \texttt{Value} \\
+& Null & Null if \texttt{Value} is not null \\
+& Automation & Resolved automatically from \texttt{Content}
+definitions \\
 \end{longtable}
+}
 
 \section{StatisticalMethod}\label{statisticalmethod}
 
 \subsection{Description}\label{description-29}
 
-The StatisticalMethod table records statistical methods that may be
-applied to data to generate StatisticalVariables.
+The \texttt{StatisticalMethod} table records statistical methods that
+may be applied to data to generate \texttt{StatisticalVariable}s.
 
 \subsection{Standards}\label{standards-31}
 
@@ -3066,6 +3332,7 @@ None
 
 \subsection{Attributes}\label{attributes-26}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3075,18 +3342,19 @@ Field & Property & Value \\
 \endlastfoot
 ID\_STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the StatisticalMethod \\
+& Description & Unique identifier for the \texttt{StatisticalMethod} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 \end{longtable}
+}
 
 \section{StatisticalVariable}\label{statisticalvariable}
 
 \subsection{Description}\label{description-30}
 
-The StatisticalVariable table records variables that are generated by
-applying a StatisticalMethod.
+The \texttt{StatisticalVariable} table records variables that are
+generated by applying a \texttt{StatisticalMethod}.
 
 \subsection{Standards}\label{standards-32}
 
@@ -3094,11 +3362,12 @@ None
 
 \subsection{Automation}\label{automation-32}
 
-StatisticalVariables may be created automatically as outputs of
+\texttt{StatisticalVariable}s may be created automatically as outputs of
 statistical computations.
 
 \subsection{Attributes}\label{attributes-27}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3108,19 +3377,22 @@ Field & Property & Value \\
 \endlastfoot
 ID\_STATISTICAL\_VARIABLE & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the StatisticalVariable \\
+& Description & Unique identifier for the
+\texttt{StatisticalVariable} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 DATA\_TYPE & Type & TEXT \\
-& Description & Data type of the StatisticalVariable \\
+& Description & Data type of the \texttt{StatisticalVariable} \\
 & Standards & XSD \\
 & Validation & Valid XSD data type or URI \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-26}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3139,28 +3411,29 @@ Value
 \endlastfoot
 STATISTIC\_GENERATED\_BY & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table of the method that
-generates this StatisticalVariable \\
+& Description & ID in \texttt{StatisticalMethod} table of the method
+that generates this \texttt{StatisticalVariable} \\
 & Standards & PROV:wasGeneratedBy \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Not null \\
 & Automation & None \\
 VISUALISATION\_GENERATED\_BY & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table of the method that
-generates this Visualisation \\
+& Description & ID in \texttt{VisualisationMethod} table of the method
+that generates this \texttt{Visualisation} \\
 & Standards & PROV:wasGeneratedBy \\
-& Validation & Must be an ID of a VisualisationMethod. \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod}. \\
 & Null & Not null \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Statistics}\label{statistics}
 
 \subsection{Description}\label{description-31}
 
-The Statistics table records statistical computations, including when
-they were performed and how input data was selected.
+The \texttt{Statistics} table records statistical computations,
+including when they were performed and how input data was selected.
 
 \subsection{Standards}\label{standards-33}
 
@@ -3173,6 +3446,7 @@ performed.
 
 \subsection{Attributes}\label{attributes-28}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3190,7 +3464,8 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ID\_STATISTICS & Type & TEXT \\
-& Description & Unique identifier for the Statistics computation \\
+& Description & Unique identifier for the \texttt{Statistics}
+computation \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -3206,9 +3481,11 @@ computation \\
 & Validation & Formatted string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-27}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3226,20 +3503,21 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 USED & Type & TEXT \\
-& Description & ID in StatisticalMethod table of the method used for the
-computation \\
+& Description & ID in \texttt{StatisticalMethod} table of the method
+used for the computation \\
 & Standards & PROV:used \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Not null \\
-& Automation & Set when the Statistics entry is created \\
+& Automation & Set when the \texttt{Statistics} entry is created \\
 \end{longtable}
+}
 
 \section{Study}\label{study}
 
 \subsection{Description}\label{description-32}
 
-The Study table records units of scientific work, representing
-collections of Processes, data, and outputs.
+The \texttt{Study} table records units of scientific work, representing
+collections of \texttt{Process}es, data, and outputs.
 
 \subsection{Standards}\label{standards-34}
 
@@ -3247,11 +3525,12 @@ PROV:Activity
 
 \subsection{Automation}\label{automation-34}
 
-Some fields may be populated automatically when Processes are grouped
-into Studies.
+Some fields may be populated automatically when \texttt{Process}es are
+grouped into Studies.
 
 \subsection{Attributes}\label{attributes-29}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3260,29 +3539,31 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_STUDY & Type & TEXT \\
-& Description & Unique identifier for the Study \\
+& Description & Unique identifier for the \texttt{Study} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 TITLE & Type & TEXT \\
-& Description & Title or name of the Study \\
+& Description & Title or name of the \texttt{Study} \\
 & Standards & dc:title \\
 & Validation & String \\
 & Automation & None \\
 START\_TIME & Type & DATE \\
-& Description & Start time of the Study \\
+& Description & Start time of the \texttt{Study} \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
-& Automation & May be inferred from earliest Process \\
+& Automation & May be inferred from earliest \texttt{Process} \\
 END\_TIME & Type & DATE \\
-& Description & End time of the Study \\
+& Description & End time of the \texttt{Study} \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
-& Automation & May be inferred from latest Process \\
+& Automation & May be inferred from latest \texttt{Process} \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-28}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3300,27 +3581,28 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 PROJECT & Type & TEXT \\
-& Description & ID in Project table of the Project this Study belongs
-to \\
+& Description & ID in \texttt{Project} table of the \texttt{Project}
+this \texttt{Study} belongs to \\
 & Standards & None \\
-& Validation & Must be an ID of a Project \\
+& Validation & Must be an ID of a \texttt{Project} \\
 & Null & Optional \\
 & Automation & None \\
 PART & Type & TEXT \\
-& Description & ID in Study table if this Study is part of another
-Study \\
+& Description & ID in \texttt{Study} table if this \texttt{Study} is
+part of another \texttt{Study} \\
 & Standards & PROV:wasPartOf \\
-& Validation & Must be an ID of a Study \\
-& Null & Null if not part of another Study \\
+& Validation & Must be an ID of a \texttt{Study} \\
+& Null & Null if not part of another \texttt{Study} \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Tag}\label{tag}
 
 \subsection{Description}\label{description-33}
 
-The Tag table records tags that can be used to classify and annotate
-other entities in the system.
+The \texttt{Tag} table records tags that can be used to classify and
+annotate other entities in the system.
 
 \subsection{Standards}\label{standards-35}
 
@@ -3332,6 +3614,7 @@ None
 
 \subsection{Attributes}\label{attributes-30}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3340,11 +3623,12 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_TAG & Type & TEXT \\
-& Description & Unique identifier for the Tag \\
+& Description & Unique identifier for the \texttt{Tag} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 \end{longtable}
+}
 
 \section{TagMap}\label{tagmap}
 
@@ -3354,8 +3638,9 @@ which allows the enumeration of the many-to-many linkage.
 
 \subsection{Description}\label{description-34}
 
-The TagMap table records the association of Tags with other entities
-such as Applications, Boxes, Documentation, Studies, and Methods.
+The \texttt{TagMap} table records the association of \texttt{Tag}s with
+other entities such as \texttt{Application}s, \texttt{Box}es,
+\texttt{Documentation}, Studies, and Methods.
 
 \subsection{Standards}\label{standards-36}
 
@@ -3363,11 +3648,12 @@ None
 
 \subsection{Automation}\label{automation-36}
 
-Tags may be applied manually by users or inferred automatically based on
-metadata and usage.
+\texttt{Tag}s may be applied manually by users or inferred automatically
+based on metadata and usage.
 
 \subsection{Relationships}\label{relationships-29}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3385,86 +3671,93 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 TAG & Type & TEXT \\
-& Description & ID in Tag table of the Tag being applied \\
+& Description & ID in \texttt{Tag} table of the \texttt{Tag} being
+applied \\
 & Standards & None \\
-& Validation & Must be an ID of a Tag \\
+& Validation & Must be an ID of a \texttt{Tag} \\
 & Null & Not null \\
 & Automation & None \\
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table if the Tag applies to an
-Application \\
+& Description & ID in \texttt{Application} table if the \texttt{Tag}
+applies to an \texttt{Application} \\
 & Standards & None \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 ASSUMPTION & Type & TEXT \\
-& Description & ID in Assumptoin table if the Tag applies to an
-Assumption. \\
+& Description & ID in Assumptoin table if the \texttt{Tag} applies to an
+\texttt{Assumption}. \\
 & Standards & None \\
-& Validation & Must be an ID of an Assumption \\
+& Validation & Must be an ID of an \texttt{Assumption} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 BOX & Type & TEXT \\
-& Description & ID in Box table if the Tag applies to a Box \\
+& Description & ID in \texttt{Box} table if the \texttt{Tag} applies to
+a \texttt{Box} \\
 & Standards & None \\
-& Validation & Must be an ID of a Box \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 BOX\_TYPE & Type & TEXT \\
-& Description & ID in BoxType table if the Tag applies to a BoxType \\
+& Description & ID in \texttt{BoxType} table if the \texttt{Tag} applies
+to a \texttt{BoxType} \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 DOCUMENTATION & Type & TEXT \\
-& Description & ID in Documentation table if the Tag applies to
-Documentation \\
+& Description & ID in \texttt{Documentation} table if the \texttt{Tag}
+applies to \texttt{Documentation} \\
 & Standards & None \\
-& Validation & Must be an ID of a Documentation \\
+& Validation & Must be an ID of a \texttt{Documentation} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 OTHER\_TAG & Type & TEXT \\
-& Description & ID in Tag table if the Tag relates to another Tag \\
+& Description & ID in \texttt{Tag} table if the \texttt{Tag} relates to
+another \texttt{Tag} \\
 & Standards & None \\
-& Validation & Must be an ID of a Tag \\
+& Validation & Must be an ID of a \texttt{Tag} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 PERSON & Type & TEXT \\
-& Description & ID in Person table is the Person in the Person table. \\
+& Description & ID in \texttt{Person} table is the \texttt{Person} in
+the \texttt{Person} table. \\
 & Standards & None \\
-& Validation & Must be an ID of a Tag \\
+& Validation & Must be an ID of a \texttt{Tag} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 STATISTICAL\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalMethod table if the Tag applies to a
-statistical method \\
+& Description & ID in \texttt{StatisticalMethod} table if the
+\texttt{Tag} applies to a statistical method \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalMethod \\
+& Validation & Must be an ID of a \texttt{StatisticalMethod} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 STUDY & Type & TEXT \\
-& Description & ID in Study table if the Tag applies to a Study \\
+& Description & ID in \texttt{Study} table if the \texttt{Tag} applies
+to a \texttt{Study} \\
 & Standards & None \\
-& Validation & Must be an ID of a Study \\
+& Validation & Must be an ID of a \texttt{Study} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table if the Tag applies to a
-visualisation method \\
+& Description & ID in \texttt{VisualisationMethod} table if the
+\texttt{Tag} applies to a visualisation method \\
 & Standards & None \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Null if not applicable \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{User}\label{user}
 
 \subsection{Description}\label{description-35}
 
-The User table records system user accounts, linking operating system
-user information to a Person.
+The \texttt{User} table records system user accounts, linking operating
+system user information to a \texttt{Person}.
 
 \subsection{Standards}\label{standards-37}
 
@@ -3476,6 +3769,7 @@ Most values are obtained automatically from the operating system.
 
 \subsection{Attributes}\label{attributes-31}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3484,7 +3778,7 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 ID\_USER & Type & TEXT \\
-& Description & Unique identifier for the User \\
+& Description & Unique identifier for the \texttt{User} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
@@ -3494,9 +3788,11 @@ HOME\_DIR & Type & TEXT \\
 & Validation & Valid file path \\
 & Automation & Retrieved from the operating system \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-30}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3514,20 +3810,21 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 ACCOUNT\_OF & Type & TEXT \\
-& Description & ID in Person table of the Person this User account
-belongs to \\
+& Description & ID in \texttt{Person} table of the \texttt{Person} this
+\texttt{User} account belongs to \\
 & Standards & PROV:actedOnBehalfOf \\
-& Validation & Must be an ID of a Person \\
+& Validation & Must be an ID of a \texttt{Person} \\
 & Null & Not null \\
 & Automation & Resolved from system/user configuration \\
 \end{longtable}
+}
 
 \section{Uses}\label{uses}
 
 \subsection{Description}\label{description-36}
 
-The Uses table records that an Application uses a BoxType as an input or
-dependency.
+The \texttt{Uses} table records that an \texttt{Application} uses a
+\texttt{BoxType} as an input or dependency.
 
 \subsection{Standards}\label{standards-38}
 
@@ -3535,11 +3832,12 @@ PROV:used
 
 \subsection{Automation}\label{automation-38}
 
-May be inferred automatically based on Application execution and
-detected Inputs.
+May be inferred automatically based on \texttt{Application} execution
+and detected \texttt{Input}s.
 
 \subsection{Attributes}\label{attributes-32}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3548,14 +3846,16 @@ Field & Property & Value \\
 \bottomrule\noalign{}
 \endlastfoot
 LOCATOR & Type & TEXT \\
-& Description & Description of how to locate the Uses input \\
+& Description & Description of how to locate the \texttt{Uses} input \\
 & Standards & None \\
 & Validation & Formatted rule string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-31}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3573,34 +3873,36 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 APPLICATION & Type & TEXT \\
-& Description & ID in Application table of the Application that uses the
-input \\
+& Description & ID in \texttt{Application} table of the
+\texttt{Application} that uses the input \\
 & Standards & PROV:Activity \\
-& Validation & Must be an ID of an Application \\
+& Validation & Must be an ID of an \texttt{Application} \\
 & Null & Not null \\
 & Automation & None \\
 BOX\_TYPE & Type & TEXT \\
-& Description & ID in BoxType table of the type of Box that is used \\
+& Description & ID in \texttt{BoxType} table of the type of \texttt{Box}
+that is used \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Not null \\
 & Automation & None \\
 IN\_FILE & Type & TEXT \\
-& Description & ID in BoxType table if the Uses input is contained
-within another file \\
+& Description & ID in \texttt{BoxType} table if the \texttt{Uses} input
+is contained within another file \\
 & Standards & None \\
-& Validation & Must be an ID of a BoxType \\
+& Validation & Must be an ID of a \texttt{BoxType} \\
 & Null & Null if LOCATOR is not `in-file' \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Value}\label{value}
 
 \subsection{Description}\label{description-37}
 
-The Value table represents values of Variables or StatisticalVariables.
-It is a virtual table whose entries are retrieved from Boxes rather than
-stored directly.
+The \texttt{Value} table represents values of Variables or
+\texttt{StatisticalVariable}s. It is a virtual table whose entries are
+retrieved from \texttt{Box}es rather than stored directly.
 
 \subsection{Standards}\label{standards-39}
 
@@ -3608,11 +3910,13 @@ PROV:Entity
 
 \subsection{Automation}\label{automation-39}
 
-Values are not stored explicitly; they are retrieved dynamically from
-Boxes based on Content specifications.
+\texttt{Value}s are not stored explicitly; they are retrieved
+dynamically from \texttt{Box}es based on \texttt{Content}
+specifications.
 
 \subsection{Attributes}\label{attributes-33}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3634,22 +3938,24 @@ ID\_VALUE & Type & TEXT \\
 & Description & Identifier or representation of the value \\
 & Standards & None \\
 & Validation & This should be a unique string \\
-& Automation & Retrieved from underlying data in Box \\
+& Automation & Retrieved from underlying data in \texttt{Box} \\
 UNITS & Type & TEXT \\
 & Description & The units of the value. \\
 & Standards & None \\
 & Validation & None \\
 & Automation & None. \\
 FORMAT & Type & TEXT \\
-& Description & ID in Variable table of the Variable this Value
-corresponds to \\
+& Description & ID in \texttt{Variable} table of the \texttt{Variable}
+this \texttt{Value} corresponds to \\
 & Standards & None \\
 & Validation & Values are not alway numbers. \\
 & Automation & None. \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-32}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3667,92 +3973,95 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 VARIABLE & Type & TEXT \\
-& Description & ID in Variable table of the Variable this Value
-corresponds to \\
+& Description & ID in \texttt{Variable} table of the \texttt{Variable}
+this \texttt{Value} corresponds to \\
 & Standards & None \\
-& Validation & Must be an ID of a Variable \\
+& Validation & Must be an ID of a \texttt{Variable} \\
 & Null & Null if STATISTICAL\_VARIABLE is used \\
-& Automation & Resolved via Content definitions \\
+& Automation & Resolved via \texttt{Content} definitions \\
 STATISTICAL\_VARIABLE & & \\
 & Type & TEXT \\
-& Description & ID in StatisticalVariable table if this Value is the
-result of a statistical computation \\
+& Description & ID in \texttt{StatisticalVariable} table if this
+\texttt{Value} is the result of a statistical computation \\
 & Standards & None \\
-& Validation & Must be an ID of a StatisticalVariable \\
+& Validation & Must be an ID of a \texttt{StatisticalVariable} \\
 & Null & Null if VARIABLE is used \\
 & Automation & Resolved via statistical processing \\
 PARAMETER & Type & TEXT \\
-& Description & ID in Parameter table if this Value corresponds to a
-parameter \\
+& Description & ID in \texttt{Parameter} table if this \texttt{Value}
+corresponds to a parameter \\
 & Standards & None \\
-& Validation & Must be an ID of a Parameter \\
+& Validation & Must be an ID of a \texttt{Parameter} \\
 & Null & Optional \\
 & Automation & Resolved during method execution \\
 STATISTICAL\_PARAMETER & & \\
 & Type & TEXT \\
-& Description & ID in Statistics table if this Value corresponds to a
-Statistic \\
+& Description & ID in \texttt{Statistics} table if this \texttt{Value}
+corresponds to a Statistic \\
 & Standards & None \\
 & Validation & Must be an ID of a Statistic \\
 & Null & Optional \\
 & Automation & Resolved during method execution \\
 VISUALISATION\_PARAMETER & & \\
 & Type & TEXT \\
-& Description & ID in the Visualisation table if this Value corresponds
-to a Visualisation \\
+& Description & ID in the \texttt{Visualisation} table if this
+\texttt{Value} corresponds to a \texttt{Visualisation} \\
 & Standards & None \\
-& Validation & Must be an ID of a Visualisation \\
+& Validation & Must be an ID of a \texttt{Visualisation} \\
 & Null & Optional \\
 & Automation & Resolved during method execution \\
 RESULT\_OF & Type & TEXT \\
-& Description & ID in Statistics table if this Value is the result of a
-statistical computation \\
+& Description & ID in \texttt{Statistics} table if this \texttt{Value}
+is the result of a statistical computation \\
 & Standards & PROV:wasGeneratedBy \\
-& Validation & Must be an ID of a Statistics \\
+& Validation & Must be an ID of a \texttt{Statistics} \\
 & Null & Optional \\
 & Automation & Set when statistical outputs are generated \\
 TIME & Type & TEXT \\
-& Description & ID in Context table representing the time associated
-with the Value \\
+& Description & ID in \texttt{Context} table representing the time
+associated with the \texttt{Value} \\
 & Standards & None \\
-& Validation & Must be an ID of a Context \\
+& Validation & Must be an ID of a \texttt{Context} \\
 & Null & Optional \\
-& Automation & Derived from Content locators \\
+& Automation & Derived from \texttt{Content} locators \\
 SPACE & Type & TEXT \\
-& Description & ID in Context table representing the spatial context of
-the Value \\
+& Description & ID in \texttt{Context} table representing the spatial
+context of the \texttt{Value} \\
 & Standards & None \\
-& Validation & Must be an ID of a Context \\
+& Validation & Must be an ID of a \texttt{Context} \\
 & Null & Optional \\
-& Automation & Derived from Content locators \\
+& Automation & Derived from \texttt{Content} locators \\
 AGENT & Type & TEXT \\
-& Description & ID in Context table representing the agent associated
-with the Value \\
+& Description & ID in \texttt{Context} table representing the agent
+associated with the \texttt{Value} \\
 & Standards & None \\
-& Validation & Must be an ID of a Context \\
+& Validation & Must be an ID of a \texttt{Context} \\
 & Null & Optional \\
-& Automation & Derived from Content locators \\
+& Automation & Derived from \texttt{Content} locators \\
 LINK & Type & TEXT \\
-& Description & ID in Context table representing link relationships
-associated with the Value \\
+& Description & ID in \texttt{Context} table representing link
+relationships associated with the \texttt{Value} \\
 & Standards & None \\
-& Validation & Must be an ID of a Context \\
+& Validation & Must be an ID of a \texttt{Context} \\
 & Null & Optional \\
-& Automation & Derived from Content locators \\
+& Automation & Derived from \texttt{Content} locators \\
 CONTAINED\_IN & Type & TEXT \\
-& Description & ID in Box table from which the Value is retrieved \\
+& Description & ID in \texttt{Box} table from which the \texttt{Value}
+is retrieved \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a Box \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Not null \\
 & Automation & Determined from data source \\
 \end{longtable}
+}
 
 \section{Variable}\label{variable}
 
 \subsection{Description}\label{description-38}
 
-The Variable table records variables that describe data, including their
-name, type, and roles such as time, space, agent, or link.
+The \texttt{Variable} table records variables that describe data,
+including their name, type, and roles such as time, space, agent, or
+link.
 
 \subsection{Standards}\label{standards-40}
 
@@ -3760,11 +4069,12 @@ None
 
 \subsection{Automation}\label{automation-40}
 
-Variables are generally defined by the user; some roles may be inferred
-during data processing.
+\texttt{Variable}s are generally defined by the user; some roles may be
+inferred during data processing.
 
 \subsection{Attributes}\label{attributes-34}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3821,13 +4131,14 @@ information \\
 & Validation & True or False \\
 & Automation & None \\
 \end{longtable}
+}
 
 \section{Visualisation}\label{visualisation}
 
 \subsection{Description}\label{description-39}
 
-The Visualisation table records visualisations generated from data,
-including when they were created and how the data was selected.
+The \texttt{Visualisation} table records visualisations generated from
+data, including when they were created and how the data was selected.
 
 \subsection{Standards}\label{standards-41}
 
@@ -3839,6 +4150,7 @@ Entries may be created automatically when a visualisation is generated.
 
 \subsection{Attributes}\label{attributes-35}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3848,24 +4160,27 @@ Field & Property & Value \\
 \endlastfoot
 ID\_VISUALISATION & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the Visualisation \\
+& Description & Unique identifier for the \texttt{Visualisation} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 DATE & Type & DATE \\
-& Description & Date the Visualisation was created \\
+& Description & Date the \texttt{Visualisation} was created \\
 & Standards & ISO8601 \\
 & Validation & Datetime string \\
 & Automation & Set automatically at creation time \\
 QUERY & Type & TEXT \\
-& Description & Query used to select data for the Visualisation \\
+& Description & Query used to select data for the
+\texttt{Visualisation} \\
 & Standards & None \\
 & Validation & Formatted string \\
 & Automation & None \\
 \end{longtable}
+}
 
 \subsection{Relationships}\label{relationships-33}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3884,26 +4199,27 @@ Value
 \endlastfoot
 VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & ID in VisualisationMethod table of the method used to
-generate the Visualisation \\
+& Description & ID in \texttt{VisualisationMethod} table of the method
+used to generate the Visualisation \\
 & Standards & PROV:used \\
-& Validation & Must be an ID of a VisualisationMethod \\
+& Validation & Must be an ID of a \texttt{VisualisationMethod} \\
 & Null & Not null \\
-& Automation & Set when the Visualisation is created \\
+& Automation & Set when the \texttt{Visualisation} is created \\
 CONTAINED\_IN & Type & TEXT \\
-& Description & ID in Box table of the Box containing the
-Visualisation \\
+& Description & ID in \texttt{Box} table of the \texttt{Box} containing
+the \texttt{Visualisation} \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a Box \\
+& Validation & Must be an ID of a \texttt{Box} \\
 & Null & Optional \\
-& Automation & Set if output is stored in a Box \\
+& Automation & Set if output is stored in a \texttt{Box} \\
 \end{longtable}
+}
 
 \section{VisualisationMethod}\label{visualisationmethod}
 
 \subsection{Description}\label{description-40}
 
-The VisualisationMethod table records methods used to generate
+The \texttt{VisualisationMethod} table records methods used to generate
 visualisations from data.
 
 \subsection{Standards}\label{standards-42}
@@ -3916,6 +4232,7 @@ None
 
 \subsection{Attributes}\label{attributes-36}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3925,18 +4242,21 @@ Field & Property & Value \\
 \endlastfoot
 ID\_VISUALISATION\_METHOD & & \\
 & Type & TEXT \\
-& Description & Unique identifier for the VisualisationMethod \\
+& Description & Unique identifier for the
+\texttt{VisualisationMethod} \\
 & Standards & None \\
 & Validation & Must be unique \\
 & Automation & Automated by the instantiating framework \\
 \end{longtable}
+}
 
 \section{VisualisationValue}\label{visualisationvalue}
 
 \subsection{Description}\label{description-41}
 
-The VisualisationValue table links Values to Visualisations, indicating
-which Values are used in a given Visualisation.
+The \texttt{VisualisationValue} table links a \texttt{Value} to a
+\texttt{Visualisation}, indicating which \texttt{Value}s are used in a
+given \texttt{Visualisation}.
 
 \subsection{Standards}\label{standards-43}
 
@@ -3944,10 +4264,12 @@ PROV:used
 
 \subsection{Automation}\label{automation-43}
 
-Entries are created automatically when a Visualisation is generated.
+Entries are created automatically when a \texttt{Visualisation} is
+generated.
 
 \subsection{Relationships}\label{relationships-34}
 
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3965,37 +4287,60 @@ Value
 \bottomrule\noalign{}
 \endlastfoot
 VALUE & Type & TEXT \\
-& Description & ID in Value table of the Value used in the
-Visualisation \\
+& Description & ID in \texttt{Value} table of the \texttt{Value} used in
+the \texttt{Visualisation}. \\
 & Standards & PROV:Entity \\
-& Validation & Must be an ID of a Value \\
-& Null & Not null \\
-& Automation & Populated automatically when the Visualisation is
-created \\
+& Validation & Must be an ID of a \texttt{Value}. \\
+& Null & Not null. \\
+& Automation & Populated automatically when the \texttt{Visualisation}
+is created. \\
 VISUALISATION & Type & TEXT \\
-& Description & ID in Visualisation table of the Visualisation using the
-Value \\
-& Standards & PROV:Activity \\
-& Validation & Must be an ID of a Visualisation \\
-& Null & Not null \\
-& Automation & Populated automatically when the Visualisation is
-created \\
+& Description & ID in \texttt{Visualisation} table of the
+\texttt{Visualisation} using the \texttt{Value}. \\
+& Standards & PROV:Activity. \\
+& Validation & Must be an ID of a \texttt{Visualisation}. \\
+& Null & Not null. \\
+& Automation & Populated automatically when the \texttt{Visualisation}
+is created. \\
 \end{longtable}
+}
 
 \section*{Bibliography}\label{bibliography}
 \addcontentsline{toc}{section}{Bibliography}
 
 \protect\phantomsection\label{refs}
-\begin{CSLReferences}{1}{0}
+\begin{CSLReferences}{1}{1}
 \bibitem[\citeproctext]{ref-atkinson2017scientific}
 Atkinson, Malcolm, Sandra Gesing, Johan Montagnat, and Ian Taylor. 2017.
-{``Scientific Workflows: Past, Present and Future.''} \emph{Future
-Generation Computer Systems}. Elsevier.
+{``Scientific Workflows: Past, Present and Future.''} In \emph{Future
+Generation Computer Systems}, vol. 75. Elsevier.
+
+\bibitem[\citeproctext]{ref-christensen2001wsdl}
+Christensen, Erik, Francisco Curbera, Greg Meredith, and Sanjiva
+Weerawarana. 2001. \emph{Web Services Description Language ({WSDL})
+1.1}. W3C Note. W3C. \url{https://www.w3.org/TR/wsdl}.
 
 \bibitem[\citeproctext]{ref-davoudian2020big}
 Davoudian, Ali, and Mengchi Liu. 2020. {``Big Data Systems: A Software
 Engineering Perspective.''} \emph{ACM Computing Surveys (CSUR)} 53 (5):
 1--39.
+
+\bibitem[\citeproctext]{ref-edmonds2003}
+Edmonds, Bruce, and David Hales. 2003. {``Replication, Replication and
+Replication: Some Hard Lessons from Model Alignment.''} \emph{Journal of
+Artificial Societies and Social Simulation} 6 (4): 11.
+\url{https://www.jasss.org/6/4/11.html}.
+
+\bibitem[\citeproctext]{ref-edwards2014lessons}
+Edwards, Peter, Edoardo Pignotti, Chris Mellish, et al. 2014. {``Lessons
+Learnt from the Deployment of a Semantic Virtual Research
+Environment.''} \emph{Journal of Web Semantics} 27: 70--77.
+
+\bibitem[\citeproctext]{ref-fanelli2018replication}
+Fanelli, Daniele. 2018. {``Is Science Really Facing a Reproducibility
+Crisis, and Do We Need It To?''} \emph{Proceedings of the National
+Academy of Sciences of the United States of America} 115 (11): 2628--31.
+\url{https://doi.org/10.1073/pnas.1708272114}.
 
 \bibitem[\citeproctext]{ref-gao2020big}
 Gao, Yuanzhao, Xingyuan Chen, and Xuehui Du. 2020. {``A Big Data
@@ -4004,10 +4349,10 @@ Model.''} \emph{IEEE Access} 8: 38742--52.
 
 \bibitem[\citeproctext]{ref-hartig2010publishing}
 Hartig, Olaf, and Jun Zhao. 2010. {``Publishing and Consuming Provenance
-Metadata on the Web of Linked Data.''} In \emph{Provenance and
-Annotation of Data and Processes: Third International Provenance and
-Annotation Workshop, IPAW 2010, Troy, NY, USA, June 15-16, 2010. Revised
-Selected Papers 3}, 78--90. Springer.
+Metadata on the Web of Linked Data.''} \emph{Provenance and Annotation
+of Data and Processes: Third International Provenance and Annotation
+Workshop, IPAW 2010, Troy, NY, USA, June 15-16, 2010. Revised Selected
+Papers 3}, 78--90.
 
 \bibitem[\citeproctext]{ref-herschel2017survey}
 Herschel, Melanie, Ralf Diestelkämper, and Houssem Ben Lahmar. 2017.
@@ -4021,20 +4366,31 @@ Reproducible Data Analysis and Visualization Platform for Outputs of
 Agent-Based Models.''} \emph{Environmental Modelling and Software} 96:
 172--80. \url{https://doi.org/10.1016/j.envsoft.2017.06.010}.
 
+\bibitem[\citeproctext]{ref-martin2007bringing}
+Martin, David, Mark Burstein, Drew McDermott, et al. 2007. {``Bringing
+Semantics to Web Services with {OWL-S}.''} \emph{World Wide Web} 10 (3):
+243--77. \url{https://doi.org/10.1007/s11280-007-0033-x}.
+
 \bibitem[\citeproctext]{ref-oliveira2018provenance}
 Oliveira, Wellington, Daniel De Oliveira, and Vanessa Braganholo. 2018.
 {``Provenance Analytics for Workflow-Based Computational Experiments: A
 Survey.''} \emph{ACM Computing Surveys (CSUR)} 51 (3): 1--25.
 
+\bibitem[\citeproctext]{ref-pignotti2013bigprov}
+Pignotti, Edoardo, Gary Polhill, and Peter Edwards. 2013. {``Using
+Provenance to Analyse Agent-Based Simulations.''} In \emph{Proceedings
+of the Joint EDBT/ICDT 2013 Workshops, Genoa, Italy, March 18-22, 2013},
+edited by Kai-Uwe Sattler, Devis Bianchini, Malu Castellanos, et al.
+Association for Computing Machinery.
+\url{https://doi.org/10.1145/2457317.2457371}.
+
 \bibitem[\citeproctext]{ref-polhill2014towards}
-Polhill, Gary, Terence Dawson, Dawn Parker, Xiongbing Jin, Kevin
-Robinson, Tatiana Filatova, Alexey Voinov, Michael Barton, Edoardo
-Pignotti, and Peter Edwards. 2014. {``Towards Metadata Standards for
-Sharing Simulation Outputs.''} In \emph{Advances in Computational Social
-Science and Social Simulation: Proceedings of the Social Simulation
-Conference 2014, Barcelona, Catalunya (Spain), September 15}, edited by
-Francisco J. Miguel, Frédéric Amblard, Joan A. Barceló, and Marco
-Madella, 624--27. Barcelona: Aut{ò}noma University of Barcelona.
+Polhill, Gary, Terence Dawson, Dawn Parker, et al. 2014. {``Towards
+Metadata Standards for Sharing Simulation Outputs.''} In \emph{Advances
+in Computational Social Science and Social Simulation: Proceedings of
+the Social Simulation Conference 2014, Barcelona, Catalunya (Spain),
+September 15}, edited by Francisco J. Miguel, Frédéric Amblard, Joan A.
+Barceló, and Marco Madella. Aut{ò}noma University of Barcelona.
 \url{https://core.ac.uk/download/pdf/78523531.pdf}.
 
 \bibitem[\citeproctext]{ref-polhill2017lessons}
@@ -4043,14 +4399,19 @@ Dawn Parker. 2017. {``Lessons Learned Replicating the Analysis of
 Outputs from a Social Simulation of Biodiversity Incentivisation.''} In
 \emph{Advances in Social Simulation 2015}, edited by Wander Jager,
 Rineke Verbrugge, Andreas Flache, Gert de Roo, Lex Hoogduin, and
-Charlotte Hemelrijk, 528:355--65. Advances in Intelligent Systems and
-Computing. Cham: Springer.
-\url{https://doi.org/10.1007/978-3-319-47253-9_32}.
+Charlotte Hemelrijk, vol. 528. Advances in Intelligent Systems and
+Computing. Springer. \url{https://doi.org/10.1007/978-3-319-47253-9_32}.
 
 \bibitem[\citeproctext]{ref-pritchard2025formal}
 Pritchard, Nicholas J, and Andreas Wicenec. 2025. {``Formal Definition
 and Implementation of Reproducibility Tenets for Computational
 Workflows.''} \emph{Future Generation Computer Systems} 166: 107684.
+
+\bibitem[\citeproctext]{ref-shrout2018replication}
+Shrout, Patrick E., and Joseph L. Rodgers. 2018. {``Psychology, Science,
+and Knowledge Construction: Broadening Perspectives from the Replication
+Crisis.''} \emph{Annual Review of Psychology} 69: 487--510.
+\url{https://doi.org/10.1146/annurev-psych-122216-011845}.
 
 \end{CSLReferences}
 

@@ -9,5 +9,17 @@ if ((Get-Command python -ErrorAction SilentlyContinue) -and (Get-Command record-
 	exit
 }
 Get-Content .\miracle-specification-end.md | Add-Content .\miracle-specification.md
- pandoc .\miracle-specification.md --standalone --toc --citeproc --bibliography=citations.bib -o miracle-specification-full.tex
+
+# The order of these parameter is immportant
+
+pandoc miracle-specification.md `
+  	--standalone `
+        --toc `
+        -o miracle-specification-full.tex `
+        --filter=.\pandoc-crossref `
+        --citeproc `
+        --pdf-engine=xelatex `
+        -V mainfont="Carlito" `
+        -V geometry:margin=1in `
+        --bibliography=citations.bib
 
