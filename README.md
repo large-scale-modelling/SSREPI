@@ -2,7 +2,7 @@
 
 **S**ocial **S**imulation **REP**ository **I**nterface (SSREPI)
 
-This is the specification document for the SSREPI metadata. An implentation of this specification can be found at [https://github.Acom/large-scale-modelling/miracle](https://github.com/large-scale-modelling/miracle), once a working version has been released. This is the:
+This is the specification document for the SSREPI metadata. An implentation of this specification can be found at [https://github.Acom/large-scale-modelling/miracle](https://github.com/large-scale-modelling/RECORD), once a working version has been released. This is the:
 
 **R**eproducible
 **E**xecution
@@ -19,11 +19,21 @@ If you want a word version of this specification, then `pandoc` can produce docu
 
 Suggested citation:
 
-[Polhill, G.](https://orcid.org/0000-0002-8596-0590), [Milazzo, L.](https://orcid.org/0000-0002-9451-8964), [Parker D.](https://orcid.org/0000-0001-8988-193X), Jin, X., [Pritchard C.](https://orcid.org/0000-0002-4557-8602), [Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), and [Salt, D.](https://orcid.org/0000-0001-5186-9388) (2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). 
+[Polhill, G.](https://orcid.org/0000-0002-8596-0590), 
+[Milazzo, L.](https://orcid.org/0000-0002-9451-8964), 
+[Parker D.](https://orcid.org/0000-0001-8988-193X), 
+Jin, X., 
+[Pritchard C.](https://orcid.org/0000-0002-4557-8602), 
+[Lee, J.-S.](https://orcid.org/0000-0002-4158-2700), 
+[Filatova, T.](https://orcid.org/0000-0002-3546-6930),
+[Voinov, A.](https://orcid.org/0009-0000-8002-2813),
+[Dawson T.](https://orcid.org/0000-0002-4314-1378) and
+[Salt, D.](https://orcid.org/0000-0001-5186-9388) 
+(2022) MIRACLE simulation outputs metadata specification, _Technical Report, The James Hutton Institute, Aberdeen, Spetember 2023_ (version 3.0.0). 
 
 ```BibTeX
 @techreport{polhill2022ssrepi,
-  author      = {Polhill, Gary and Milazzo, Lorenzo and Parker, Dawn and Jin, Xiongbing and Pritchard, Calvin and Lee, Ju-Sung and Salt, Doug},
+  author      = {Polhill, Gary and Milazzo, Lorenzo and Parker, Dawn and Jin, Xiongbing and Pritchard, Calvin and Lee, Ju-Sung and Filatova, Tatiana and Voinov, Alexey and Dawson, Terry and Salt, Doug},
   title       = {MIRACLE simulation outputs metadata specification (Formerly: Social Simulation Repository Interface (SSREPI))},
   institution = {The James Hutton Institute},
   year        = {2026},
@@ -31,7 +41,7 @@ Suggested citation:
   type        = {Specification},
   address     = {Aberdeen},
   month       = {September},
-  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification-full.pdf},
+  url         = {https://github.com/large-scale-modelling/SSREPI/blob/main/miracle-specification.pdf},
 }
 ```
 <!--  doi         = {10.5281/zenodo.15234672} -->

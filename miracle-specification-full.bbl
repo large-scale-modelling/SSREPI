@@ -1,0 +1,161 @@
+\begin{thebibliography}{17}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Atkinson et~al.(2017)Atkinson, Gesing, Montagnat, and
+  Taylor]{atkinson2017scientific}
+Malcolm Atkinson, Sandra Gesing, Johan Montagnat, and Ian Taylor.
+\newblock Scientific workflows: Past, present and future, 2017.
+
+\bibitem[Christensen et~al.(2001)Christensen, Curbera, Meredith, and
+  Weerawarana]{christensen2001wsdl}
+Erik Christensen, Francisco Curbera, Greg Meredith, and Sanjiva Weerawarana.
+\newblock Web services description language ({WSDL}) 1.1.
+\newblock W3c note, W3C, March 2001.
+\newblock URL \url{https://www.w3.org/TR/wsdl}.
+
+\bibitem[Davoudian and Liu(2020)]{davoudian2020big}
+Ali Davoudian and Mengchi Liu.
+\newblock Big data systems: A software engineering perspective.
+\newblock \emph{ACM Computing Surveys (CSUR)}, 53\penalty0 (5):\penalty0 1--39,
+  2020.
+
+\bibitem[Edmonds and Hales(2003)]{edmonds2003}
+Bruce Edmonds and David Hales.
+\newblock Replication, replication and replication: some hard lessons from
+  model alignment.
+\newblock \emph{Journal of Artificial Societies and Social Simulation},
+  6\penalty0 (4):\penalty0 11, 2003.
+\newblock URL \url{https://www.jasss.org/6/4/11.html}.
+
+\bibitem[Edwards et~al.(2014)Edwards, Pignotti, Mellish, Eckhardt,
+  Ponnamperuma, Bouttaz, Philip, Pangbourne, Polhill, and
+  Gotts]{edwards2014lessons}
+Peter Edwards, Edoardo Pignotti, Chris Mellish, Alan Eckhardt, Kapila
+  Ponnamperuma, Thomas Bouttaz, Lorna Philip, Kate Pangbourne, Gary Polhill,
+  and Nick Gotts.
+\newblock Lessons learnt from the deployment of a semantic virtual research
+  environment.
+\newblock \emph{Journal of Web Semantics}, 27--28:\penalty0 70--77, 2014.
+\newblock \doi{10.1016/j.websem.2014.07.008}.
+\newblock URL \url{https://doi.org/10.1016/j.websem.2014.07.008}.
+
+\bibitem[Fanelli(2018)]{fanelli2018replication}
+Daniele Fanelli.
+\newblock Is science really facing a reproducibility crisis, and do we need it
+  to?
+\newblock \emph{Proceedings of the National Academy of Sciences of the United
+  States of America}, 115\penalty0 (11):\penalty0 2628--2631, 2018.
+\newblock \doi{10.1073/pnas.1708272114}.
+\newblock URL \url{https://doi.org/10.1073/pnas.1708272114}.
+
+\bibitem[Gao et~al.(2020)Gao, Chen, and Du]{gao2020big}
+Yuanzhao Gao, Xingyuan Chen, and Xuehui Du.
+\newblock A big data provenance model for data security supervision based on
+  prov-dm model.
+\newblock \emph{IEEE Access}, 8:\penalty0 38742--38752, 2020.
+
+\bibitem[Hartig and Zhao(2010)]{hartig2010publishing}
+Olaf Hartig and Jun Zhao.
+\newblock Publishing and consuming provenance metadata on the web of linked
+  data.
+\newblock In \emph{Provenance and Annotation of Data and Processes: Third
+  International Provenance and Annotation Workshop, IPAW 2010, Troy, NY, USA,
+  June 15-16, 2010. Revised Selected Papers 3}, pages 78--90. Springer, 2010.
+
+\bibitem[Herschel et~al.(2017)Herschel, Diestelk{\"a}mper, and
+  Ben~Lahmar]{herschel2017survey}
+Melanie Herschel, Ralf Diestelk{\"a}mper, and Houssem Ben~Lahmar.
+\newblock A survey on provenance: What for? what form? what from?
+\newblock \emph{The VLDB Journal}, 26:\penalty0 881--906, 2017.
+
+\bibitem[Jin et~al.(2017)Jin, Robinson, Lee, Polhill, Pritchard, and
+  Parker]{jin2017miracle}
+Xiongbing Jin, Kevin Robinson, Ju-Sung Lee, J.~Gareth Polhill, Calvin
+  Pritchard, and Dawn Parker.
+\newblock Miracle: A prototype cloud-based reproducible data analysis and
+  visualization platform for outputs of agent-based models.
+\newblock \emph{Environmental Modelling and Software}, 96:\penalty0 172--180,
+  2017.
+\newblock \doi{10.1016/j.envsoft.2017.06.010}.
+\newblock URL \url{https://doi.org/10.1016/j.envsoft.2017.06.010}.
+
+\bibitem[Martin et~al.(2007)Martin, Burstein, McDermott, McIlraith, Paolucci,
+  Sycara, McGuinness, Sirin, and Srinivasan]{martin2007bringing}
+David Martin, Mark Burstein, Drew McDermott, Sheila McIlraith, Massimo
+  Paolucci, Katia Sycara, Deborah~L McGuinness, Evren Sirin, and Naveen
+  Srinivasan.
+\newblock Bringing semantics to web services with {OWL-S}.
+\newblock \emph{World Wide Web}, 10\penalty0 (3):\penalty0 243--277, 2007.
+\newblock \doi{10.1007/s11280-007-0033-x}.
+
+\bibitem[Oliveira et~al.(2018)Oliveira, Oliveira, and
+  Braganholo]{oliveira2018provenance}
+Wellington Oliveira, Daniel~De Oliveira, and Vanessa Braganholo.
+\newblock Provenance analytics for workflow-based computational experiments: A
+  survey.
+\newblock \emph{ACM Computing Surveys (CSUR)}, 51\penalty0 (3):\penalty0 1--25,
+  2018.
+
+\bibitem[Pignotti et~al.(2013)Pignotti, Polhill, and
+  Edwards]{pignotti2013bigprov}
+Edoardo Pignotti, Gary Polhill, and Peter Edwards.
+\newblock Using provenance to analyse agent-based simulations.
+\newblock In Kai-Uwe Sattler, Devis Bianchini, Malu Castellanos, Florian
+  Daniel, Roberto De~Virgilio, Valeria De~Antonellis, Farshad Fotouhi, Irene
+  Garrig{\'o}s, Wolfgang Lehner, Ulf Leser, Bertram Ludaescher, Federica
+  Mandreoli, Traian Marius, Riccardo Martoglia, Jose-Norberto Maz{\'o}n, Marco
+  Mesiti, Paolo Missier, Sascha M{\"u}ller-Feuerstein, Torben Bach~Pedersen,
+  Wilma Penzo, Bernhard Volz, Sebastian Wandelt, Li~Xiong, and Anastasios
+  Gounaris, editors, \emph{Proceedings of the Joint EDBT/ICDT 2013 Workshops,
+  Genoa, Italy, March 18-22, 2013}, pages 319--322. Association for Computing
+  Machinery, 2013.
+\newblock \doi{10.1145/2457317.2457371}.
+\newblock URL \url{https://doi.org/10.1145/2457317.2457371}.
+
+\bibitem[Polhill et~al.(2014)Polhill, Dawson, Parker, Jin, Robinson, Filatova,
+  Voinov, Barton, Pignotti, and Edwards]{polhill2014towards}
+Gary Polhill, Terence Dawson, Dawn Parker, Xiongbing Jin, Kevin Robinson,
+  Tatiana Filatova, Alexey Voinov, Michael Barton, Edoardo Pignotti, and Peter
+  Edwards.
+\newblock Towards metadata standards for sharing simulation outputs.
+\newblock In Francisco~J. Miguel, Fr{\'e}d{\'e}ric Amblard, Joan~A.
+  Barcel{\'o}, and Marco Madella, editors, \emph{Advances in Computational
+  Social Science and Social Simulation: Proceedings of the Social Simulation
+  Conference 2014, Barcelona, Catalunya (Spain), September 15}, pages 624--627,
+  Barcelona, 2014. Aut{\`o}noma University of Barcelona.
+\newblock URL \url{https://core.ac.uk/download/pdf/78523531.pdf}.
+\newblock DDD repository record 125597.
+
+\bibitem[Polhill et~al.(2017)Polhill, Milazzo, Dawson, Gimona, and
+  Parker]{polhill2017lessons}
+Gary Polhill, Lorenzo Milazzo, Terence Dawson, Alessandro Gimona, and Dawn
+  Parker.
+\newblock Lessons learned replicating the analysis of outputs from a social
+  simulation of biodiversity incentivisation.
+\newblock In Wander Jager, Rineke Verbrugge, Andreas Flache, Gert de~Roo, Lex
+  Hoogduin, and Charlotte Hemelrijk, editors, \emph{Advances in Social
+  Simulation 2015}, volume 528 of \emph{Advances in Intelligent Systems and
+  Computing}, pages 355--365. Springer, Cham, 2017.
+\newblock \doi{10.1007/978-3-319-47253-9_32}.
+\newblock URL \url{https://doi.org/10.1007/978-3-319-47253-9_32}.
+
+\bibitem[Pritchard and Wicenec(2025)]{pritchard2025formal}
+Nicholas~J Pritchard and Andreas Wicenec.
+\newblock Formal definition and implementation of reproducibility tenets for
+  computational workflows.
+\newblock \emph{Future Generation Computer Systems}, 166:\penalty0 107684,
+  2025.
+
+\bibitem[Shrout and Rodgers(2018)]{shrout2018replication}
+Patrick~E. Shrout and Joseph~L. Rodgers.
+\newblock Psychology, science, and knowledge construction: broadening
+  perspectives from the replication crisis.
+\newblock \emph{Annual Review of Psychology}, 69:\penalty0 487--510, 2018.
+\newblock \doi{10.1146/annurev-psych-122216-011845}.
+\newblock URL \url{https://doi.org/10.1146/annurev-psych-122216-011845}.
+
+\end{thebibliography}

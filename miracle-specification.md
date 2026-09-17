@@ -11,7 +11,7 @@ author:
   - Alexey Voinov
   - Terry Dawson
   - Doug Salt
-date: 29 April 2016
+date: 17 September 2026
 abstract: |
   This document contains metadata specifications for recording simulation
   outputs.
