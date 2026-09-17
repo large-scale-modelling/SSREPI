@@ -17,7 +17,7 @@ pandoc miracle-specification.md `
         --toc `
         -o miracle-specification-full.tex `
         --filter=.\pandoc-crossref `
-        --citeproc `
+        --natbib `
         --pdf-engine=xelatex `
         -V mainfont="Carlito" `
         -V geometry:margin=1in `

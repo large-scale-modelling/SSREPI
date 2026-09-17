@@ -1,4 +1,3 @@
-% Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \documentclass[
@@ -6,131 +5,100 @@
 \usepackage{xcolor}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\setcounter{secnumdepth}{-\maxdimen} 
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
+  \usepackage{textcomp} 
+\else 
+  \usepackage{unicode-math} 
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 \usepackage{lmodern}
 \ifPDFTeX\else
-  % xetex/luatex font selection
+  
   \setmainfont[]{Carlito}
 \fi
-% Use upquote if available, for straight quotes in verbatim environments
+
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
+\IfFileExists{microtype.sty}{
   \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+  \UseMicrotypeSet[protrusion]{basicmath} 
 }{}
 \makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
+\@ifundefined{KOMAClassName}{
+  \IfFileExists{parskip.sty}{
     \usepackage{parskip}
-  }{% else
+  }{
     \setlength{\parindent}{0pt}
     \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
+}{
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{longtable,booktabs,array}
 \usepackage{caption}
 \captionsetup[table]{skip=6pt}
-\newcounter{none} % for unnumbered tables
-\usepackage{calc} % for calculating minipage widths
-% Correct order of tables after \paragraph or \subparagraph
+\newcounter{none} 
+\usepackage{calc} 
+
 \usepackage{etoolbox}
 \makeatletter
 \patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
 \makeatother
-% Allow footnotes in longtable head/foot
+
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
-\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
-  \sbox\pandoc@box{#1}%
-  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
-  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
-  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
-  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
-  \else\usebox{\pandoc@box}%
-  \fi%
+\newcommand*\pandocbounded[1]{
+  \sbox\pandoc@box{#1}
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}
+  \else\usebox{\pandoc@box}
+  \fi
 }
-% Set default figure placement to htbp
+
 \def\fps@figure{htbp}
 \makeatother
-% definitions for citeproc citations
-\NewDocumentCommand\citeproctext{}{}
-\NewDocumentCommand\citeproc{mm}{%
-  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
-\makeatletter
- % allow citations to break across lines
- \let\@cite@ofmt\@firstofone
- % avoid brackets around text for \cite:
- \def\@biblabel#1{}
- \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
-\makeatother
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
- {\begin{list}{}{%
-  \setlength{\itemindent}{0pt}
-  \setlength{\leftmargin}{0pt}
-  \setlength{\parsep}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1
-   \setlength{\leftmargin}{\cslhangindent}
-   \setlength{\itemindent}{-1\cslhangindent}
-  \fi
-  % set entry spacing
-  \setlength{\itemsep}{#2\baselineskip}}}
- {\end{list}}
-\usepackage{calc}
-\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
+\setlength{\emergencystretch}{3em} 
+\providecommand{\tightlist}{
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
 \usepackage{etoolbox}
 \AtBeginEnvironment{longtable}{\footnotesize}
 \makeatletter
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \captionsetup[subfigure]{margin=0.5em}
-\AtBeginDocument{%
+\AtBeginDocument{
 \renewcommand*\figurename{Figure}
 \renewcommand*\tablename{Table}
 }
-\AtBeginDocument{%
+\AtBeginDocument{
 \renewcommand*\listfigurename{List of Figures}
 \renewcommand*\listtablename{List of Tables}
 }
 \newcounter{pandoccrossref@subfigures@footnote@counter}
-\newenvironment{pandoccrossrefsubfigures}{%
+\newenvironment{pandoccrossrefsubfigures}{
 \setcounter{pandoccrossref@subfigures@footnote@counter}{0}
-\begin{figure}\centering%
-\gdef\global@pandoccrossref@subfigures@footnotes{}%
-\DeclareRobustCommand{\footnote}[1]{\footnotemark%
-\stepcounter{pandoccrossref@subfigures@footnote@counter}%
-\ifx\global@pandoccrossref@subfigures@footnotes\empty%
-\gdef\global@pandoccrossref@subfigures@footnotes{{##1}}%
-\else%
-\g@addto@macro\global@pandoccrossref@subfigures@footnotes{, {##1}}%
-\fi}}%
-{\end{figure}%
+\begin{figure}\centering
+\gdef\global@pandoccrossref@subfigures@footnotes{}
+\DeclareRobustCommand{\footnote}[1]{\footnotemark
+\stepcounter{pandoccrossref@subfigures@footnote@counter}
+\ifx\global@pandoccrossref@subfigures@footnotes\empty
+\gdef\global@pandoccrossref@subfigures@footnotes{{##1}}
+\else
+\g@addto@macro\global@pandoccrossref@subfigures@footnotes{, {##1}}
+\fi}}
+{\end{figure}
 \addtocounter{footnote}{-\value{pandoccrossref@subfigures@footnote@counter}}
-\@for\f:=\global@pandoccrossref@subfigures@footnotes\do{\stepcounter{footnote}\footnotetext{\f}}%
+\@for\f:=\global@pandoccrossref@subfigures@footnotes\do{\stepcounter{footnote}\footnotetext{\f}}
 \gdef\global@pandoccrossref@subfigures@footnotes{}}
 \@ifpackageloaded{float}{}{\usepackage{float}}
 \floatstyle{ruled}
@@ -139,9 +107,9 @@
 \newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
 \makeatother
 \usepackage{bookmark}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} 
 \urlstyle{same}
-% fallback for those not using the hyperref driver hyperxmp:
+
 \makeatletter
 \@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
 \makeatother
@@ -171,7 +139,7 @@ outputs.
 }
 \section{ChangeLog}\label{changelog}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
@@ -214,17 +182,18 @@ RESAS release \\
 
 \section{Introduction}\label{introduction}
 
-The replication `crisis' (Fanelli 2018) in science generally (and
-especially the social sciences (Shrout and Rodgers 2018)) has its
-correlate in social simulation (Edmonds and Hales 2003). In our own work
-(Polhill et al. 2017), the complicated computational workflows
-associated with preparing, running and analysing the results of
-agent-based models have demonstrated the need for automated
-record-keeping.
+The replication `crisis' \citep{fanelli2018replication} in science
+generally (and especially the social sciences
+\citep{shrout2018replication}) has its correlate in social simulation
+\citep{edmonds2003}. In our own work \citep{polhill2017lessons}, the
+complicated computational workflows associated with preparing, running
+and analysing the results of agent-based models have demonstrated the
+need for automated record-keeping.
 
 Earlier work identified the various ways in which provenance metadata
-could be used to help analyse agent-based models (Pignotti et al. 2013).
-Three types of provenance were identified in that work:
+could be used to help analyse agent-based models
+\citep{pignotti2013bigprov}. Three types of provenance were identified
+in that work:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -243,19 +212,19 @@ of provenance can be recorded.
 \section{Overview}\label{overview}
 
 This specification builds on earlier work towards metadata standards for
-sharing simulation outputs (Polhill et al. 2014). The schema diagram is
-shown in fig.~\ref{fig:schema}.
+sharing simulation outputs \citep{polhill2014towards}. The schema
+diagram is shown in fig.~\ref{fig:schema}.
 
 Note originally this schema was designed to run on a relational
 database, but later work has adapted it to run on graph database as
-well, due to ease of querying on a graph database (Davoudian and Liu
-2020). As such there are many reified relationships in the relational
-description of the database. Please note that in the graph database, the
-reified relationships have been converted to direct links between
-entities; the many to many relation being more natural in a graph
-database setting. A note has been made when a reified relationship in
-the relational schema has been replaced with a direct link in the graph
-database.
+well, due to ease of querying on a graph database
+\citep{davoudian2020big}. As such there are many reified relationships
+in the relational description of the database. Please note that in the
+graph database, the reified relationships have been converted to direct
+links between entities; the many to many relation being more natural in
+a graph database setting. A note has been made when a reified
+relationship in the relational schema has been replaced with a direct
+link in the graph database.
 
 There are two important dimensions of distinction. First is fine- versus
 coarse- grained metadata. Second is provenance versus workflow.
@@ -333,7 +302,7 @@ computed using them. \texttt{Statistics} are computed using
 \texttt{StatisticalVariables} as outputs, which are stored in the
 \texttt{Value}s table as results-of \texttt{Statistics}.
 \texttt{Statistics} and \texttt{Visualisations} are thus conceived as a
-\texttt{PROV::Activity} in the PROV vocabulary (Gao et al. 2020).
+\texttt{PROV::Activity} in the PROV vocabulary \citep{gao2020big}.
 
 When a user of the system has identified some statistics or
 visualisations they want to be able to reuse in other studies or record
@@ -445,7 +414,7 @@ following gives examples of specific external links:
   Petri-Nets and various business process modelling ontologies, remain
   potentially relevant, though PROV-O may be a more durable choice than
   domain-specific alternatives for capturing workflow provenance in
-  particular (Herschel et al. 2017).
+  particular \citep{herschel2017survey}.
 \item
   GitHub/Zenodo -- links to source-code repositories and their citable
   archived releases. GitHub is the natural place to link an
@@ -527,16 +496,16 @@ projects}\label{fig:diagram-06}
 \end{figure}
 
 Project metadata (fig.~\ref{fig:diagram-06}) is largely for users to
-enter, and previously may have been regarded as unduly onerous (Edwards
-et al. 2014). However, it tells an important part of the story of a
-model from a Type 1 provenance (Pignotti et al. 2013) perspective, and
-with the advent of large language models, much of this metadata might be
-automatically generated. It is provided to facilitate users in
-understanding how simulation output data relates to publications (which
-would appear in the Documentation table), and specific pieces of work
-(Study table). The Study might be the most important table for users to
-complete, as this, by its association with \texttt{Box}es allows
-collection of simulation outputs in useful groups.
+enter, and previously may have been regarded as unduly onerous
+\citep{edwards2014lessons}. However, it tells an important part of the
+story of a model from a Type 1 provenance \citep{pignotti2013bigprov}
+perspective, and with the advent of large language models, much of this
+metadata might be automatically generated. It is provided to facilitate
+users in understanding how simulation output data relates to
+publications (which would appear in the Documentation table), and
+specific pieces of work (Study table). The Study might be the most
+important table for users to complete, as this, by its association with
+\texttt{Box}es allows collection of simulation outputs in useful groups.
 
 \subsection{Provenance}\label{provenance}
 
@@ -548,21 +517,23 @@ collection of simulation outputs in useful groups.
 
 Provenance (fig.~\ref{fig:diagram-07}) is very much at the heart of the
 system, with an important role in recording how results from a model
-presented in journal articles are produced (Oliveira et al. 2018). Most
-of the tables here are autopopulated, as particularly for large scale
-analyses, user entry is an unrealistic goal. The system therefore needs
-to act as a wrapper around the scripts and tools (\texttt{Application}s)
-used to process the raw output from the simulation (which is the
-starting point of the MIRACLE project (Jin et al. 2017)) into the result
-used as part of an article. At the coarse grain, the central activity is
-the \texttt{Process}, which is a record of all relevant information of a
+presented in journal articles are produced
+\citep{oliveira2018provenance}. Most of the tables here are
+autopopulated, as particularly for large scale analyses, user entry is
+an unrealistic goal. The system therefore needs to act as a wrapper
+around the scripts and tools (\texttt{Application}s) used to process the
+raw output from the simulation (which is the starting point of the
+MIRACLE project \citep{jin2017miracle}) into the result used as part of
+an article. At the coarse grain, the central activity is the
+\texttt{Process}, which is a record of all relevant information of a
 process that ran on a \texttt{Computer}. This includes anything needed
 to replicate that \texttt{Process} under the same circumstances: the
 input files it used, command-line arguments, environment variables
 (essentially, anything that might affect its behaviour), and the output
 files it generated, the importance of which is illustrated by the
 challenges encountered when replicating the analysis of outputs from a
-social simulation of biodiversity incentivisation (Polhill et al. 2017).
+social simulation of biodiversity incentivisation
+\citep{polhill2017lessons}.
 
 The need for cross-platform support means that it is difficult to draw
 on standards for these. Different operating systems, and even different
@@ -579,7 +550,7 @@ involve user interaction that might affect the behaviour, automatic
 capture of provenance data would be extremely challenging. Whilst GUIs
 might be used during exploratory analysis of simulation output data,
 ultimately for reproducibility of results and keeping records of
-activities done (Pritchard and Wicenec 2025), these must ultimately be
+activities done \citep{pritchard2025formal}, these must ultimately be
 manifested as scripts that can be run in batch mode, once a decision is
 taken that a particular analysis step needs to be recorded as an
 application. \texttt{Application}s that only support GUI interaction can
@@ -637,8 +608,8 @@ their developers -- users of the framework would then not be uploading
 \texttt{Application}s to their own system, but instead sending data for
 processing by other servers, and capturing metadata about these
 interactions. The services architecture could then draw much more
-heavily on web services ontologies, for example OWL-S (Martin et al.
-2007) and WSDL (Christensen et al. 2001).
+heavily on web services ontologies, for example OWL-S
+\citep{martin2007bringing} and WSDL \citep{christensen2001wsdl}.
 
 \subsection{Workflow}\label{workflow}
 
@@ -649,15 +620,15 @@ heavily on web services ontologies, for example OWL-S (Martin et al.
 \end{figure}
 
 The standard workflow model (fig.~\ref{fig:diagram-09}) provides
-prescriptive `recipes' for undertaking specific procedures (Atkinson et
-al. 2017). Though we are interested in that here, and have provided a
-rudimentary sequence-based \texttt{Pipeline} table to handle that, we
-are also interested in providing support for exploring what `could be
-done' given a current set of circumstances, and `what needs to be done'
-before running an \texttt{Application}. For example, suppose we are
-interested in getting a \texttt{Value} for a particular
-\texttt{Variable}. Then we can see which \texttt{BoxType}s have that
-\texttt{Variable} in their \texttt{Content}, and which
+prescriptive `recipes' for undertaking specific procedures
+\citep{atkinson2017scientific}. Though we are interested in that here,
+and have provided a rudimentary sequence-based \texttt{Pipeline} table
+to handle that, we are also interested in providing support for
+exploring what `could be done' given a current set of circumstances, and
+`what needs to be done' before running an \texttt{Application}. For
+example, suppose we are interested in getting a \texttt{Value} for a
+particular \texttt{Variable}. Then we can see which \texttt{BoxType}s
+have that \texttt{Variable} in their \texttt{Content}, and which
 \texttt{Application}s have the \texttt{BoxType} as a \texttt{Product}.
 If the \texttt{BoxType}s those \texttt{Application}s Use have no
 instances, then we can find \texttt{Application}s that have the Uses
@@ -698,16 +669,16 @@ format, not in the native format of the database. This is recommended
 best practice according to the Dublin Core Metadata
 Initiative.{[}\^{}1{]} The remaining attribute that is always included
 in each relation is the "about" column. This we have pinched directly
-from RDF and uniquely identifies a triple in RDF (Hartig and Zhao 2010).
-Although currently optional, we intend this to uniquely identify the
-relationship within our database. The form of this is normally some kind
-of IRI. This will allow inward referencing of the provenance and
-metadata resource from other standardised resource software that
-recognizes IRIs.
+from RDF and uniquely identifies a triple in RDF
+\citep{hartig2010publishing}. Although currently optional, we intend
+this to uniquely identify the relationship within our database. The form
+of this is normally some kind of IRI. This will allow inward referencing
+of the provenance and metadata resource from other standardised resource
+software that recognizes IRIs.
 
 \subsubsection{Attributes}\label{attributes}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
@@ -775,7 +746,7 @@ should be allowed to stop the possibility of SQL injections.
 
 \subsubsection{Attributes}\label{attributes-1}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
@@ -834,7 +805,7 @@ Most of this table is expected to be populated by the user.
 
 \subsection{Attributes}\label{attributes-2}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -893,7 +864,7 @@ application \\
 
 \subsection{Relationships}\label{relationships-1}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -981,7 +952,7 @@ concatenate to C. - C contains the command-line argument string.
 
 \subsection{Attributes}\label{attributes-3}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1083,7 +1054,7 @@ the user \\
 
 \subsection{Relationships}\label{relationships-2}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1140,7 +1111,7 @@ Populated automatically when a \texttt{Process} is invoked.
 
 \subsection{Attributes}\label{attributes-4}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1206,7 +1177,7 @@ This relationship may be inferred automatically from the use of
 
 \subsection{Relationships}\label{relationships-3}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1283,7 +1254,7 @@ None
 
 \subsection{Attributes}\label{attributes-5}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -1319,7 +1290,7 @@ timestamps, and hash may be populated automatically using system tools
 
 \subsection{Attributes}\label{attributes-6}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1398,7 +1369,7 @@ INSTANCE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-4}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1495,7 +1466,7 @@ contents.
 
 \subsection{Attributes}\label{attributes-7}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1549,7 +1520,7 @@ system and network interfaces.
 
 \subsection{Attributes}\label{attributes-8}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -1601,7 +1572,7 @@ None
 
 \subsection{Attributes}\label{attributes-9}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1657,7 +1628,7 @@ STATISTICAL\_VARIABLE & & \\
 
 \subsection{Relationships}\label{relationships-5}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1717,7 +1688,7 @@ interpreting data from \texttt{Box}es.
 
 \subsection{Attributes}\label{attributes-10}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1751,7 +1722,7 @@ extraction \\
 
 \subsection{Relationships}\label{relationships-6}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1800,7 +1771,7 @@ None
 
 \subsection{Attributes}\label{attributes-11}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1833,7 +1804,7 @@ the \texttt{Application} or \texttt{Documentation} \\
 
 \subsection{Relationships}\label{relationships-7}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1895,7 +1866,7 @@ are generally provided by the user.
 
 \subsection{Attributes}\label{attributes-12}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1923,7 +1894,7 @@ conditional \\
 
 \subsection{Relationships}\label{relationships-8}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -1974,7 +1945,7 @@ None
 
 \subsection{Attributes}\label{attributes-13}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2003,7 +1974,7 @@ DATE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-9}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2059,7 +2030,7 @@ methods and variables.
 
 \subsection{Relationships}\label{relationships-10}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2125,7 +2096,7 @@ methods and assumptions.
 
 \subsection{Relationships}\label{relationships-11}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2189,7 +2160,7 @@ None
 
 \subsection{Attributes}\label{attributes-14}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2223,7 +2194,7 @@ found \\
 
 \subsection{Relationships}\label{relationships-12}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2288,7 +2259,7 @@ inputs are identified.
 
 \subsection{Attributes}\label{attributes-15}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2307,7 +2278,7 @@ USAGE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-13}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2363,7 +2334,7 @@ None
 
 \subsection{Attributes}\label{attributes-16}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2381,7 +2352,7 @@ ROLE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-14}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2436,7 +2407,7 @@ None
 
 \subsection{Relationships}\label{relationships-15}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2489,7 +2460,7 @@ None
 
 \subsection{Attributes}\label{attributes-17}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2523,7 +2494,7 @@ repository \\
 
 \subsection{Relationships}\label{relationships-16}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2567,7 +2538,7 @@ None
 
 \subsection{Attributes}\label{attributes-18}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2590,7 +2561,7 @@ DATA\_TYPE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-17}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2643,7 +2614,7 @@ None
 
 \subsection{Attributes}\label{attributes-19}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2681,7 +2652,7 @@ None
 
 \subsection{Attributes}\label{attributes-20}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2710,7 +2681,7 @@ VALUE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-18}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2755,7 +2726,7 @@ None
 
 \subsection{Attributes}\label{attributes-21}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -2773,7 +2744,7 @@ ID\_PIPELINE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-19}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2826,7 +2797,7 @@ executed, capturing runtime details.
 
 \subsection{Attributes}\label{attributes-22}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2881,7 +2852,7 @@ executed \\
 
 \subsection{Relationships}\label{relationships-20}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2952,7 +2923,7 @@ Some \texttt{Product}s may be inferred automatically based on
 
 \subsection{Attributes}\label{attributes-23}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -2986,7 +2957,7 @@ output \\
 
 \subsection{Relationships}\label{relationships-21}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3045,7 +3016,7 @@ None
 
 \subsection{Attributes}\label{attributes-24}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3078,7 +3049,7 @@ GRANT\_ID & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-22}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3127,7 +3098,7 @@ None
 
 \subsection{Relationships}\label{relationships-23}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3193,7 +3164,7 @@ None
 
 \subsection{Attributes}\label{attributes-25}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3222,7 +3193,7 @@ VALUE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-24}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3273,7 +3244,7 @@ computation is executed.
 
 \subsection{Relationships}\label{relationships-25}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3332,7 +3303,7 @@ None
 
 \subsection{Attributes}\label{attributes-26}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3367,7 +3338,7 @@ statistical computations.
 
 \subsection{Attributes}\label{attributes-27}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3392,7 +3363,7 @@ DATA\_TYPE & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-26}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3446,7 +3417,7 @@ performed.
 
 \subsection{Attributes}\label{attributes-28}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3485,7 +3456,7 @@ computation \\
 
 \subsection{Relationships}\label{relationships-27}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3530,7 +3501,7 @@ grouped into Studies.
 
 \subsection{Attributes}\label{attributes-29}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3563,7 +3534,7 @@ END\_TIME & Type & DATE \\
 
 \subsection{Relationships}\label{relationships-28}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3614,7 +3585,7 @@ None
 
 \subsection{Attributes}\label{attributes-30}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3653,7 +3624,7 @@ based on metadata and usage.
 
 \subsection{Relationships}\label{relationships-29}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3769,7 +3740,7 @@ Most values are obtained automatically from the operating system.
 
 \subsection{Attributes}\label{attributes-31}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3792,7 +3763,7 @@ HOME\_DIR & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-30}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3837,7 +3808,7 @@ and detected \texttt{Input}s.
 
 \subsection{Attributes}\label{attributes-32}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -3855,7 +3826,7 @@ LOCATOR & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-31}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3916,7 +3887,7 @@ specifications.
 
 \subsection{Attributes}\label{attributes-33}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -3955,7 +3926,7 @@ this \texttt{Value} corresponds to \\
 
 \subsection{Relationships}\label{relationships-32}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -4074,7 +4045,7 @@ inferred during data processing.
 
 \subsection{Attributes}\label{attributes-34}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -4150,7 +4121,7 @@ Entries may be created automatically when a visualisation is generated.
 
 \subsection{Attributes}\label{attributes-35}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -4180,7 +4151,7 @@ QUERY & Type & TEXT \\
 
 \subsection{Relationships}\label{relationships-33}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -4232,7 +4203,7 @@ None
 
 \subsection{Attributes}\label{attributes-36}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
 Field & Property & Value \\
@@ -4269,7 +4240,7 @@ generated.
 
 \subsection{Relationships}\label{relationships-34}
 
-{\def\LTcaptype{none} % do not increment counter
+{\def\LTcaptype{none} 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2326}}
   >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1860}}
@@ -4305,114 +4276,10 @@ is created. \\
 \end{longtable}
 }
 
-\section*{Bibliography}\label{bibliography}
-\addcontentsline{toc}{section}{Bibliography}
-
-\protect\phantomsection\label{refs}
-\begin{CSLReferences}{1}{1}
-\bibitem[\citeproctext]{ref-atkinson2017scientific}
-Atkinson, Malcolm, Sandra Gesing, Johan Montagnat, and Ian Taylor. 2017.
-{``Scientific Workflows: Past, Present and Future.''} In \emph{Future
-Generation Computer Systems}, vol. 75. Elsevier.
-
-\bibitem[\citeproctext]{ref-christensen2001wsdl}
-Christensen, Erik, Francisco Curbera, Greg Meredith, and Sanjiva
-Weerawarana. 2001. \emph{Web Services Description Language ({WSDL})
-1.1}. W3C Note. W3C. \url{https://www.w3.org/TR/wsdl}.
-
-\bibitem[\citeproctext]{ref-davoudian2020big}
-Davoudian, Ali, and Mengchi Liu. 2020. {``Big Data Systems: A Software
-Engineering Perspective.''} \emph{ACM Computing Surveys (CSUR)} 53 (5):
-1--39.
-
-\bibitem[\citeproctext]{ref-edmonds2003}
-Edmonds, Bruce, and David Hales. 2003. {``Replication, Replication and
-Replication: Some Hard Lessons from Model Alignment.''} \emph{Journal of
-Artificial Societies and Social Simulation} 6 (4): 11.
-\url{https://www.jasss.org/6/4/11.html}.
-
-\bibitem[\citeproctext]{ref-edwards2014lessons}
-Edwards, Peter, Edoardo Pignotti, Chris Mellish, et al. 2014. {``Lessons
-Learnt from the Deployment of a Semantic Virtual Research
-Environment.''} \emph{Journal of Web Semantics} 27: 70--77.
-
-\bibitem[\citeproctext]{ref-fanelli2018replication}
-Fanelli, Daniele. 2018. {``Is Science Really Facing a Reproducibility
-Crisis, and Do We Need It To?''} \emph{Proceedings of the National
-Academy of Sciences of the United States of America} 115 (11): 2628--31.
-\url{https://doi.org/10.1073/pnas.1708272114}.
-
-\bibitem[\citeproctext]{ref-gao2020big}
-Gao, Yuanzhao, Xingyuan Chen, and Xuehui Du. 2020. {``A Big Data
-Provenance Model for Data Security Supervision Based on PROV-DM
-Model.''} \emph{IEEE Access} 8: 38742--52.
-
-\bibitem[\citeproctext]{ref-hartig2010publishing}
-Hartig, Olaf, and Jun Zhao. 2010. {``Publishing and Consuming Provenance
-Metadata on the Web of Linked Data.''} \emph{Provenance and Annotation
-of Data and Processes: Third International Provenance and Annotation
-Workshop, IPAW 2010, Troy, NY, USA, June 15-16, 2010. Revised Selected
-Papers 3}, 78--90.
-
-\bibitem[\citeproctext]{ref-herschel2017survey}
-Herschel, Melanie, Ralf Diestelkämper, and Houssem Ben Lahmar. 2017.
-{``A Survey on Provenance: What for? What Form? What From?''} \emph{The
-VLDB Journal} 26: 881--906.
-
-\bibitem[\citeproctext]{ref-jin2017miracle}
-Jin, Xiongbing, Kevin Robinson, Ju-Sung Lee, J. Gareth Polhill, Calvin
-Pritchard, and Dawn Parker. 2017. {``MIRACLE: A Prototype Cloud-Based
-Reproducible Data Analysis and Visualization Platform for Outputs of
-Agent-Based Models.''} \emph{Environmental Modelling and Software} 96:
-172--80. \url{https://doi.org/10.1016/j.envsoft.2017.06.010}.
-
-\bibitem[\citeproctext]{ref-martin2007bringing}
-Martin, David, Mark Burstein, Drew McDermott, et al. 2007. {``Bringing
-Semantics to Web Services with {OWL-S}.''} \emph{World Wide Web} 10 (3):
-243--77. \url{https://doi.org/10.1007/s11280-007-0033-x}.
-
-\bibitem[\citeproctext]{ref-oliveira2018provenance}
-Oliveira, Wellington, Daniel De Oliveira, and Vanessa Braganholo. 2018.
-{``Provenance Analytics for Workflow-Based Computational Experiments: A
-Survey.''} \emph{ACM Computing Surveys (CSUR)} 51 (3): 1--25.
-
-\bibitem[\citeproctext]{ref-pignotti2013bigprov}
-Pignotti, Edoardo, Gary Polhill, and Peter Edwards. 2013. {``Using
-Provenance to Analyse Agent-Based Simulations.''} In \emph{Proceedings
-of the Joint EDBT/ICDT 2013 Workshops, Genoa, Italy, March 18-22, 2013},
-edited by Kai-Uwe Sattler, Devis Bianchini, Malu Castellanos, et al.
-Association for Computing Machinery.
-\url{https://doi.org/10.1145/2457317.2457371}.
-
-\bibitem[\citeproctext]{ref-polhill2014towards}
-Polhill, Gary, Terence Dawson, Dawn Parker, et al. 2014. {``Towards
-Metadata Standards for Sharing Simulation Outputs.''} In \emph{Advances
-in Computational Social Science and Social Simulation: Proceedings of
-the Social Simulation Conference 2014, Barcelona, Catalunya (Spain),
-September 15}, edited by Francisco J. Miguel, Frédéric Amblard, Joan A.
-Barceló, and Marco Madella. Aut{ò}noma University of Barcelona.
-\url{https://core.ac.uk/download/pdf/78523531.pdf}.
-
-\bibitem[\citeproctext]{ref-polhill2017lessons}
-Polhill, Gary, Lorenzo Milazzo, Terence Dawson, Alessandro Gimona, and
-Dawn Parker. 2017. {``Lessons Learned Replicating the Analysis of
-Outputs from a Social Simulation of Biodiversity Incentivisation.''} In
-\emph{Advances in Social Simulation 2015}, edited by Wander Jager,
-Rineke Verbrugge, Andreas Flache, Gert de Roo, Lex Hoogduin, and
-Charlotte Hemelrijk, vol. 528. Advances in Intelligent Systems and
-Computing. Springer. \url{https://doi.org/10.1007/978-3-319-47253-9_32}.
-
-\bibitem[\citeproctext]{ref-pritchard2025formal}
-Pritchard, Nicholas J, and Andreas Wicenec. 2025. {``Formal Definition
-and Implementation of Reproducibility Tenets for Computational
-Workflows.''} \emph{Future Generation Computer Systems} 166: 107684.
-
-\bibitem[\citeproctext]{ref-shrout2018replication}
-Shrout, Patrick E., and Joseph L. Rodgers. 2018. {``Psychology, Science,
-and Knowledge Construction: Broadening Perspectives from the Replication
-Crisis.''} \emph{Annual Review of Psychology} 69: 487--510.
-\url{https://doi.org/10.1146/annurev-psych-122216-011845}.
-
-\end{CSLReferences}
+\renewcommand\refname{Bibliography}
+\bibliography{citations.bib}
 
 \end{document}
+
+\typeout{get arXiv to do 4 passes: Label(s) may have changed. Rerun}
+

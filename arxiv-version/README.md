@@ -9,8 +9,25 @@ Basically this amounts to flatten the file, put all the images in this directory
 # INSTRUCTIONS
 
 1. `cp ..\miracle-specification-full.tex .`
+1. `cp ..\citations.bib .`
 2. edit this file and remove all the "img/" prefixes from the image paths.
+   remove all comments
+   add `\typeout{get arXiv to do 4 passes: Label(s) may have changed. Rerun}` after the `\end{document}` line.
 3. `pdflatex miracle-specification-full`
+4. `bibtex miracle-specification-full`
+5. `pdflatex miracle-specification-full`
+6. `pdflatex miracle-specification-full`
+7. Check everyting is OK in the pdf
+8. `rm citations.bib`
+9. `rm *.aux`
+10. `rm *.blg`
+11. `rm *.pdf`
+12. `rm *.toc`
+13. `mv README.md ..\save`
+14. `tar -cvvf ax.tar *`
+15. `mv ..\save README.md .`
+
+Change the directions of the slashes if you are on a real operating system.
 
 # MANIFEST
 
