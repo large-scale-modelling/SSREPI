@@ -23,9 +23,7 @@ Basically this amounts to flatten the file, put all the images in this directory
 10. `rm *.blg`
 11. `rm *.pdf`
 12. `rm *.toc`
-13. `mv README.md ..\save`
-14. `tar -cvvf ax.tar *`
-15. `mv ..\save README.md .`
+13. `tar --exclude=README.md -cvvf ax.tar *`
 
 Change the directions of the slashes if you are on a real operating system.
 

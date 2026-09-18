@@ -23,7 +23,8 @@ pandoc miracle-specification.md \
         --filter=.\pandoc-crossref \
         --citeproc \
         --pdf-engine=xelatex \
-        -V mainfont="Carlito" \
+	-V mainfont="Carlito-Regular.ttf" \
+	-V mainfontoptions="BoldFont=Carlito-Bold.ttf,ItalicFont=Carlito-Italic.ttf,BoldItalicFont=Carlito-BoldItalic.ttf" \
         -V geometry:margin=1in \
         --bibliography=citations.bib
 
